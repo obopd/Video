@@ -28,7 +28,7 @@ export const StyleFrame: React.FC<SceneProps> = () => {
             </div>
           </>
         }
-        over={<Axo2 x={1650} y={905} scale={0.74} mood="happy" peek />}
+        over={<Axo2 x={1650} y={905} scale={0.74} mood="calm" peek />}
       />
     </AbsoluteFill>
   );

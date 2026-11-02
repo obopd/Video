@@ -30,14 +30,14 @@ export const Axo2: React.FC<{x: number; y: number; scale?: number; mood?: Mood; 
   const wiggle = Math.sin(f / (mood === 'wow' ? 4 : 18)) * (mood === 'wow' ? 7 : 3);
   const cycle = f % 120;
   const blink = cycle > 114 ? Math.abs(cycle - 117) / 3 : 1;
-  const eyeX = 72, eyeY = -6, lx = look * 8;
+  const eyeX = 66, eyeY = -6, lx = look * 8;
   return (
     <g transform={`translate(${x} ${y}) scale(${scale * breathe} ${scale / breathe})`}>
       {/* body (shows below the smaller head; off-screen when peeking low) */}
-      <ellipse cx={0} cy={175} rx={122} ry={118} fill={BODY} />
+      <ellipse cx={0} cy={180} rx={86} ry={120} fill={BODY} />
       <g transform="scale(0.76)">
       {[-1, 1].map((s) => [0, 1, 2].map((i) => <Tuft key={`${s}${i}`} side={s as 1 | -1} i={i} wiggle={wiggle * (i % 2 ? -1 : 1)} />))}
-      <ellipse cx={0} cy={0} rx={178} ry={138} fill={BODY} />
+      <ellipse cx={0} cy={0} rx={164} ry={136} fill={BODY} />
       {/* eyes */}
       {[-1, 1].map((s) => (
         mood === 'happy' ? (
@@ -45,7 +45,7 @@ export const Axo2: React.FC<{x: number; y: number; scale?: number; mood?: Mood; 
                 stroke={FACE} strokeWidth={9} strokeLinecap="round" fill="none" />
         ) : (
           <g key={s} transform={`translate(${s * eyeX + lx} ${eyeY}) scale(1 ${blink * (mood === 'wow' ? 1.15 : 1)})`}>
-            <ellipse rx={mood === 'wow' ? 22 : 18} ry={mood === 'wow' ? 26 : 22} fill={FACE} />
+            <circle r={mood === 'wow' ? 23 : 19} fill={FACE} />
           </g>
         )
       ))}
@@ -57,7 +57,7 @@ export const Axo2: React.FC<{x: number; y: number; scale?: number; mood?: Mood; 
       )}
       </g>
       {/* little hands */}
-      {[-1, 1].map((s) => <ellipse key={s} cx={s * 108} cy={peek ? 140 : 180} rx={32} ry={22} fill={BODY} />)}
+      {[-1, 1].map((s) => <ellipse key={s} cx={s * 82} cy={peek ? 140 : 180} rx={26} ry={19} fill={BODY} />)}
     </g>
   );
 };

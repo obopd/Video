@@ -11,11 +11,19 @@ export const StyleFrame: React.FC<SceneProps> = (props) => {
   useFontsReady();
   const f = useCurrentFrame();
   const D = props.durationInFrames;
-  // crawl in from the left along the bottom, pause under the answer, crawl on
-  const stopAt = D * 0.45, goAt = D * 0.7;
-  const moving = f < stopAt ? f : f < goAt ? stopAt : f - (goAt - stopAt);
-  const x = interpolate(moving, [0, D - (goAt - stopAt)], [-200, 2150]);
-  const phase = moving / 26;
+  // crawl in from the bottom-left on a gentle curve, pause near the answer, crawl off to the right
+  const stopAt = D * 0.42, goAt = D * 0.68;
+  const t = f < stopAt ? f : f < goAt ? stopAt : f - (goAt - stopAt);
+  const T = D - (goAt - stopAt);
+  const pos = (tt: number) => {
+    const u = tt / T;
+    return [interpolate(u, [0, 1], [-250, 2200]), 930 - Math.sin(u * Math.PI) * 170];
+  };
+  const [x, y] = pos(t);
+  const [x2, y2] = pos(t + 1);
+  const heading = (Math.atan2(y2 - y, x2 - x) * 180) / Math.PI;
+  const moving = f > stopAt && f < goAt ? interpolate(f, [stopAt, stopAt + 8, goAt - 8, goAt], [1, 0, 0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 1;
+  const phase = t / 24;
   return (
     <AbsoluteFill>
       <Stage
@@ -36,7 +44,7 @@ export const StyleFrame: React.FC<SceneProps> = (props) => {
             </div>
           </>
         }
-        over={<AxoCrawl x={x} y={1052} scale={0.62} phase={phase} mood={f > stopAt && f < goAt ? 'happy' : 'calm'} />}
+        over={<AxoCrawl x={x} y={y} scale={0.75} heading={heading} phase={phase} moving={moving} mood={moving < 0.5 ? 'look' : 'calm'} />}
       />
     </AbsoluteFill>
   );

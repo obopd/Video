@@ -1,0 +1,84 @@
+# Example video script. Render it with:
+#   python -m ytvideo examples/morning-routine.yaml
+# Paths (images, music, output) are relative to this file.
+
+title: "5 Morning Habits That Actually Work"
+description: |
+  Small changes to your first hour that make the whole day easier.
+  Which habit are you trying first? Let me know in the comments!
+tags: [morning routine, productivity, habits, self improvement]
+
+output: output/morning-routine.mp4
+resolution: landscape        # landscape (1920x1080), 720p, 4k, shorts (1080x1920) or [width, height]
+fps: 30
+
+voice:
+  engine: auto               # auto | edge | espeak | none
+  name: en-US-AndrewNeural   # list voices with: edge-tts --list-voices
+  rate: "+5%"
+
+music:
+  file: assets/ambient.mp3
+  volume: 0.18
+  duck: true                 # lower the music while the narrator talks
+
+subtitles:
+  burn: true                 # draw captions onto the video (an .srt is always written too)
+
+theme:
+  background: "#0f172a"
+  background2: "#1e293b"
+  text: "#f8fafc"
+  muted: "#94a3b8"
+  accent: "#f59e0b"
+
+thumbnail:
+  text: "5 Morning Habits"
+  image: assets/sunrise.jpg
+  badge: "THAT WORK"
+
+scenes:
+  - type: title
+    title: "5 Morning Habits That Actually Work"
+    subtitle: "Small changes, big difference"
+    narration: >
+      Your first hour sets the tone for the whole day. Here are five simple
+      morning habits that actually work, and how to start each one tomorrow.
+
+  - type: image
+    image: assets/sunrise.jpg
+    caption: "Habit 1: Get daylight early"
+    chapter: "Get daylight early"
+    narration: >
+      Habit number one. Get outside within thirty minutes of waking up.
+      Ten minutes of daylight tells your body clock it's morning, which helps
+      you feel alert now and sleep better tonight.
+
+  - type: bullets
+    heading: "Habits 2 to 4"
+    chapter: "Water, movement, planning"
+    bullets:
+      - "Drink a glass of water before coffee"
+      - "Move for five minutes: walk, stretch, or push-ups"
+      - "Write down the one task that matters most today"
+    narration: >
+      Next, drink a full glass of water before your coffee. You've gone all
+      night without any. Then move your body for just five minutes. A short
+      walk or a few stretches is plenty. And before you open your email, write
+      down the one task that would make today a success.
+
+  - type: quote
+    quote: "We are what we repeatedly do."
+    author: "Will Durant"
+    chapter: "Keep it simple"
+    narration: >
+      Habit five is the most important: keep it simple. As the saying goes,
+      we are what we repeatedly do. Pick one habit and repeat it every day
+      for two weeks before adding another.
+
+  - type: text
+    heading: "Thanks for watching!"
+    text: "Subscribe for more simple, practical habits."
+    narration: >
+      Thanks for watching. If this helped, subscribe for more simple,
+      practical habits, and I'll see you in the next one.

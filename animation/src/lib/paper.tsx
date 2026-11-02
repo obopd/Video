@@ -59,9 +59,9 @@ export const Circled: React.FC<{children: React.ReactNode; progress?: number}> =
   <span style={{position: 'relative', display: 'inline-block', padding: '0 0.32em', margin: '0 0.08em'}}>
     {children}
     <svg viewBox="0 0 100 60" preserveAspectRatio="none" style={{position: 'absolute', left: 0, top: '-10%', width: '100%', height: '120%', overflow: 'visible'}}>
-      <path d="M 50 3 C 80 3, 97 15, 97 30 C 97 46, 78 57, 50 57 C 22 57, 3 46, 3 30 C 3 15, 21 4, 47 3"
+      <path d="M 50 3 C 80 3, 97 15, 97 30 C 97 46, 78 57, 50 57 C 22 57, 3 46, 3 30 C 3 15, 21 3, 50 3 C 56 3, 61 3.5, 65 4.5"
             fill="none" stroke={P.ink} strokeLinecap="round" vectorEffect="non-scaling-stroke"
-            pathLength={1} strokeDasharray={`${progress} 1`} style={{strokeWidth: 6}} />
+            strokeDasharray={progress >= 1 ? undefined : `${progress * 300} 1000`} style={{strokeWidth: 6}} />
     </svg>
   </span>
 );

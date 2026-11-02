@@ -33,11 +33,9 @@ export const Axo2: React.FC<{x: number; y: number; scale?: number; mood?: Mood; 
   const eyeX = 72, eyeY = -6, lx = look * 8;
   return (
     <g transform={`translate(${x} ${y}) scale(${scale * breathe} ${scale / breathe})`}>
-      {!peek && (
-        <g>
-          <ellipse cx={0} cy={210} rx={120} ry={110} fill={BODY} />
-        </g>
-      )}
+      {/* body (shows below the smaller head; off-screen when peeking low) */}
+      <ellipse cx={0} cy={175} rx={122} ry={118} fill={BODY} />
+      <g transform="scale(0.76)">
       {[-1, 1].map((s) => [0, 1, 2].map((i) => <Tuft key={`${s}${i}`} side={s as 1 | -1} i={i} wiggle={wiggle * (i % 2 ? -1 : 1)} />))}
       <ellipse cx={0} cy={0} rx={178} ry={138} fill={BODY} />
       {/* eyes */}
@@ -57,8 +55,9 @@ export const Axo2: React.FC<{x: number; y: number; scale?: number; mood?: Mood; 
       ) : (
         <path d="M -16 38 Q -8 48 0 40 Q 8 48 16 38" stroke={FACE} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
       )}
-      {/* little hands holding the edge when peeking */}
-      {peek && [-1, 1].map((s) => <ellipse key={s} cx={s * 92} cy={128} rx={36} ry={24} fill={BODY} />)}
+      </g>
+      {/* little hands */}
+      {[-1, 1].map((s) => <ellipse key={s} cx={s * 108} cy={peek ? 140 : 180} rx={32} ry={22} fill={BODY} />)}
     </g>
   );
 };

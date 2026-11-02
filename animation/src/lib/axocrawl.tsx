@@ -10,15 +10,15 @@ export type CrawlMood = 'calm' | 'look';
 
 /** Spine offset (sideways sway) at body position x, for gait phase a. */
 const sway = (x: number, a: number, moving: number) => {
-  const toTail = Math.max(0, (90 - x) / 380); // 0 near the head, grows toward the tail
-  return Math.sin(a - x / 70) * (6 + 30 * toTail) * moving;
+  const toTail = Math.max(0, (90 - x) / 280); // 0 near the head, grows toward the tail
+  return Math.sin(a - x / 60) * (5 + 22 * toTail) * moving;
 };
 
 /** Body half-width at position x (head is drawn separately). */
 const width = (x: number) => {
-  if (x > 70) return 20;
-  if (x > -70) return 24 - Math.abs(x) * 0.02;
-  return Math.max(1.5, 22 * (1 - (-70 - x) / 230)); // tail tapers to a point
+  if (x > 70) return 30;
+  if (x > -40) return 36 - Math.abs(x - 15) * 0.04;
+  return Math.max(5, 33 * (1 - (-40 - x) / 150)); // short tail tapering to a soft tip
 };
 
 const Gill: React.FC<{x: number; y: number; angle: number}> = ({x, y, angle}) => (
@@ -37,10 +37,10 @@ const Gill: React.FC<{x: number; y: number; angle: number}> = ({x, y, angle}) =>
 /** A splayed leg with little toes; swing rotates it forward/back around the hip. */
 const Leg: React.FC<{x: number; y: number; side: 1 | -1; swing: number}> = ({x, y, side, swing}) => (
   <g transform={`translate(${x} ${y}) rotate(${swing * side})`}>
-    <rect x={-7} y={side > 0 ? 0 : -42} width={14} height={42} rx={7} fill={INK} transform={`rotate(${-20 * side})`} />
-    <g transform={`rotate(${-20 * side}) translate(0 ${42 * side})`}>
-      {[-12, -4, 4, 12].map((t, i) => (
-        <rect key={i} x={t - 2.5} y={side > 0 ? -2 : -10} width={5} height={12} rx={2.5} fill={INK} transform={`rotate(${(i - 1.5) * 18 * side})`} />
+    <rect x={-10} y={side > 0 ? 0 : -40} width={20} height={40} rx={10} fill={INK} transform={`rotate(${-20 * side})`} />
+    <g transform={`rotate(${-20 * side}) translate(0 ${40 * side})`}>
+      {[-13, -4.5, 4.5, 13].map((t, i) => (
+        <rect key={i} x={t - 3.5} y={side > 0 ? -2 : -11} width={7} height={13} rx={3.5} fill={INK} transform={`rotate(${(i - 1.5) * 18 * side})`} />
       ))}
     </g>
   </g>
@@ -64,7 +64,7 @@ export const AxoCrawl: React.FC<{
 
   // body silhouette as overlapping discs along a swaying spine
   const discs: React.ReactNode[] = [];
-  for (let sx = 90; sx >= -300; sx -= 5) {
+  for (let sx = 90; sx >= -185; sx -= 4) {
     discs.push(<circle key={sx} cx={sx} cy={sway(sx, a, moving)} r={width(sx)} fill={INK} />);
   }
   const legSwing = (off: number) => Math.sin(a + off) * 28 * moving;
@@ -73,22 +73,22 @@ export const AxoCrawl: React.FC<{
   return (
     <g transform={`translate(${x} ${y}) rotate(${heading}) scale(${scale})`}>
       {/* legs: front-left with back-right, front-right with back-left */}
-      <Leg x={46} y={sway(46, a, moving) + 14} side={1} swing={legSwing(0)} />
-      <Leg x={46} y={sway(46, a, moving) - 14} side={-1} swing={legSwing(Math.PI)} />
-      <Leg x={-62} y={sway(-62, a, moving) + 14} side={1} swing={legSwing(Math.PI)} />
-      <Leg x={-62} y={sway(-62, a, moving) - 14} side={-1} swing={legSwing(0)} />
+      <Leg x={40} y={sway(40, a, moving) + 22} side={1} swing={legSwing(0)} />
+      <Leg x={40} y={sway(40, a, moving) - 22} side={-1} swing={legSwing(Math.PI)} />
+      <Leg x={-50} y={sway(-50, a, moving) + 22} side={1} swing={legSwing(Math.PI)} />
+      <Leg x={-50} y={sway(-50, a, moving) - 22} side={-1} swing={legSwing(0)} />
       {discs}
       {/* gills fan back from both sides of the head */}
       {[-1, 1].map((s) => [0, 1, 2].map((k) => (
-        <Gill key={`${s}${k}`} x={112 - k * 12} y={headY + s * (30 - k * 2)} angle={s * (62 + k * 30 + gillWiggle * (k % 2 ? -1 : 1))} />
+        <Gill key={`${s}${k}`} x={118 - k * 13} y={headY + s * (40 - k * 3)} angle={s * (62 + k * 30 + gillWiggle * (k % 2 ? -1 : 1))} />
       )))}
       {/* wide, flat head */}
-      <ellipse cx={128} cy={headY} rx={44} ry={40} fill={INK} />
-      <ellipse cx={150} cy={headY} rx={30} ry={34} fill={INK} />
+      <ellipse cx={124} cy={headY} rx={52} ry={50} fill={INK} />
+      <ellipse cx={146} cy={headY} rx={36} ry={44} fill={INK} />
       {/* eyes near the front edges of the head */}
       {[-1, 1].map((s) => (
-        <g key={s} transform={`translate(${148 + look} ${headY + s * 22}) scale(1 ${blink})`}>
-          <circle r={8} fill={EYE} />
+        <g key={s} transform={`translate(${148 + look} ${headY + s * 27}) scale(1 ${blink})`}>
+          <circle r={9.5} fill={EYE} />
         </g>
       ))}
     </g>

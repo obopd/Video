@@ -3,11 +3,19 @@ import React from 'react';
 import {AbsoluteFill} from 'remotion';
 import {Stage, useFontsReady} from '../../lib/stage';
 import {P, Paper, Tag, Line, Sup, Circled, SANS} from '../../lib/paper';
-import {Axo2} from '../../lib/axo2';
+import {AxoCrawl} from '../../lib/axocrawl';
+import {useCurrentFrame, interpolate} from 'remotion';
 import type {SceneProps} from '../../lib/types';
 
-export const StyleFrame: React.FC<SceneProps> = () => {
+export const StyleFrame: React.FC<SceneProps> = (props) => {
   useFontsReady();
+  const f = useCurrentFrame();
+  const D = props.durationInFrames;
+  // crawl in from the left along the bottom, pause under the answer, crawl on
+  const stopAt = D * 0.45, goAt = D * 0.7;
+  const moving = f < stopAt ? f : f < goAt ? stopAt : f - (goAt - stopAt);
+  const x = interpolate(moving, [0, D - (goAt - stopAt)], [-200, 2150]);
+  const phase = moving / 26;
   return (
     <AbsoluteFill>
       <Stage
@@ -28,7 +36,7 @@ export const StyleFrame: React.FC<SceneProps> = () => {
             </div>
           </>
         }
-        over={<Axo2 x={1650} y={905} scale={0.74} mood="calm" peek />}
+        over={<AxoCrawl x={x} y={1052} scale={0.62} phase={phase} mood={f > stopAt && f < goAt ? 'happy' : 'calm'} />}
       />
     </AbsoluteFill>
   );

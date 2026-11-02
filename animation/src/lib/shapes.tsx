@@ -1,6 +1,8 @@
 import React, {useId} from 'react';
 import {random, useCurrentFrame, interpolate, Easing} from 'remotion';
 import {C, W, H, FONT} from './theme';
+import {Nebula} from './bodies';
+export {mix} from './color';
 
 export const ease = Easing.bezier(0.45, 0, 0.25, 1);
 
@@ -14,6 +16,7 @@ export const Canvas: React.FC<{children: React.ReactNode; background?: boolean}>
   <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice"
        style={{position: 'absolute', inset: 0, width: '100%', height: '100%'}}>
     {background && <Sky />}
+    {background && <Nebula />}
     {children}
   </svg>
 );
@@ -151,9 +154,3 @@ export const Continents: React.FC<{cx: number; cy: number; r: number; color: str
   );
 };
 
-/** Mix two hex colors. */
-export const mix = (a: string, b: string, t: number) => {
-  const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
-  const pb = [1, 3, 5].map((i) => parseInt(b.slice(i, i + 2), 16));
-  return '#' + pa.map((v, i) => Math.round(v + (pb[i] - v) * Math.min(1, Math.max(0, t))).toString(16).padStart(2, '0')).join('');
-};

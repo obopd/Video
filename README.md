@@ -42,7 +42,7 @@ resolution: landscape          # landscape | 720p | 4k | shorts | [width, height
 
 voice:
   engine: auto                 # auto | edge | espeak | none
-  name: en-US-AndrewNeural     # see: edge-tts --list-voices
+  name: en-US-AndrewMultilingualNeural     # see: edge-tts --list-voices
   rate: "+5%"
 
 music: assets/music.mp3        # optional; or {file: ..., volume: 0.15, duck: true}
@@ -86,6 +86,14 @@ Each scene lasts as long as its narration, plus a short pause. `duration` sets a
 - **`none`** makes a silent video. Scene lengths are estimated from the narration word count, which is useful for previews.
 
 Generated speech is cached in `output/.tts-cache/`, so only scenes whose narration changed are synthesized again.
+
+**Making the AI voice sound more human** (all on by default with `edge`):
+- **Natural pauses:** each sentence is spoken separately and joined with slightly varied pauses instead of identical machine gaps. A `...` or `—` in the narration gives a longer, dramatic pause, and questions get a beat after them.
+- **Higher quality:** the voice is requested at 96 kbps instead of 48 kbps, which means fewer robotic compression artifacts.
+- **Recorded sound:** a light voiceover treatment adds warmth and gentle compression, a very small room, and faint room tone so the silences don't sound digitally dead.
+- **Write for speaking:** contractions ("it's", "can't"), short sentences, questions and asides ("Now, that can't actually happen.") sound far more natural than textbook sentences.
+
+To turn the treatment off, use `voice: {natural_pauses: false, polish: false, hq: false}`. For the most human result, record the narration yourself with `audio:`, or use a premium voice service.
 
 ### Other settings
 
@@ -135,7 +143,11 @@ cd animation && npm install
 
 **Making new scenes:**
 - Write a React component in `animation/src/scenes/<topic>/` and add it to `SCENES` in `animation/src/Root.tsx`.
-- Shared building blocks are in `animation/src/lib/shapes.tsx`: `Canvas`, `Stars`, `Sun`, `Planet`, `Continents`, `Glow`, `Label`, `tween` and `mix`.
+- Shared building blocks:
+  - `lib/globe.tsx` has `Globe`, a detailed Earth with real coastlines, biomes, clouds, atmosphere, day and night, city lights, and an `ice` setting.
+  - `lib/bodies.tsx` has `DetailedSun`, `DetailedPlanet` (Mercury, Venus, Mars, Jupiter), `Nebula` and `BrightStars`.
+  - `lib/shapes.tsx` has `Canvas`, `Stars`, `Glow`, `Label`, `tween` and `mix`.
+- To check a scene quickly without rendering the whole video, render single frames: `node stills.mjs /tmp/out Freeze:120 DeepVent:300`.
 - Colors are in `animation/src/lib/theme.ts`.
 - Every scene draws on a 1920×1080 canvas. Run `npm run studio` inside `animation/` to preview scenes in your browser while you work on them.
 

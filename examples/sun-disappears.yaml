@@ -23,8 +23,8 @@ fps: 30
 
 voice:
   engine: auto
-  name: en-US-AndrewNeural
-  rate: "-4%"
+  name: en-US-AndrewMultilingualNeural
+  rate: "-2%"
 
 music:
   file: assets/ambient.mp3
@@ -43,10 +43,10 @@ scenes:
     component: SunVanishes
     fade: false
     narration: >
-      Imagine that one ordinary afternoon, the Sun simply vanishes.
-      No explosion. No warning. It's just gone.
-      That's impossible, of course. But it's a great way to see
-      how much we depend on our star.
+      Imagine it's an ordinary afternoon. You're outside, the sky is bright...
+      and then, the Sun just vanishes. No explosion. No warning. It's simply gone.
+      Now, that can't actually happen. But imagining it shows us just how much
+      we depend on our star.
 
   - type: animated
     component: TitleCard
@@ -58,37 +58,40 @@ scenes:
     component: LightDelay
     chapter: "The first eight minutes"
     narration: >
-      For the first eight minutes, nothing happens. Sunlight takes about eight
-      minutes and twenty seconds to reach us, so the last light the Sun ever made
-      is still on its way. Even gravity travels at the speed of light, so Earth
-      keeps orbiting an empty spot in space.
+      Here's the strange part: for the next eight minutes, nothing happens.
+      Sunlight takes about eight minutes and twenty seconds to reach us, so the
+      last light the Sun ever made is still on its way. And gravity? It travels
+      at the speed of light too. So Earth keeps circling an empty patch of space,
+      as if nothing had changed.
 
   - type: animated
     component: Drift
     fade: false
     chapter: "Into the dark"
     narration: >
-      Then the lights go out. Without the Sun's pull, Earth stops curving around it,
-      and flies off in a straight line, along with every other planet, out into the dark.
+      Then... the lights go out. With nothing left to pull on it, Earth stops
+      curving, and shoots off in a straight line. So does every other planet.
+      Out, into the dark.
 
   - type: animated
     component: Freeze
     chapter: "The big freeze"
     narration: >
-      It gets cold fast. Within a week, the average temperature drops below
+      And it gets cold. Fast. Within a week, the average temperature falls below
       minus eighteen degrees Celsius. After a year, it's around minus seventy.
-      Plants can no longer photosynthesize, and most of them die within weeks.
+      With no light, plants can't photosynthesize, and most of them die within weeks.
 
   - type: animated
     component: DeepVent
     chapter: "Life in the deep"
     narration: >
-      But life wouldn't disappear completely. The oceans would freeze over at the top,
-      and the ice would insulate the water below. Deep down, around hot springs on
-      the sea floor, microbes that never needed sunlight could keep going for a very long time.
+      But not everything dies. The oceans freeze over at the surface, and that ice
+      acts like a blanket, insulating the water below. Deep down, around hot springs
+      on the sea floor, there are microbes that never needed sunlight in the first place.
+      They could keep going for a very, very long time.
 
   - type: animated
     component: SunReturns
     narration: >
-      Luckily, our Sun isn't going anywhere. It has about five billion years of fuel left.
-      So go outside, and enjoy the sunshine.
+      Luckily, our Sun isn't going anywhere. It has about five billion years of
+      fuel left. So, maybe go outside today... and enjoy the sunshine.

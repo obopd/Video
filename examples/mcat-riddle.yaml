@@ -38,11 +38,11 @@ scenes:
     component: BlackTick
     duration: 1.6
     fade: false
+    chapter: "The riddle"
 
   - type: animated
     component: Hook
     fade: false
-    chapter: "The riddle"
     narration: >
       Riddle: you have ninety-six seconds. A solution has a hydrogen ion concentration of three
       times ten to the minus five. What's its pH? And, no calculator. None. Impossible? By the end

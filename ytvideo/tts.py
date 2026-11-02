@@ -110,11 +110,11 @@ def split_sentences(text: str) -> list[tuple[str, float]]:
             continue
         jitter = (zlib.crc32(p.encode()) % 1000) / 1000  # 0..1
         if p.endswith(("...", "\u2026", "\u2014")):
-            pause = 0.5 + 0.25 * jitter
+            pause = 0.42 + 0.2 * jitter
         elif p.endswith("?"):
-            pause = 0.32 + 0.18 * jitter
+            pause = 0.26 + 0.14 * jitter
         else:
-            pause = 0.12 + 0.2 * jitter
+            pause = 0.08 + 0.14 * jitter
         out.append((p.rstrip("\u2014").strip(), pause))
     return out
 

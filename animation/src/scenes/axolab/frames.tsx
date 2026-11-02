@@ -133,4 +133,34 @@ export const FrameElevator: React.FC<SceneProps> = () => {
   );
 };
 
-export const frameScenes = {FrameHook, FrameCrate, FrameElevator};
+
+
+// Thumbnail in the channel style: paper, huge Fraunces, one accent, ink Axo.
+export const Thumb: React.FC<SceneProps> = (props) => {
+  const big = (props.big as string) ?? 'pH in';
+  const hero = (props.hero as string) ?? '10s?';
+  const tag = (props.tag as string) ?? 'NO CALCULATOR';
+  const sub = (props.sub as string) ?? '';
+  return (
+    <Frame
+      html={
+        <>
+          <div style={{position: 'absolute', left: 110, top: 96}}><Tag style={{fontSize: 34, padding: '14px 34px 14px 38px'}}>{tag}</Tag></div>
+          {sub && <div style={{position: 'absolute', left: 114, top: 200, fontFamily: DISPLAY, fontWeight: 600, fontSize: 54, color: P.muted}}>{sub}</div>}
+          <div style={{position: 'absolute', left: 100, top: 300, fontFamily: DISPLAY, fontWeight: 800, fontSize: 250, lineHeight: 0.95, color: INK, letterSpacing: '-0.03em'}}>
+            {big}
+          </div>
+          <div style={{position: 'absolute', left: 100, top: 560, fontFamily: DISPLAY, fontWeight: 800, fontSize: 330, lineHeight: 0.95, color: ORANGE, letterSpacing: '-0.035em'}}>
+            {hero}
+          </div>
+        </>
+      }
+    >
+      <path d="M 520 548 C 790 545, 905 625, 900 735 C 895 860, 720 925, 470 922 C 220 919, 55 850, 58 735 C 61 615, 230 552, 470 549 C 560 548, 640 552, 700 563"
+            fill="none" stroke={INK} strokeWidth={10} strokeLinecap="round" />
+      <AxoSide x={1430} y={1010} scale={1.55} rear={1} arm={-6} holding="pencil" sweat />
+    </Frame>
+  );
+};
+
+export const frameScenes = {FrameHook, FrameCrate, FrameElevator, Thumb};

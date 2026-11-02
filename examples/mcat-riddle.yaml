@@ -18,7 +18,7 @@ fps: 30
 voice:
   engine: auto
   name: en-US-AndrewMultilingualNeural
-  rate: "-2%"
+  rate: "+8%"
 
 music:
   file: assets/ambient.mp3
@@ -29,9 +29,12 @@ subtitles:
   burn: false
 
 thumbnail:
-  text: "pH in 10 seconds?"
-  frame_at: 9
-  badge: "NO CALCULATOR"
+  component: Thumb      # rendered in the channel style (animation/src/scenes/axolab/frames.tsx)
+  props:
+    tag: "NO CALCULATOR"
+    sub: "[H⁺] = 3 × 10⁻⁵"
+    big: "pH in"
+    hero: "10s?"
 
 scenes:
   - type: animated

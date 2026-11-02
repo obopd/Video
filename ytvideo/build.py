@@ -21,8 +21,8 @@ PRESETS = {
     "shorts": (1080, 1920),
     "vertical": (1080, 1920),
 }
-LEAD_IN = 0.35   # silence before narration in each scene
-TAIL = 0.65      # silence after narration
+LEAD_IN = 0.25   # silence before narration in each scene
+TAIL = 0.45      # silence after narration
 FADE = 0.3       # video fade in/out per scene
 ANIMATION_DIR = Path(__file__).resolve().parent.parent / "animation"
 
@@ -205,7 +205,7 @@ class Builder:
         # Cache rendered animations by (props + animation source code), so changing music,
         # text or one scene's narration doesn't re-render every animation.
         src_hash = hashlib.sha1()
-        for f in sorted((anim_dir / "src").rglob("*")) + [anim_dir / "package-lock.json"]:
+        for f in sorted((anim_dir / "src").rglob("*")) + sorted((anim_dir / "public").rglob("*")) + [anim_dir / "package-lock.json"]:
             if f.is_file():
                 src_hash.update(f.relative_to(anim_dir).as_posix().encode() + f.read_bytes())
         cache = self.out.parent / ".anim-cache"
@@ -224,7 +224,7 @@ class Builder:
             )
             self.check_cues(sc, props)
             crf = 28 if self.preview else 16
-            key = hashlib.sha1((src_hash.hexdigest() + json.dumps([props, crf], sort_keys=True)).encode()).hexdigest()[:20]
+            key = hashlib.sha1((src_hash.hexdigest() + json.dumps([props, crf, "audio-v1"], sort_keys=True)).encode()).hexdigest()[:20]
             sc.animation = cache / f"{key}.mp4"
             if sc.animation.exists() and sc.animation.stat().st_size > 0:
                 cached.append(sc)
@@ -303,7 +303,13 @@ class Builder:
             ain = ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
             af = f"atrim=0:{d:.3f}"
 
-        ffmpeg(*vin, *ain, "-filter_complex", f"[0:v]{vf}[v];[1:a]{af}[a]",
+        graph = f"[0:v]{vf}[v];[1:a]{af}[a]"
+        if sc.animation:
+            # mix in the scene's own sound effects (rendered by Remotion) under the voice
+            graph = (f"[0:v]{vf}[v];[1:a]{af}[vo];[0:a]aresample=48000,aformat=channel_layouts=stereo,"
+                     f"volume={float(self.cfg.get('sfx_volume', 1.0))},apad,atrim=0:{d:.3f}[fx];"
+                     f"[vo][fx]amix=inputs=2:duration=first:normalize=0[a]")
+        ffmpeg(*vin, *ain, "-filter_complex", graph,
                "-map", "[v]", "-map", "[a]", "-t", f"{d:.3f}",
                "-c:v", "libx264", "-preset", "ultrafast" if self.preview else "medium",
                "-crf", "28" if self.preview else "18", "-r", str(self.fps),
@@ -372,7 +378,16 @@ class Builder:
     def write_extras(self, scenes: list[Scene], total: float) -> None:
         # Thumbnail (1280x720 is YouTube's recommended size)
         th = self.cfg.get("thumbnail", {}) or {}
-        if th is not False:
+        if th is not False and th.get("component"):
+            anim_dir = Path(self.cfg.get("animation_dir", ANIMATION_DIR)).resolve()
+            job = [{"out": str(self.out.with_suffix(".thumbnail.png")), "still": True, "frame": int(th.get("frame", 45)),
+                    "props": {**(th.get("props") or {}), "component": th["component"], "durationInFrames": 90,
+                              "fps": self.fps, "width": 1280, "height": 720, "words": []}}]
+            jf = self.work / "thumb-job.json"
+            jf.write_text(json.dumps(job))
+            if subprocess.run(["node", str(anim_dir / "render.mjs"), str(jf)], cwd=anim_dir).returncode != 0:
+                raise RuntimeError("thumbnail render failed")
+        elif th is not False:
             img_path = self.path(th["image"]) if th.get("image") else None
             if th.get("frame_at") is not None:  # grab a frame of the finished video
                 img_path = self.work / "thumb-frame.png"

@@ -4,7 +4,7 @@ import {useCurrentFrame, random, spring} from 'remotion';
 import type {SceneProps} from '../../lib/types';
 import {AxoSide, Calc, Pencil, Stamp, BigClock, Zero, Crate, COBALT_TINT} from '../../lib/cast';
 import {
-  Frame, KeySeq, KineticLine, InkCircle, Spark, Beaker, Ring, useCue, tw, clamp01, ease, fall, rich,
+  Frame, KeySeq, KineticLine, InkCircle, Spark, Beaker, Ring, useCue, tw, clamp01, ease, fall, rich, SfxList,
   INK, PAPER, ORANGE, COBALT, LINE, DISPLAY, SANS, P,
 } from './kit';
 
@@ -29,6 +29,7 @@ export const BlackTick: React.FC<SceneProps> = (props) => {
           <span key={i} style={{fontFamily: SANS, fontWeight: 700, fontSize: 30, letterSpacing: 8, color: '#6d665c',
             opacity: f >= i * 14 ? 1 : 0}}>{t.toUpperCase()}</span>
         ))}
+        <SfxList items={[[0, 'tick', 0.7], [14, 'tock', 0.7], [28, 'tick', 0.7]]} />
       </div>
     } />
   );
@@ -44,8 +45,15 @@ export const Hook: React.FC<SceneProps> = (props) => {
   const open = tw(f, 0, 7);
   const L = (a: number, b: number) => a + (b - a) * open;
   const door = `M ${L(110, 410)} 300 L ${L(410, 560)} ${L(300, 250)} L ${L(410, 560)} ${L(940, 990)} L ${L(110, 410)} 940 Z`;
-  const ax = tw(f, 3, 3 + 1.6 * fps, 300, 800, (t) => 1 - Math.pow(1 - t, 4));
-  const speed = f < 3 + 1.6 * fps ? 1 : 0;
+  const arrive = 3 + Math.round(1.25 * fps);
+  const ax = tw(f, 3, arrive, 250, 800, (t) => 1 - Math.pow(1 - t, 3));
+  const speed = f < arrive - 4 ? 1 : 0;
+  const rear = tw(f, arrive - 3, arrive + 12, 0, 1);
+  const D = props.durationInFrames;
+  const ticks: [number, 'tick' | 'tock', number][] = [];
+  for (let t = c96, k = 0; t < D; t += fps, k++) ticks.push([t, k % 2 ? 'tock' : 'tick', 0.28]);
+  const taps: [number, 'tap', number][] = [];
+  for (let t = noCalc; t < none - 4; t += 9) taps.push([t, 'tap', 0.5]);
   const secs = Math.max(0, 96 - Math.max(0, f - c96) / fps);
   const tip = tw(f, noCalc, none - 4, 2060, 1390, (t) => t);
   const flick = clamp01((f - none) / 5);
@@ -55,7 +63,9 @@ export const Hook: React.FC<SceneProps> = (props) => {
   const stampS = f < imp ? 0 : tw(f, imp, imp + 6, 2.4, 0.85, (t) => t * t);
   return (
     <Frame
-      html={<KeySeq x={100} y={100} w={860} size={92} items={[
+      html={<><SfxList items={[[1, 'bang', 0.9], [3, 'whoosh', 0.5], [arrive + 2, 'swish', 0.5], [c96, 'pop', 0.7], ...ticks, ...taps,
+        [none - 2, 'swish', 0.8], [none + 2, 'slide', 0.6], [imp + 5, 'thud', 1], [ten, 'sparkle', 0.5], [cue('Pause', 0.92) + 6, 'pop', 0.5]]} />
+      <KeySeq x={100} y={100} w={860} size={92} items={[
         {at: cue('Riddle', 0.02), text: 'Riddle:'},
         {at: c96, text: '[[96]] seconds.'},
         {at: cue('hydrogen ion', 0.18), text: '[H^{+}] = 3 × 10^{−5}', sub: 'hydrogen ion concentration'},
@@ -65,7 +75,7 @@ export const Hook: React.FC<SceneProps> = (props) => {
         {at: imp, text: 'Impossible?'},
         {at: ten, text: 'In your head. [[10 seconds.]]', size: 76},
         {at: cue('Pause', 0.92), text: 'Pause & guess.'},
-      ]} />}
+      ]} /></>}
       svg={
         <g>
           <Floor />
@@ -74,7 +84,7 @@ export const Hook: React.FC<SceneProps> = (props) => {
           {speed > 0 && [[ax - 120, 560], [ax - 100, 610], [ax - 130, 660]].map(([lx, ly], i) => (
             <line key={i} x1={lx - 80} y1={ly} x2={lx} y2={ly} stroke={INK} strokeWidth={4} strokeLinecap="round" opacity={0.35} />
           ))}
-          <AxoSide x={ax} y={940} scale={1.05} rear={1} arm={8} holding="pencil" sweat wink={f > ten && f < ten + 20} />
+          <AxoSide x={ax} y={940} scale={1.05} rear={rear} run={speed ? f / 5 : undefined} arm={8} holding="pencil" sweat wink={f > ten && f < ten + 20} />
           <g transform={`translate(1150 330) scale(${pop(f, c96, fps)})`}><BigClock x={0} y={0} r={170} value={Math.ceil(secs)} /></g>
           {/* the bouncer */}
           <g transform="translate(1690 940) rotate(-90)"><Pencil len={620} w={120} face /></g>
@@ -105,6 +115,9 @@ export const SciCrate: React.FC<SceneProps> = (props) => {
     <Frame tag="SCIENTIFIC NOTATION"
       html={
         <>
+          <SfxList items={[[enorm, 'fizz', 0.5], [micro, 'swish', 0.35], [avo, 'swish', 0.5], [zeros - 5, 'whoosh', 0.35],
+            ...Array.from({length: 21}).map((_, i) => [zeros + (850 + 95 * i) / 11, 'pop', 0.32, 0.9 + i * 0.03] as [number, 'pop', number, number]),
+            [label, 'thud', 0.8], [parts, 'pop', 0.7]]} />
           <KeySeq x={100} y={300} w={720} size={84} items={[
             {at: enorm, text: 'Enormous,'},
             {at: micro, text: 'or [[microscopic.]]'},
@@ -143,8 +156,11 @@ export const SciCrate: React.FC<SceneProps> = (props) => {
                 if (x < 1150 || x > 2100) return null;
                 return <Zero key={i} x={x} y={870} step={(walk + i * 6) / 18} scale={0.72} />;
               })}
-              {f < pack + 2 * fps && <AxoSide x={1840} y={870} scale={0.5} dir={-1} run={walk / 9} sweat />}
-              {f >= pack + 2 * fps && <AxoSide x={1700} y={870} scale={0.5} dir={-1} />}
+              {(() => {
+                const st = zeros + Math.round(1.6 * fps);
+                const axX = tw(f, zeros, st, 2060, 1720, (t) => 1 - Math.pow(1 - t, 2));
+                return <AxoSide x={axX} y={870} scale={0.5} dir={-1} run={f < st ? f / 5 : undefined} sweat={f < st + 40} />;
+              })()}
             </g>
           )}
         </g>
@@ -188,6 +204,9 @@ export const DotRun: React.FC<SceneProps> = (props) => {
     <Frame tag="SCIENTIFIC NOTATION"
       html={
         <>
+          <SfxList items={[[meet, 'pop', 0.6], [runL, 'whoosh', 0.45], [runR, 'whoosh', 0.45], [digitsAt, 'swish', 0.4],
+            ...[0, 1, 2, 3].flatMap((k) => [[steps + k * hopDur, 'hop', 0.6, 1 + k * 0.1], [steps + k * hopDur + hopDur - 2, 'tick', 0.4]] as [number, 'hop' | 'tick', number, number][]),
+            [so, 'slide', 0.6], [so + 8, 'sparkle', 0.5]]} />
           <KeySeq x={0} y={170} w={1920} align="center" size={80} items={[
             {at: meet, text: 'Meet [[Dot]], the decimal point.'},
             {at: runL, text: '← Run left: exponent [[up]]'},
@@ -288,7 +307,11 @@ export const Towers: React.FC<SceneProps> = (props) => {
   }
   return (
     <Frame tag="EXPONENT RULES"
-      html={<KeySeq x={1260} y={330} w={620} size={70} items={[
+      html={<><SfxList items={[
+        ...[0, 1, 2].map((i) => [times2 + i * 8 + 15, 'clack', 0.7, 1 + i * 0.08] as [number, 'clack', number, number]),
+        [six, 'ding', 0.45], [div, 'whoosh', 0.5], [wreck + 9, 'crash', 0.8], [sub, 'pop', 0.5],
+        [add, 'swish', 0.4], [lower, 'rise', 0.6], [lower + 20, 'clack', 0.7], [total + 17, 'clack', 0.8], [total + 20, 'ding', 0.5]]} />
+      <KeySeq x={1260} y={330} w={620} size={70} items={[
         {at: mul, text: 'Multiply → [[stack]]', sub: 'exponents add'},
         {at: cue('Three times ten to the four', 0.08), text: '3×10^{4} · 2×10^{3}'},
         {at: six, text: '= [[6×10^{7}]]'},
@@ -299,7 +322,7 @@ export const Towers: React.FC<SceneProps> = (props) => {
         {at: cue('Three times ten to the five', 0.6), text: '3×10^{5} + 2×10^{4}'},
         {at: lower, text: '= 3×10^{5} + [[0.2×10^{5}]]', size: 60},
         {at: total, text: '= [[3.2×10^{5}]]'},
-      ]} />}
+      ]} /></>}
       svg={<g><Floor y={Y} x2={1220} />{blocks}{labels}{axo}</g>}
     />
   );
@@ -338,14 +361,16 @@ export const LogElevator: React.FC<SceneProps> = (props) => {
   const nums = ['0.01', '0.1', '1', '10', '100', '1000'];
   return (
     <Frame tag="LOGARITHMS"
-      html={<KeySeq x={1150} y={330} w={720} size={84} items={[
+      html={<><SfxList items={[[three, 'rise', 0.6], [three + 27, 'ding', 0.5], [hund, 'rise', 0.6, 0.85], [hund + 27, 'ding', 0.5, 0.9],
+        [two, 'rise', 0.6], [two + 27, 'boing', 0.5, 0.8], [stuck, 'pop', 0.6], [log2, 'chime', 0.5]]} />
+      <KeySeq x={1150} y={330} w={720} size={84} items={[
         {at: counter, text: 'log = [[floor number]]'},
         {at: each, text: 'Each floor up: ×10'},
         {at: three, text: 'log 1000 = [[3]]'},
         {at: hund, text: 'log 0.01 = [[−2]]'},
         {at: two, text: 'log 2 = ?'},
         {at: log2, text: 'log 2 ≈ [[0.3]]', size: 110},
-      ]} />}
+      ]} /></>}
       svg={
         <g>
           <Building x={500} w={500} floors={[-2, -1, 0, 1, 2, 3]} Y={Y} right={(n) => nums[n + 2]} top={Y(3) - 110} />
@@ -383,7 +408,10 @@ export const LogHops: React.FC<SceneProps> = (props) => {
   const carX = tw(f, carry, carry + 70, 2050, 1500, (t) => t);
   return (
     <Frame tag="LOGARITHMS"
-      html={<KeySeq x={900} y={300} w={980} size={84} items={[
+      html={<><SfxList items={[[l2, 'pop', 0.6], [l3, 'pop', 0.6, 1.1],
+        ...hopSets.flatMap(([at, vs]) => vs.slice(1).map((_, i) => [at + i * 14, 'hop', 0.55, 1 + i * 0.12] as [number, 'hop', number, number])),
+        [add, 'chime', 0.45], ...Array.from({length: 9}).map((_, i) => [carry + i * 8, 'tap', 0.45] as [number, 'tap', number])]} />
+      <KeySeq x={900} y={300} w={980} size={84} items={[
         {at: memo, text: 'Memorize two numbers'},
         {at: l2, text: 'log 2 = [[0.30]]'},
         {at: l3, text: 'log 3 = [[0.48]]', sub: 'everything else is hops'},
@@ -393,7 +421,7 @@ export const LogHops: React.FC<SceneProps> = (props) => {
         {at: c8, text: 'log 8 = 3 × 0.3 = [[0.9]]'},
         {at: add, text: '× becomes [[+]]', sub: "you're walking, not building", size: 110},
         {at: carry, text: 'The only log you’ll be glad to carry.', size: 60},
-      ]} />}
+      ]} /></>}
       svg={
         <g>
           <line x1={X} x2={X} y1={Y(0) + 20} y2={Y(1) - 20} stroke={INK} strokeWidth={LINE} />
@@ -448,6 +476,8 @@ export const RiddleSolve: React.FC<SceneProps> = (props) => {
     <Frame tag="SOLVING THE RIDDLE"
       html={
         <>
+          <SfxList items={[[three, 'fizz', 0.6], [hopC, 'hop', 0.6], [flip, 'whoosh', 0.6], [about + 8, 'scribble', 0.6],
+            [done, 'confetti', 0.9], [done + 6, 'chime', 0.5]]} />
           <KeySeq x={980} y={240} w={900} size={92} items={[
             {at: 0, text: 'pH = −log [H^{+}]'},
             {at: three, text: '[H^{+}] = 3 × 10^{−5}'},
@@ -508,11 +538,12 @@ export const SparkScale: React.FC<SceneProps> = (props) => {
   const beakers: [number, number, number, string][] = [[480, 10, c1, 'pH 5'], [960, 45, c2, 'pH 4'], [1440, 130, c3, 'pH 3']];
   return (
     <Frame tag="pH"
-      html={<KeySeq x={0} y={130} w={1920} align="center" size={84} items={[
+      html={<><SfxList items={[[c1, 'fizz', 0.4], [c2, 'fizz', 0.55], [c3, 'fizz', 0.75], [c3 + 30, 'slide', 0.4], [hund, 'whoosh', 0.4]]} />
+      <KeySeq x={0} y={130} w={1920} align="center" size={84} items={[
         {at: c1, text: '1 pH step = [[10×]] the sparks'},
         {at: hund, text: 'pH 3 vs pH 5 = [[100×]] more acid'},
         {at: sq, text: 'Logs squeeze huge ranges small.'},
-      ]} />}
+      ]} /></>}
       svg={
         <g>
           {beakers.map(([x, n, at, label], bi) => f >= at && (
@@ -550,6 +581,7 @@ export const LnTwins: React.FC<SceneProps> = (props) => {
     <Frame tag="NATURAL LOG"
       html={
         <>
+          <SfxList items={[[cousin, 'swish', 0.5], [mult, 'rise', 0.45, 1.2], [mult + 20, 'ding', 0.45], [ln2, 'pop', 0.5]]} />
           <KeySeq x={1300} y={300} w={600} size={80} items={[
             {at: 0, text: 'ln: log’s [[cousin]]'},
             {at: eAt, text: 'base e ≈ 2.718', sub: 'instead of 10'},
@@ -591,6 +623,8 @@ export const Rulers: React.FC<SceneProps> = (props) => {
     <Frame tag="SIGNIFICANT DIGITS"
       html={
         <>
+          <SfxList items={[[confess, 'clack', 0.5], [measured, 'swish', 0.5], [made, 'blip', 0.5], [nose, 'boing', 0.7, 0.75],
+            [weak, 'thud', 0.6]]} />
           <KeySeq x={100} y={630} w={1100} size={72} items={[
             {at: confess, text: 'Every number confesses its ruler.'},
             {at: measured, text: 'Measured = [[significant]]'},
@@ -657,6 +691,9 @@ export const Sculpt: React.FC<SceneProps> = (props) => {
     <Frame tag="ESTIMATION"
       html={
         <>
+          <SfxList items={[[chip, 'clack', 0.6, 1.6], [chip + 9, 'clack', 0.6, 1.8], [chip + 18, 'clack', 0.6, 1.5], [about, 'pop', 0.6],
+            [mol, 'swish', 0.5], ...Array.from({length: 8}).map((_, i) => [mol + ((eight - mol) * i) / 8, 'tick', 0.35] as [number, 'tick', number]),
+            [six, 'ding', 0.55], ...[0, 1, 2, 3].map((i) => [calc + i * 9, 'blip', 0.4] as [number, 'blip', number])]} />
           <KeySeq x={100} y={150} w={900} size={76} items={[
             {at: 0, text: 'Estimating is [[sculpting.]]'},
             {at: chip, text: 'Chip to friendly shapes.'},
@@ -743,6 +780,7 @@ export const Chests: React.FC<SceneProps> = (props) => {
     <Frame tag="THREE TRAPS"
       html={
         <>
+          <SfxList items={[[0, 'type', 0.45], [c1, 'chomp', 0.9], [c1 + 12, 'crash', 0.25], [only, 'pop', 0.4], [c2, 'chomp', 0.9], [c3, 'chomp', 0.9]]} />
           <div style={{position: 'absolute', left: 0, width: 1920, top: 150}}>
             <KineticLine text="Chests that [[bite.]]" at={0} size={100} align="center" />
           </div>
@@ -783,6 +821,8 @@ export const YourTurnQ: React.FC<SceneProps> = (props) => {
     <Frame tag="YOUR TURN"
       html={
         <div style={{position: 'absolute', left: 0, width: 1920, top: 200}}>
+          <SfxList items={[[q, 'type', 0.45], [ph, 'pop', 0.5], ...[0, 1, 2, 3, 4].map((k) => [start + k * fps, k % 2 ? 'tock' : 'tick', 0.6] as [number, 'tick' | 'tock', number]),
+            [start + 5 * fps, 'ding', 0.6]]} />
           <KineticLine text="Strong acid: [H^{+}] = 2 × 10^{−4}" at={q} size={92} align="center" />
           <KineticLine text="pH = [[?]]" at={ph} size={120} align="center" style={{marginTop: 30}} />
         </div>
@@ -805,12 +845,13 @@ export const YourTurnA: React.FC<SceneProps> = (props) => {
   const lvl = f < lift ? 3.7 : 3.7 + 2 * ease(clamp01((f - lift) / 30));
   return (
     <Frame tag="YOUR TURN"
-      html={<KeySeq x={820} y={300} w={1060} size={92} items={[
+      html={<><SfxList items={[[r1, 'pop', 0.6], [lift, 'rise', 0.7], [lift + 30, 'ding', 0.5], [r2, 'chime', 0.5]]} />
+      <KeySeq x={820} y={300} w={1060} size={92} items={[
         {at: a1, text: 'pH ≈ 4 − 0.3'},
         {at: r1, text: 'pH ≈ [[3.7]]', size: 140},
         {at: dil, text: 'Dilute 100× → [[+2 floors]]'},
         {at: r2, text: 'pH ≈ [[5.7]]', size: 140},
-      ]} />}
+      ]} /></>}
       svg={
         <g>
           <Building x={300} w={300} floors={[3, 4, 5, 6]} Y={Y} right={() => ''} top={Y(6) - 60} />
@@ -853,6 +894,8 @@ export const RiddleRecap: React.FC<SceneProps> = (props) => {
             <div key={n} style={{position: 'absolute', left: 160 + i * 340 - 100, width: 200, top: 620, textAlign: 'center', opacity: clamp01((f - ats[i]) / 8) * (1 - out),
               fontFamily: DISPLAY, fontWeight: 700, fontSize: 44, color: INK}}>{n}</div>
           ))}
+          <SfxList items={[...ats.map((a, i) => [a, 'pop', 0.6, 1 + i * 0.1] as [number, 'pop', number, number]), [next, 'whoosh', 0.45],
+            [D - 40, 'sparkle', 0.55]]} />
           <div style={{position: 'absolute', left: 0, width: 1920, top: 330}}>
             <KineticLine text="Next time: [[Units.]]" at={next} size={120} align="center" />
             <KineticLine text="the words that give numbers meaning" at={next + 12} size={40} weight={600} font="sans" color={P.muted} align="center" style={{marginTop: 24}} />

@@ -1,6 +1,6 @@
 // Shared kit for the riddle video: frame wrapper, kinetic typography, small props.
 import React from 'react';
-import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {Stage, useFontsReady} from '../../lib/stage';
 import {Paper, Tag, DISPLAY, SANS, P} from '../../lib/paper';
 import {INK, PAPER, ORANGE, COBALT, LINE} from '../../lib/cast';
@@ -76,6 +76,7 @@ export const KeySeq: React.FC<{items: KeyItem[]; x: number; y: number; w?: numbe
   items, x, y, w = 900, align = 'left', size = 92,
 }) => (
   <div style={{position: 'absolute', left: x, top: y, width: w}}>
+    {items.map((it, i) => it.text.trim() && <Sfx key={`s${i}`} at={i === 0 ? it.at : it.at + 7} name="type" volume={0.45} />)}
     {items.map((it, i) => (
       <div key={i} style={{position: 'absolute', left: 0, top: 0, width: w}}>
         <KineticLine text={it.text} at={i === 0 ? it.at : it.at + 7} out={items[i + 1]?.at} size={it.size ?? size} color={it.color} align={align} />
@@ -83,6 +84,24 @@ export const KeySeq: React.FC<{items: KeyItem[]; x: number; y: number; w?: numbe
       </div>
     ))}
   </div>
+);
+
+export type SfxName = 'pop' | 'type' | 'tick' | 'tock' | 'whoosh' | 'swish' | 'thud' | 'bang' | 'ding' | 'chime' | 'sparkle'
+  | 'boing' | 'hop' | 'clack' | 'crash' | 'chomp' | 'fizz' | 'scribble' | 'rise' | 'confetti' | 'tap' | 'blip' | 'slide';
+
+/** A sound effect that plays at frame `at` (synthesized kit in public/sfx). */
+export const Sfx: React.FC<{at: number; name: SfxName; volume?: number; rate?: number}> = ({at, name, volume = 0.6, rate = 1}) => {
+  if (!Number.isFinite(at)) return null;
+  return (
+    <Sequence from={Math.max(0, Math.round(at))} layout="none" name={`sfx:${name}`}>
+      <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume} playbackRate={rate} />
+    </Sequence>
+  );
+};
+
+/** Several sound effects at once: [frame, name, volume?, rate?]. */
+export const SfxList: React.FC<{items: [number, SfxName, number?, number?][]}> = ({items}) => (
+  <>{items.map(([at, name, vol, rate], i) => <Sfx key={i} at={at} name={name} volume={vol ?? 0.6} rate={rate ?? 1} />)}</>
 );
 
 /** Cue helper: frame for a phrase, with fallback fraction. */

@@ -18,7 +18,7 @@ if (specs[0] === '--jobs') {
 }
 fs.mkdirSync(outDir, {recursive: true});
 const browserExecutable = process.env.REMOTION_BROWSER_EXECUTABLE || null;
-const serveUrl = await bundle({entryPoint: path.join(here, 'src/index.ts')});
+const serveUrl = await bundle({entryPoint: path.join(here, 'src/index.ts'), publicDir: path.join(here, 'public')});
 
 for (const spec of specs) {
   let inputProps, frame, name;

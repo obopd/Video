@@ -70,7 +70,8 @@ class Scene:
 
 class Builder:
     def __init__(self, script_path: Path, out: Path | None = None, preview: bool = False,
-                 engine: str | None = None):
+                 engine: str | None = None, plan_only: bool = False):
+        self.plan_only = plan_only
         self.script_path = script_path.resolve()
         self.root = self.script_path.parent
         self.cfg = yaml.safe_load(self.script_path.read_text(encoding="utf-8")) or {}
@@ -111,6 +112,11 @@ class Builder:
             self.render_frames(sc)
             t += sc.seconds
         self.render_animations([s for s in scenes if s.spec.get("type") == "animated"])
+        if self.plan_only:
+            for sc in scenes:
+                log(f"scene {sc.index + 1}: {sc.spec.get('component', sc.spec.get('type'))} starts {sc.start:.1f}s, {sc.seconds:.1f}s long")
+            log(f"plan written: {self.work / 'animation-jobs.json'} (total {t:.1f}s)")
+            return self.out
         for sc in scenes:
             self.render_clip(sc)
             log(f"scene {sc.index + 1}/{len(scenes)} [{sc.spec.get('type', 'text')}] {sc.seconds:.1f}s")
@@ -216,6 +222,7 @@ class Builder:
                 # word times relative to the start of the scene (the voice starts after LEAD_IN)
                 words=[{**w, "start": w["start"] + LEAD_IN, "end": w["end"] + LEAD_IN} for w in sc.words],
             )
+            self.check_cues(sc, props)
             crf = 28 if self.preview else 16
             key = hashlib.sha1((src_hash.hexdigest() + json.dumps([props, crf], sort_keys=True)).encode()).hexdigest()[:20]
             sc.animation = cache / f"{key}.mp4"
@@ -230,12 +237,25 @@ class Builder:
             return
         jobs_file = self.work / "animation-jobs.json"
         jobs_file.write_text(json.dumps(jobs))
+        if self.plan_only:
+            return
         log(f"rendering {len(jobs)} animated scene(s) with Remotion...")
         res = subprocess.run(["node", str(anim_dir / "render.mjs"), str(jobs_file)], cwd=anim_dir)
         if res.returncode != 0:
             raise RuntimeError("Remotion render failed (see output above)")
         for job in jobs:  # only finished renders enter the cache
             Path(job["out"]).replace(job["final"])
+
+    def check_cues(self, sc: Scene, props: dict) -> None:
+        """Warn about board cues that never occur in the narration (typos would mistime the animation)."""
+        import re
+        norm = lambda w: re.sub(r"[^a-z0-9]", "", w.lower())
+        spoken = " " + " ".join(norm(w["text"]) for w in sc.words) + " "
+        for step in props.get("steps", []) or []:
+            c = step.get("cue") if isinstance(step, dict) else None
+            phrase = c.get("cue") if isinstance(c, dict) else c
+            if phrase and " " + " ".join(norm(w) for w in phrase.split()) not in spoken:
+                log(f"warning: scene {sc.index + 1}: cue {phrase!r} not found in narration")
 
     def render_clip(self, sc: Scene) -> None:
         w, h = self.size

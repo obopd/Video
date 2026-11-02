@@ -1,12 +1,14 @@
 import React from 'react';
 import {AbsoluteFill, Composition} from 'remotion';
 import {sunScenes} from './scenes/sun';
+import {mcatScenes} from './scenes/mcat';
 import type {SceneProps} from './lib/types';
 import {C, FONT} from './lib/theme';
 
 // Register new scene components here so YAML scripts can use them by name.
 const SCENES: Record<string, React.FC<SceneProps>> = {
   ...sunScenes,
+  ...mcatScenes,
 };
 
 const Router: React.FC<SceneProps> = (props) => {

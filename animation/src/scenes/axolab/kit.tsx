@@ -1,6 +1,6 @@
 // Shared kit for the riddle video: frame wrapper, kinetic typography, small props.
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Stage, useFontsReady} from '../../lib/stage';
 import {Paper, Tag, DISPLAY, SANS, P} from '../../lib/paper';
 import {INK, PAPER, ORANGE, COBALT, LINE} from '../../lib/cast';
@@ -9,26 +9,41 @@ import type {SceneProps} from '../../lib/types';
 
 export const ease = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : 1 - Math.pow(1 - t, 3));
 export const tw = (f: number, a: number, b: number, from = 0, to = 1, e: (t: number) => number = ease) =>
-  from + (to - from) * e((f - a) / Math.max(1, b - a));
+  from + (to - from) * e(Math.max(0, Math.min(1, (f - a) / Math.max(1, b - a))));
 export const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 /** Paper frame with an HTML layer (type) under an SVG layer (characters, props). */
-export const Frame: React.FC<{svg?: React.ReactNode; html?: React.ReactNode; tag?: string; tagOpacity?: number}> = ({svg, html, tag, tagOpacity = 1}) => {
+export const Frame: React.FC<{svg?: React.ReactNode; html?: React.ReactNode; tag?: string; tagOpacity?: number; still?: boolean}> = ({svg, html, tag, tagOpacity = 1, still = false}) => {
   useFontsReady();
+  const f = useCurrentFrame();
+  const {durationInFrames: D} = useVideoConfig();
+  // paper-to-paper transitions: content fades in from blank paper and back out at the end,
+  // and the "camera" pushes in very slowly so no frame feels frozen.
+  const o = still ? 1 : Math.min(clamp01(f / 7), clamp01((D - 1 - f) / 6));
+  const z = still ? 1 : 1 + 0.025 * (f / Math.max(1, D));
   return (
     <AbsoluteFill>
       <Stage
         html={
           <>
             <Paper />
-            {tag && <div style={{position: 'absolute', left: 80, top: 64, opacity: tagOpacity}}><Tag>{tag}</Tag></div>}
-            {html}
+            <div style={{position: 'absolute', inset: 0, opacity: o, transform: `scale(${z})`, transformOrigin: '50% 52%'}}>
+              {tag && <div style={{position: 'absolute', left: 80, top: 64, opacity: tagOpacity}}><Tag>{tag}</Tag></div>}
+              {html}
+            </div>
           </>
         }
-        over={svg}
+        over={<g opacity={o} transform={`translate(960 561.6) scale(${z}) translate(-960 -561.6)`}>{svg}</g>}
       />
     </AbsoluteFill>
   );
+};
+
+/** Ease-out with a small overshoot, for words that should land with a pop. */
+export const backOut = (t: number) => {
+  const c1 = 1.9, c3 = c1 + 1;
+  const x = Math.max(0, Math.min(1, t));
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
 };
 
 /** Render text with ^{sup} and [[accent]] markup in the display face. */
@@ -58,9 +73,12 @@ export const KineticLine: React.FC<{
       {words.map((w, i) => {
         if (/^\s+$/.test(w)) return <span key={i}>{w}</span>;
         const k = wi++;
-        const t = clamp01((f - at - k * 3) / 10);
+        const accent = w.includes('[[');
+        const t = clamp01((f - at - k * 3) / (accent ? 13 : 10));
+        const s = accent ? 0.7 + 0.3 * backOut(t) : 1;
         return (
-          <span key={i} style={{display: 'inline-block', opacity: ease(t), transform: `translateY(${(1 - ease(t)) * size * 0.35}px)`}}>
+          <span key={i} style={{display: 'inline-block', opacity: ease(t), transformOrigin: '50% 70%',
+            transform: `translateY(${(1 - ease(t)) * size * 0.35}px) scale(${s})`}}>
             {rich(w)}
           </span>
         );

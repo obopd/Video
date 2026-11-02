@@ -38,20 +38,21 @@ thumbnail:
 
 scenes:
   - type: animated
+    fade: false
     component: BlackTick
     duration: 1.6
-    fade: false
     chapter: "The riddle"
 
   - type: animated
-    component: Hook
     fade: false
+    component: Hook
     narration: >
       Riddle: you have ninety-six seconds. A solution has a hydrogen ion concentration of three
       times ten to the minus five. What's its pH? And, no calculator. None. Impossible? By the end
       of this video, you'll do it in your head in ten seconds. Pause and guess, if you like.
 
   - type: animated
+    fade: false
     component: SciCrate
     chapter: "Scientific notation"
     narration: >
@@ -61,16 +62,16 @@ scenes:
       and the crate.
 
   - type: animated
-    component: DotRun
     fade: false
+    component: DotRun
     narration: >
       The decimal point is Dot. Run left, and the exponent goes up. Run right, and it goes down.
       Zero point zero zero zero four five: four steps right, so four point five times ten to the
       minus four.
 
   - type: animated
-    component: Towers
     fade: false
+    component: Towers
     narration: >
       Multiply, and towers stack: exponents add. Three times ten to the four, times two times ten to
       the three, is six times ten to the seven. Divide, and the wrecking ball removes floors:
@@ -79,6 +80,7 @@ scenes:
       ten to the five. Total: three point two times ten to the five.
 
   - type: animated
+    fade: false
     component: LogElevator
     chapter: "Logarithms"
     narration: >
@@ -88,8 +90,8 @@ scenes:
       floor. Log of two is about 0.3.
 
   - type: animated
-    component: LogHops
     fade: false
+    component: LogHops
     narration: >
       Memorize two numbers: log two is 0.30, and log three is 0.48. Everything else is hops. Five is
       ten divided by two, so one minus 0.3 is 0.7. Four is two hops of 0.3, so 0.6. Six is both
@@ -97,6 +99,7 @@ scenes:
       You're walking, not building. And this is the only log you'll ever be glad to carry.
 
   - type: animated
+    fade: false
     component: RiddleSolve
     chapter: "Solving the riddle"
     narration: >
@@ -105,13 +108,14 @@ scenes:
       Done, with eighty-six seconds left.
 
   - type: animated
-    component: SparkScale
     fade: false
+    component: SparkScale
     narration: >
       One last thing. Each pH step means ten times more sparks. pH three versus pH five is a
       hundred times more acid. Logs squeeze enormous ranges into small numbers.
 
   - type: animated
+    fade: false
     component: LnTwins
     chapter: "The natural log"
     narration: >
@@ -119,6 +123,7 @@ scenes:
       multiply log by about 2.3. And remember: L N of two is about 0.69. You'll need it for half-lives.
 
   - type: animated
+    fade: false
     component: Rulers
     chapter: "Significant digits"
     narration: >
@@ -127,6 +132,7 @@ scenes:
       weakest input. Add or subtract: keep as few decimal places as your weakest input. Weakest link wins.
 
   - type: animated
+    fade: false
     component: Sculpt
     chapter: "Estimation"
     narration: >
@@ -135,6 +141,7 @@ scenes:
       to the twenty-third. 3.6 over six is 0.6, times ten. Six moles. Eight seconds. Calc is still thinking.
 
   - type: animated
+    fade: false
     component: Chests
     chapter: "Three traps"
     narration: >
@@ -142,6 +149,7 @@ scenes:
       sums. Two: lower concentration means higher pH. Three: never add numbers that live on different floors.
 
   - type: animated
+    fade: false
     component: YourTurnQ
     chapter: "Your turn"
     duration: 11
@@ -149,13 +157,13 @@ scenes:
       Your turn. Strong acid, two times ten to the minus four. pH? Five seconds.
 
   - type: animated
-    component: YourTurnA
     fade: false
+    component: YourTurnA
     narration: >
       It's four minus 0.3: 3.7. Dilute it a hundred times, and the building lifts two floors: 5.7.
 
   - type: animated
-    component: RiddleRecap
     fade: false
+    component: RiddleRecap
     narration: >
       Crate. Towers. Elevator. Ruler. Chisel. Next time: units, the words that give numbers meaning.

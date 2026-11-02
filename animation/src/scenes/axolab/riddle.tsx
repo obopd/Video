@@ -73,7 +73,7 @@ export const Hook: React.FC<SceneProps> = (props) => {
         {at: noCalc, text: 'No calculator.'},
         {at: none, text: '[[None.]]'},
         {at: imp, text: 'Impossible?'},
-        {at: ten, text: 'In your head. [[10 seconds.]]', size: 76},
+        {at: ten, text: '[[10 seconds.]]', sub: 'in your head'},
         {at: cue('Pause', 0.92), text: 'Pause & guess.'},
       ]} /></>}
       svg={
@@ -404,7 +404,16 @@ export const LogHops: React.FC<SceneProps> = (props) => {
   const marks: [number, number, number, boolean][] = [[1, 0, 0, false], [10, 1, 0, false], [2, 0.301, l2, true], [3, 0.477, l3, true], [5, 0.699, c5, false], [4, 0.602, c4, false], [6, 0.778, c6, false], [8, 0.903, c8, false]];
   const hopSets: [number, number[]][] = [[c5, [1, 0.699]], [c4, [0, 0.301, 0.602]], [c6, [0, 0.301, 0.778]], [c8, [0, 0.301, 0.602, 0.903]]];
   const cur = [...hopSets].reverse().find(([at]) => f >= at && f < add);
-  const target = cur ? cur[1][Math.min(cur[1].length - 1, Math.floor((f - cur[0]) / 14) + 1)] : f >= l3 ? 0.477 : f >= l2 ? 0.301 : 0;
+  // the marker glides between stops instead of teleporting
+  const stops: [number, number][] = [[0, 0], [l2, 0.301], [l3, 0.477]];
+  hopSets.forEach(([at, vs]) => vs.forEach((v, i) => stops.push([at + Math.max(0, i - 1) * 14 + (i === 0 ? -8 : 2), v])));
+  stops.sort((a, b) => a[0] - b[0]);
+  let target = 0;
+  for (let i = 0; i < stops.length; i++) {
+    if (f < stops[i][0]) break;
+    const prev = i ? stops[i - 1][1] : 0;
+    target = prev + (stops[i][1] - prev) * ease(clamp01((f - stops[i][0]) / 10));
+  }
   const carX = tw(f, carry, carry + 70, 2050, 1500, (t) => t);
   return (
     <Frame tag="LOGARITHMS"

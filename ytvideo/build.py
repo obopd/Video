@@ -115,7 +115,7 @@ class Builder:
         if self.plan_only:
             for sc in scenes:
                 log(f"scene {sc.index + 1}: {sc.spec.get('component', sc.spec.get('type'))} starts {sc.start:.1f}s, {sc.seconds:.1f}s long")
-            log(f"plan written: {self.work / 'animation-jobs.json'} (total {t:.1f}s)")
+            log(f"plan written: {self.work / 'animation-plan.json'} (total {t:.1f}s)")
             return self.out
         for sc in scenes:
             self.render_clip(sc)
@@ -210,7 +210,7 @@ class Builder:
                 src_hash.update(f.relative_to(anim_dir).as_posix().encode() + f.read_bytes())
         cache = self.out.parent / ".anim-cache"
         cache.mkdir(exist_ok=True)
-        jobs, cached = [], []
+        jobs, cached, all_props = [], [], []
         for sc in scenes:
             if not sc.spec.get("component"):
                 raise ValueError(f"scene {sc.index + 1}: animated scenes need a `component`")
@@ -223,6 +223,7 @@ class Builder:
                 words=[{**w, "start": w["start"] + LEAD_IN, "end": w["end"] + LEAD_IN} for w in sc.words],
             )
             self.check_cues(sc, props)
+            all_props.append({"out": "", "props": props})
             crf = 28 if self.preview else 16
             key = hashlib.sha1((src_hash.hexdigest() + json.dumps([props, crf, "audio-v1"], sort_keys=True)).encode()).hexdigest()[:20]
             sc.animation = cache / f"{key}.mp4"
@@ -231,6 +232,8 @@ class Builder:
                 continue
             tmp = cache / f"{key}.partial.mp4"
             jobs.append({"out": str(tmp), "final": str(sc.animation), "props": props, "crf": crf})
+        # full plan (every animated scene, cached or not) for previews: node stills.mjs --jobs <file>
+        (self.work / "animation-plan.json").write_text(json.dumps(all_props))
         if cached:
             log(f"reusing {len(cached)} cached animation(s)")
         if not jobs:

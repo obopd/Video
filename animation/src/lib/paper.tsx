@@ -2,6 +2,7 @@
 // warm off-white paper with still grain + vignette, ink type in Fraunces,
 // grey for past/inactive, black pill tags, and an ink circle for the answer.
 import React from 'react';
+import {Img, staticFile} from 'remotion';
 import '../fonts/fonts.css';
 
 export const P = {
@@ -17,24 +18,23 @@ export const P = {
 export const DISPLAY = '"Fraunces", Georgia, serif';
 export const SANS = '-apple-system, "SF Pro Text", Inter, "Segoe UI", Roboto, sans-serif';
 
-/** Paper background: flat warm off-white, still film grain, soft vignette. */
+/** Paper background: flat warm off-white, a still pre-rendered grain, soft vignette. */
 export const Paper: React.FC = () => (
-  <svg viewBox="0 0 1920 1080" width={1920} height={1080} style={{position: 'absolute', inset: 0}}>
-    <defs>
-      <filter id="grain" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves={2} seed={7} stitchTiles="stitch" />
-        <feColorMatrix type="saturate" values="0" />
-        <feComponentTransfer><feFuncA type="linear" slope="0.09" /></feComponentTransfer>
-      </filter>
-      <radialGradient id="vignette" cx="0.5" cy="0.48" r="0.75">
-        <stop offset="0.55" stopColor="#3a2a10" stopOpacity={0} />
-        <stop offset="1" stopColor="#3a2a10" stopOpacity={0.16} />
-      </radialGradient>
-    </defs>
-    <rect width={1920} height={1080} fill={P.paper} />
-    <rect width={1920} height={1080} filter="url(#grain)" />
-    <rect width={1920} height={1080} fill="url(#vignette)" />
-  </svg>
+  <>
+    <svg viewBox="0 0 1920 1080" width={1920} height={1080} style={{position: 'absolute', inset: 0}}>
+      <defs>
+        <radialGradient id="vignette" cx="0.5" cy="0.48" r="0.75">
+          <stop offset="0.55" stopColor="#3a2a10" stopOpacity={0} />
+          <stop offset="1" stopColor="#3a2a10" stopOpacity={0.16} />
+        </radialGradient>
+      </defs>
+      <rect width={1920} height={1080} fill={P.paper} />
+    </svg>
+    <Img src={staticFile('grain.png')} style={{position: 'absolute', inset: 0, width: 1920, height: 1080, opacity: 0.55}} />
+    <svg viewBox="0 0 1920 1080" width={1920} height={1080} style={{position: 'absolute', inset: 0}}>
+      <rect width={1920} height={1080} fill="url(#vignette)" />
+    </svg>
+  </>
 );
 
 /** Black pill tag, like the Planner's "D-DAY". */

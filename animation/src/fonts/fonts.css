@@ -1,0 +1,7 @@
+/* Fraunces (SIL OFL, see OFL.txt), the same display face as the Planner app. */
+@font-face {
+  font-family: "Fraunces";
+  src: url("./fraunces-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+}

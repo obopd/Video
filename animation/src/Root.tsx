@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Composition} from 'remotion';
 import {sunScenes} from './scenes/sun';
 import {mcatScenes} from './scenes/mcat';
+import {StyleFrame} from './scenes/axolab/StyleFrame';
 import type {SceneProps} from './lib/types';
 import {C, FONT} from './lib/theme';
 
@@ -9,6 +10,7 @@ import {C, FONT} from './lib/theme';
 const SCENES: Record<string, React.FC<SceneProps>> = {
   ...sunScenes,
   ...mcatScenes,
+  StyleFrame,
 };
 
 const Router: React.FC<SceneProps> = (props) => {

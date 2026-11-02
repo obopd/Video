@@ -88,7 +88,7 @@ export const AxoSide: React.FC<{
           </g>
         )}
         {/* head, kept upright */}
-        <g transform={`translate(160 -66) rotate(${-tilt * 0.85})`}>
+        <g transform={`translate(160 -66) rotate(${-tilt * 0.85}) scale(${1 + rear * 0.25})`}>
           <Gill x={-38} y={-34} angle={-145 + wig} />
           <Gill x={-50} y={-6} angle={-178 - wig} len={58} />
           <Gill x={-40} y={22} angle={152 + wig} />

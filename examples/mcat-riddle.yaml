@@ -1,0 +1,158 @@
+# Axol's Lab: "The 96-second riddle", calculator-free MCAT math.
+# Render: python -m ytvideo examples/mcat-riddle.yaml
+# Scenes: animation/src/scenes/axolab/riddle.tsx. Animations sync to the narration words.
+
+title: "Can You Find This pH in 10 Seconds? (No Calculator) | MCAT Math"
+description: |
+  Riddle: 96 seconds, a hydrogen ion concentration of 3 × 10⁻⁵, and no calculator. What's the pH?
+  Learn the moves that make MCAT math doable in your head: scientific notation, exponent rules,
+  logarithms (log 2 and log 3 unlock everything), the natural log, significant digits, and estimation.
+
+  Next time: units, the words that give numbers meaning.
+tags: [MCAT, MCAT chemistry, MCAT math, pH, logarithms, scientific notation, premed, Axol's Lab]
+
+output: output/mcat-riddle.mp4
+resolution: landscape
+fps: 30
+
+voice:
+  engine: auto
+  name: en-US-AndrewMultilingualNeural
+  rate: "-2%"
+
+music:
+  file: assets/ambient.mp3
+  volume: 0.12
+  duck: true
+
+subtitles:
+  burn: false
+
+thumbnail:
+  text: "pH in 10 seconds?"
+  frame_at: 9
+  badge: "NO CALCULATOR"
+
+scenes:
+  - type: animated
+    component: BlackTick
+    duration: 1.6
+    fade: false
+
+  - type: animated
+    component: Hook
+    fade: false
+    chapter: "The riddle"
+    narration: >
+      Riddle: you have ninety-six seconds. A solution has a hydrogen ion concentration of three
+      times ten to the minus five. What's its pH? And, no calculator. None. Impossible? By the end
+      of this video, you'll do it in your head in ten seconds. Pause and guess, if you like.
+
+  - type: animated
+    component: SciCrate
+    chapter: "Scientific notation"
+    narration: >
+      Chemistry numbers are enormous, or microscopic. Avogadro's number is six hundred two,
+      followed by twenty-one zeros. Nobody writes that. So we pack the zeros into a crate, and the
+      crate's label is the exponent. Every number has two parts: a coefficient between one and ten,
+      and the crate.
+
+  - type: animated
+    component: DotRun
+    fade: false
+    narration: >
+      The decimal point is Dot. Run left, and the exponent goes up. Run right, and it goes down.
+      Zero point zero zero zero four five: four steps right, so four point five times ten to the
+      minus four.
+
+  - type: animated
+    component: Towers
+    fade: false
+    narration: >
+      Multiply, and towers stack: exponents add. Three times ten to the four, times two times ten to
+      the three, is six times ten to the seven. Divide, and the wrecking ball removes floors:
+      exponents subtract. Add or subtract, and the towers must stand on the same floor first. Three
+      times ten to the five, plus two times ten to the four? Lower the second to zero point two times
+      ten to the five. Total: three point two times ten to the five.
+
+  - type: animated
+    component: LogElevator
+    chapter: "Logarithms"
+    narration: >
+      A logarithm is a floor counter. In this building, each floor up multiplies the number by ten.
+      The number one thousand lives on floor three, so its log is three. A hundredth lives on floor
+      minus two. But what about two? It's not on a floor. It's stuck a third of the way up the first
+      floor. Log of two is about 0.3.
+
+  - type: animated
+    component: LogHops
+    fade: false
+    narration: >
+      Memorize two numbers: log two is 0.30, and log three is 0.48. Everything else is hops. Five is
+      ten divided by two, so one minus 0.3 is 0.7. Four is two hops of 0.3, so 0.6. Six is both
+      hops: 0.78. Eight is three hops: 0.9. That's why logs turn multiplication into addition.
+      You're walking, not building. And this is the only log you'll ever be glad to carry.
+
+  - type: animated
+    component: RiddleSolve
+    chapter: "Solving the riddle"
+    narration: >
+      pH is the negative log of the concentration. Three times ten to the minus five. Five floors
+      down, plus a 0.48 hop, so minus 4.52. The minus sign flips the building. pH is about 4.5.
+      Done, with eighty-six seconds left.
+
+  - type: animated
+    component: SparkScale
+    fade: false
+    narration: >
+      One last thing. Each pH step means ten times more sparks. pH three versus pH five is a
+      hundred times more acid. Logs squeeze enormous ranges into small numbers.
+
+  - type: animated
+    component: LnTwins
+    chapter: "The natural log"
+    narration: >
+      Natural log, L N, is log's cousin that uses the number e instead of ten. Same rules. Just
+      multiply log by about 2.3. And remember: L N of two is about 0.69. You'll need it for half-lives.
+
+  - type: animated
+    component: Rulers
+    chapter: "Significant digits"
+    narration: >
+      Every number is a confession of how good your ruler was. Digits you measured are significant.
+      Digits you made up are lies, and the nose grows. Multiply or divide: keep as few digits as your
+      weakest input. Add or subtract: keep as few decimal places as your weakest input. Weakest link wins.
+
+  - type: animated
+    component: Sculpt
+    chapter: "Estimation"
+    narration: >
+      Estimating is sculpting. Chip numbers down to friendly shapes, then correct. 6.9 times 4.1 is
+      about twenty-eight. Molecules to moles: 3.6 times ten to the twenty-fourth, over six times ten
+      to the twenty-third. 3.6 over six is 0.6, times ten. Six moles. Eight seconds. Calc is still thinking.
+
+  - type: animated
+    component: Chests
+    chapter: "Three traps"
+    narration: >
+      Chests that bite. Number one: log of a plus b is not log a plus log b. Only products turn into
+      sums. Two: lower concentration means higher pH. Three: never add numbers that live on different floors.
+
+  - type: animated
+    component: YourTurnQ
+    chapter: "Your turn"
+    duration: 11
+    narration: >
+      Your turn. Strong acid, two times ten to the minus four. pH? Five seconds.
+
+  - type: animated
+    component: YourTurnA
+    fade: false
+    narration: >
+      It's four minus 0.3: 3.7. Dilute it a hundred times, and the building lifts two floors: 5.7.
+
+  - type: animated
+    component: RiddleRecap
+    fade: false
+    narration: >
+      Crate. Towers. Elevator. Ruler. Chisel. Next time: units, the words that give numbers meaning.

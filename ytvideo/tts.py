@@ -77,11 +77,18 @@ def _edge_one(text: str, out_mp3: Path, voice: dict) -> list[dict]:
 
     aiohttp.ClientWebSocketResponse.send_str = send_str
     try:
-        try:
-            return asyncio.run(run())
-        except edge_tts.exceptions.NoAudioReceived:
-            voice = {**voice, "hq": False}
-            return asyncio.run(run())
+        # the free service occasionally drops a request: retry, then fall back to the default format
+        import time
+        last: Exception | None = None
+        for attempt in range(5):
+            try:
+                return asyncio.run(run())
+            except Exception as e:  # noqa: BLE001
+                last = e
+                if attempt == 2:
+                    voice = {**voice, "hq": False}
+                time.sleep(1.5 * (attempt + 1))
+        raise last  # type: ignore[misc]
     finally:
         aiohttp.ClientWebSocketResponse.send_str = orig
 

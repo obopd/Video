@@ -4,6 +4,7 @@ import {sunScenes} from './scenes/sun';
 import {mcatScenes} from './scenes/mcat';
 import {StyleFrame} from './scenes/axolab/StyleFrame';
 import {frameScenes} from './scenes/axolab/frames';
+import {riddleScenes} from './scenes/axolab/riddle';
 import type {SceneProps} from './lib/types';
 import {C, FONT} from './lib/theme';
 
@@ -13,6 +14,7 @@ const SCENES: Record<string, React.FC<SceneProps>> = {
   ...mcatScenes,
   StyleFrame,
   ...frameScenes,
+  ...riddleScenes,
 };
 
 const Router: React.FC<SceneProps> = (props) => {

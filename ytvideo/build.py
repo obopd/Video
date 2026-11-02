@@ -24,6 +24,7 @@ PRESETS = {
 LEAD_IN = 0.35   # silence before narration in each scene
 TAIL = 0.65      # silence after narration
 FADE = 0.3       # video fade in/out per scene
+ANIMATION_DIR = Path(__file__).resolve().parent.parent / "animation"
 
 
 def log(msg: str) -> None:
@@ -63,6 +64,8 @@ class Scene:
     frames: list[tuple[Path, float]] = field(default_factory=list)
     clip: Path | None = None
     start: float = 0.0
+    words: list[dict] = field(default_factory=list)  # narration word timings, seconds from voice start
+    animation: Path | None = None
 
 
 class Builder:
@@ -106,8 +109,10 @@ class Builder:
             self.prepare_audio(sc)
             sc.start = t
             self.render_frames(sc)
-            self.render_clip(sc)
             t += sc.seconds
+        self.render_animations([s for s in scenes if s.spec.get("type") == "animated"])
+        for sc in scenes:
+            self.render_clip(sc)
             log(f"scene {sc.index + 1}/{len(scenes)} [{sc.spec.get('type', 'text')}] {sc.seconds:.1f}s")
         self.assemble(scenes, t)
         self.write_extras(scenes, t)
@@ -126,20 +131,27 @@ class Builder:
             cache = self.out.parent / ".tts-cache"
             cache.mkdir(exist_ok=True)
             mp3 = cache / f"{key}.mp3"
+            words_file = mp3.with_suffix(".words.json")
             if not mp3.exists() or mp3.stat().st_size == 0:
                 try:
-                    if tts.synthesize(sc.narration, mp3, self.engine, self.voice):
-                        sc.audio = mp3
+                    made, words = tts.synthesize(sc.narration, mp3, self.engine, self.voice)
                 except Exception as e:  # network/voice errors from the TTS backend
                     mp3.unlink(missing_ok=True)
                     raise RuntimeError(f"scene {sc.index + 1}: voiceover failed ({self.engine}): {e}\n"
                                        "Check your internet connection, or render with --voice none") from e
+                if made:
+                    sc.audio = mp3
+                    words_file.write_text(json.dumps(words))
             else:
                 sc.audio = mp3
+            if sc.audio and words_file.exists():
+                sc.words = json.loads(words_file.read_text())
         if sc.audio:
             sc.voice_seconds = probe_duration(sc.audio)
         elif sc.narration:
             sc.voice_seconds = tts.estimate_seconds(sc.narration)
+        if sc.narration and not sc.words:
+            sc.words = tts.estimate_words(sc.narration, sc.voice_seconds)
         natural = LEAD_IN + sc.voice_seconds + TAIL if sc.voice_seconds else 0
         sc.seconds = max(float(spec.get("duration", 0) or 0), natural) or 4.0
 
@@ -147,6 +159,8 @@ class Builder:
         s, size, theme = sc.spec, self.size, self.theme
         kind = s.get("type", "text")
         out = self.work / f"scene{sc.index:03}"
+        if kind == "animated":
+            return  # rendered by Remotion in render_animations()
         if kind == "title":
             imgs = [slides.render_title(size, theme, s.get("title", ""), s.get("subtitle"))]
         elif kind == "quote":
@@ -170,10 +184,38 @@ class Builder:
             imgs = [slides.render_text(size, theme, s.get("text", ""), s.get("heading"))]
         else:
             raise ValueError(f"scene {sc.index + 1}: unknown type {kind!r} "
-                             "(use title, text, bullets, image or quote)")
+                             "(use title, text, bullets, image, quote or animated)")
         p = Path(f"{out}.png")
         imgs[0].save(p)
         sc.frames.append((p, sc.seconds))
+
+    def render_animations(self, scenes: list[Scene]) -> None:
+        """Render all `animated` scenes in one Remotion batch (bundling once is much faster)."""
+        if not scenes:
+            return
+        anim_dir = Path(self.cfg.get("animation_dir", ANIMATION_DIR)).resolve()
+        if not (anim_dir / "node_modules" / "remotion").is_dir():
+            raise RuntimeError(f"animated scenes need the Remotion project installed: run `npm install` in {anim_dir}")
+        jobs = []
+        for sc in scenes:
+            if not sc.spec.get("component"):
+                raise ValueError(f"scene {sc.index + 1}: animated scenes need a `component`")
+            sc.animation = self.work / f"anim{sc.index:03}.mp4"
+            props = dict(sc.spec.get("props") or {})
+            props.update(
+                component=sc.spec["component"],
+                durationInFrames=max(1, round(sc.seconds * self.fps)),
+                fps=self.fps, width=self.size[0], height=self.size[1],
+                # word times relative to the start of the scene (the voice starts after LEAD_IN)
+                words=[{**w, "start": w["start"] + LEAD_IN, "end": w["end"] + LEAD_IN} for w in sc.words],
+            )
+            jobs.append({"out": str(sc.animation), "props": props, "crf": 28 if self.preview else 16})
+        jobs_file = self.work / "animation-jobs.json"
+        jobs_file.write_text(json.dumps(jobs))
+        log(f"rendering {len(jobs)} animated scene(s) with Remotion...")
+        res = subprocess.run(["node", str(anim_dir / "render.mjs"), str(jobs_file)], cwd=anim_dir)
+        if res.returncode != 0:
+            raise RuntimeError("Remotion render failed (see output above)")
 
     def render_clip(self, sc: Scene) -> None:
         w, h = self.size
@@ -183,7 +225,10 @@ class Builder:
         clip = self.work / f"scene{sc.index:03}.mp4"
         frames_n = max(1, round(d * self.fps))
 
-        if len(sc.frames) == 1 and motion in ("zoom", "zoom-out", "pan"):
+        if sc.animation:
+            vin = ["-i", str(sc.animation)]
+            vf = f"fps={self.fps},scale={w}:{h},"
+        elif len(sc.frames) == 1 and motion in ("zoom", "zoom-out", "pan"):
             # Ken Burns: upscale first so zoompan moves smoothly instead of in 1px steps
             rate = 0.08 / frames_n
             if motion == "zoom":
@@ -205,8 +250,10 @@ class Builder:
             listing.write_text("\n".join(lines) + "\n")
             vin = ["-f", "concat", "-safe", "0", "-i", str(listing)]
             vf = f"fps={self.fps},"
-        vf += (f"fade=t=in:st=0:d={FADE},fade=t=out:st={max(0, d - FADE):.3f}:d={FADE},"
-               f"format=yuv420p,setsar=1")
+        fade = sc.spec.get("fade", True)  # fade through black; set false for hard cuts
+        if fade:
+            vf += f"fade=t=in:st=0:d={FADE},fade=t=out:st={max(0, d - FADE):.3f}:d={FADE},"
+        vf += "format=yuv420p,setsar=1"
 
         if sc.audio:
             ain = ["-i", str(sc.audio)]
@@ -233,8 +280,9 @@ class Builder:
         cues = []
         for sc in scenes:
             if sc.narration and sc.voice_seconds:
-                cues += list(subtitles.timed_chunks(sc.narration, sc.start + LEAD_IN, sc.voice_seconds,
-                                                    int(sub_cfg.get("max_chars", 42))))
+                cues += list(subtitles.word_timed_chunks(
+                    sc.narration, sc.words, sc.start + LEAD_IN, sc.start + LEAD_IN + sc.voice_seconds,
+                    int(sub_cfg.get("max_chars", 42))))
         self.cues = cues
         srt = self.out.with_suffix(".srt")
         srt.write_text(subtitles.to_srt(cues), encoding="utf-8")
@@ -270,13 +318,14 @@ class Builder:
             filters.append(f"[0:v]subtitles=captions.srt:force_style='{style}'[v]")
             vlabel = "[v]"
 
-        if not filters:
-            shutil.move(str(body), self.out)
-            return
+        # Normalize to YouTube's playback loudness (-14 LUFS) so the video isn't quieter than others.
+        src = alabel if alabel.startswith("[") else f"[{alabel}]"
+        filters.append(f"{src}loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]")
+        alabel = "[aout]"
         args = [*inputs, "-filter_complex", ";".join(filters), "-map", vlabel, "-map", alabel]
         args += ["-c:v", "libx264", "-preset", "ultrafast" if self.preview else "medium",
                  "-crf", "28" if self.preview else "18", "-pix_fmt", "yuv420p"] if vlabel != "0:v" else ["-c:v", "copy"]
-        args += ["-c:a", "aac", "-b:a", "192k"] if alabel != "0:a" else ["-c:a", "copy"]
+        args += ["-c:a", "aac", "-b:a", "192k"]
         args += ["-movflags", "+faststart", str(self.out)]
         ffmpeg(*args, cwd=self.work)
 
@@ -285,6 +334,9 @@ class Builder:
         th = self.cfg.get("thumbnail", {}) or {}
         if th is not False:
             img_path = self.path(th["image"]) if th.get("image") else None
+            if th.get("frame_at") is not None:  # grab a frame of the finished video
+                img_path = self.work / "thumb-frame.png"
+                ffmpeg("-ss", str(th["frame_at"]), "-i", str(self.out), "-frames:v", "1", str(img_path))
             portrait = self.size[1] > self.size[0]
             slides.render_thumbnail((720, 1280) if portrait else (1280, 720), self.theme,
                                     th.get("text", self.cfg.get("title", "")), img_path, th.get("badge")

@@ -1,0 +1,94 @@
+# Animated science explainer (prototype).
+# Render:  python -m ytvideo examples/sun-disappears.yaml
+# Scenes with `type: animated` are drawn by the Remotion project in animation/
+# (see animation/src/scenes/sun/index.tsx). Animations sync to the narration:
+# e.g. the Sun vanishes exactly when the narrator says "vanishes".
+
+title: "What If the Sun Disappeared?"
+description: |
+  What would actually happen if the Sun vanished right now? For eight minutes, nothing at all.
+  Then things get very cold, very fast. But not everything would die.
+
+  Sources:
+  - Light travel time Sun to Earth (~8 min 20 s): NASA, https://science.nasa.gov/sun/facts/
+  - Changes in gravity travel at the speed of light: LIGO/Virgo GW170817, https://www.ligo.org/science/Publication-GW170817GRB/
+  - Temperature estimates (about -18 °C after a week, about -73 °C after a year): David Stevenson (Caltech), via Scientific American
+  - Chemosynthetic life at hydrothermal vents: NOAA Ocean Exploration, https://oceanexplorer.noaa.gov/facts/vents.html
+  - The Sun's remaining lifetime (~5 billion years): NASA, https://science.nasa.gov/sun/
+tags: [science, space, astronomy, the sun, what if, physics, education]
+
+output: output/sun-disappears.mp4
+resolution: landscape
+fps: 30
+
+voice:
+  engine: auto
+  name: en-US-AndrewNeural
+  rate: "-4%"
+
+music:
+  file: assets/ambient.mp3
+  volume: 0.22
+  duck: true
+
+subtitles:
+  burn: false          # clean frames; upload the .srt to YouTube instead
+
+thumbnail:
+  text: "What if the Sun disappeared?"
+  frame_at: 3.0        # use a frame of the video (seconds) as the background
+
+scenes:
+  - type: animated
+    component: SunVanishes
+    fade: false
+    narration: >
+      Imagine that one ordinary afternoon, the Sun simply vanishes.
+      No explosion. No warning. It's just gone.
+      That's impossible, of course. But it's a great way to see
+      how much we depend on our star.
+
+  - type: animated
+    component: TitleCard
+    duration: 3.5
+    props:
+      title: "What if the Sun disappeared?"
+
+  - type: animated
+    component: LightDelay
+    chapter: "The first eight minutes"
+    narration: >
+      For the first eight minutes, nothing happens. Sunlight takes about eight
+      minutes and twenty seconds to reach us, so the last light the Sun ever made
+      is still on its way. Even gravity travels at the speed of light, so Earth
+      keeps orbiting an empty spot in space.
+
+  - type: animated
+    component: Drift
+    fade: false
+    chapter: "Into the dark"
+    narration: >
+      Then the lights go out. Without the Sun's pull, Earth stops curving around it,
+      and flies off in a straight line, along with every other planet, out into the dark.
+
+  - type: animated
+    component: Freeze
+    chapter: "The big freeze"
+    narration: >
+      It gets cold fast. Within a week, the average temperature drops below
+      minus eighteen degrees Celsius. After a year, it's around minus seventy.
+      Plants can no longer photosynthesize, and most of them die within weeks.
+
+  - type: animated
+    component: DeepVent
+    chapter: "Life in the deep"
+    narration: >
+      But life wouldn't disappear completely. The oceans would freeze over at the top,
+      and the ice would insulate the water below. Deep down, around hot springs on
+      the sea floor, microbes that never needed sunlight could keep going for a very long time.
+
+  - type: animated
+    component: SunReturns
+    narration: >
+      Luckily, our Sun isn't going anywhere. It has about five billion years of fuel left.
+      So go outside, and enjoy the sunshine.

@@ -106,10 +106,40 @@ theme:                # colors (hex) and optional font files
   font_regular: /path/to/Font-Regular.ttf
 thumbnail:
   text: "Short Punchy Text"
-  image: assets/photo.jpg
+  image: assets/photo.jpg      # or frame_at: 3.0 to use a frame of the finished video
   badge: "NEW"
 keep_build: false     # keep intermediate files for debugging
 ```
+
+## Animated explainer videos
+
+For flat, animated, science-explainer videos (see `examples/sun-disappears.yaml`), scenes can be animated vector graphics drawn in code with [Remotion](https://www.remotion.dev/). Remotion is free for individuals and small teams. Larger companies need a license.
+
+**Setup (once):** install [Node.js](https://nodejs.org/) 18+, then:
+
+```bash
+cd animation && npm install
+```
+
+**Use it in a script:**
+
+```yaml
+  - type: animated
+    component: Freeze          # a scene component registered in animation/src/Root.tsx
+    props: {}                  # optional extra settings passed to the component
+    fade: false                # cut straight to the next scene instead of fading through black
+    narration: "It gets cold fast. Within a week..."
+```
+
+**Animations follow the narration.** The voice engine reports when each word is spoken. Inside a component, `cue('week')` returns the frame where the narrator says "week", so something can happen on that word. In `Freeze`, for example, the thermometer reaches -18 °C exactly when the narrator says "eighteen". If you change the narration, the timing follows automatically.
+
+**Making new scenes:**
+- Write a React component in `animation/src/scenes/<topic>/` and add it to `SCENES` in `animation/src/Root.tsx`.
+- Shared building blocks are in `animation/src/lib/shapes.tsx`: `Canvas`, `Stars`, `Sun`, `Planet`, `Continents`, `Glow`, `Label`, `tween` and `mix`.
+- Colors are in `animation/src/lib/theme.ts`.
+- Every scene draws on a 1920×1080 canvas. Run `npm run studio` inside `animation/` to preview scenes in your browser while you work on them.
+
+Animated scenes take longer to render than slides: the 1:27 example takes about 3–4 minutes.
 
 ## Uploading tips
 

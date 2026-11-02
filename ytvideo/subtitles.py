@@ -39,6 +39,44 @@ def timed_chunks(text: str, start: float, duration: float, max_chars: int = 42):
         t += d
 
 
+def _norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", s.lower())
+
+
+def token_times(text: str, words: list[dict]) -> list[float]:
+    """Start time of each whitespace token of `text`, aligned to TTS word timings."""
+    tokens = text.split()
+    times: list[float] = []
+    j, last = 0, 0.0
+    for tok in tokens:
+        t = _norm(tok)
+        found = None
+        for k in range(j, min(j + 4, len(words))):
+            w = _norm(words[k]["text"])
+            if w and (t.startswith(w) or w.startswith(t)):
+                found = k
+                break
+        if found is not None:
+            last = words[found]["start"]
+            j = found + 1
+        times.append(last)
+    return times
+
+
+def word_timed_chunks(text: str, words: list[dict], start: float, end: float, max_chars: int = 42):
+    """Caption chunks timed from real word timings (seconds relative to `start`)."""
+    pieces = chunk(text, max_chars)
+    times = token_times(" ".join(text.split()), words)
+    idx = 0
+    starts = []
+    for p in pieces:
+        starts.append(start + times[min(idx, len(times) - 1)])
+        idx += len(p.split())
+    for i, p in enumerate(pieces):
+        stop = starts[i + 1] if i + 1 < len(pieces) else end
+        yield starts[i], max(stop, starts[i] + 0.3), p
+
+
 def _ts(sec: float) -> str:
     ms = int(round(sec * 1000))
     h, ms = divmod(ms, 3_600_000)

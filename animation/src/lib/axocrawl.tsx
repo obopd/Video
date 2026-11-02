@@ -1,98 +1,94 @@
-// Axo, seen from above, crawling across the paper. An ink-black imp-like axolotl:
-// compact body, sharp jagged gill spikes, clawed feet, a thin whip tail with a fin
-// tip, and glowing round white eyes. Faces +x at heading 0.
+// Axo, seen from above, crawling across the paper: slender ink silhouette,
+// wide flat head with feathery gills, four splayed legs in a diagonal gait,
+// a body that sways side to side, two round white eyes. Faces +x at rotate 0.
 import React from 'react';
 import {useCurrentFrame} from 'remotion';
 
-const INK = '#141210', EYE = '#fffaf0';
+const INK = '#141210', EYE = '#fbf7ef';
 
 export type CrawlMood = 'calm' | 'look';
 
-/** Sideways sway of the spine at body position x. */
+/** Spine offset (sideways sway) at body position x, for gait phase a. */
 const sway = (x: number, a: number, moving: number) => {
-  const toTail = Math.max(0, (60 - x) / 260);
-  return Math.sin(a - x / 55) * (4 + 26 * toTail * toTail) * moving;
+  const toTail = Math.max(0, (90 - x) / 280); // 0 near the head, grows toward the tail
+  return Math.sin(a - x / 60) * (5 + 22 * toTail) * moving;
 };
 
-/** Half-width of the body at x: chunky trunk, then a thin whip tail. */
+/** Body half-width at position x (head is drawn separately). */
 const width = (x: number) => {
-  if (x > 60) return 30;
-  if (x > -55) return 38 - Math.abs(x - 5) * 0.06;
-  if (x > -80) return 34 - ((-55 - x) / 25) * 26; // quick pinch into the tail
-  return Math.max(3, 8 - (-80 - x) * 0.04);
+  if (x > 70) return 30;
+  if (x > -40) return 36 - Math.abs(x - 15) * 0.04;
+  return Math.max(5, 33 * (1 - (-40 - x) / 150)); // short tail tapering to a soft tip
 };
 
-/** A sharp gill spike with two small barbs. */
-const Spike: React.FC<{x: number; y: number; angle: number; len: number}> = ({x, y, angle, len}) => (
+const Gill: React.FC<{x: number; y: number; angle: number}> = ({x, y, angle}) => (
   <g transform={`translate(${x} ${y}) rotate(${angle})`}>
-    <path d={`M 0 -9 L ${len} 0 L 0 9 Z`} fill={INK} />
-    <path d={`M ${len * 0.35} -5 L ${len * 0.55} -16 L ${len * 0.55} -3 Z`} fill={INK} />
-    <path d={`M ${len * 0.6} 3 L ${len * 0.78} 13 L ${len * 0.76} 1 Z`} fill={INK} />
+    <rect x={0} y={-4} width={46} height={8} rx={4} fill={INK} />
+    {[12, 22, 32, 40].map((d) => (
+      <g key={d}>
+        <rect x={d} y={-12} width={4.5} height={10} rx={2.2} fill={INK} transform={`rotate(-30 ${d} -2)`} />
+        <rect x={d} y={2} width={4.5} height={10} rx={2.2} fill={INK} transform={`rotate(30 ${d} 2)`} />
+      </g>
+    ))}
+    <circle cx={47} cy={0} r={6} fill={INK} />
   </g>
 );
 
-/** Stubby leg ending in three sharp claws; swing moves it forward/back around the hip. */
+/** A splayed leg with little toes; swing rotates it forward/back around the hip. */
 const Leg: React.FC<{x: number; y: number; side: 1 | -1; swing: number}> = ({x, y, side, swing}) => (
   <g transform={`translate(${x} ${y}) rotate(${swing * side})`}>
-    <g transform={`rotate(${-18 * side})`}>
-      <rect x={-11} y={side > 0 ? 0 : -34} width={22} height={34} rx={11} fill={INK} />
-      <g transform={`translate(0 ${34 * side})`}>
-        {[-1, 0, 1].map((k) => (
-          <path key={k} transform={`rotate(${k * 26 * side})`} d={`M -5 0 L 0 ${16 * side} L 5 0 Z`} fill={INK} />
-        ))}
-      </g>
+    <rect x={-10} y={side > 0 ? 0 : -40} width={20} height={40} rx={10} fill={INK} transform={`rotate(${-20 * side})`} />
+    <g transform={`rotate(${-20 * side}) translate(0 ${40 * side})`}>
+      {[-13, -4.5, 4.5, 13].map((t, i) => (
+        <rect key={i} x={t - 3.5} y={side > 0 ? -2 : -11} width={7} height={13} rx={3.5} fill={INK} transform={`rotate(${(i - 1.5) * 18 * side})`} />
+      ))}
     </g>
   </g>
 );
 
 export const AxoCrawl: React.FC<{
   x: number; y: number; scale?: number;
-  heading?: number;   // degrees, 0 = right
-  phase?: number;     // gait phase in cycles; advance it while walking
-  moving?: number;    // 0..1, 0 = standing still
+  /** Heading in degrees (0 = right). */
+  heading?: number;
+  /** Gait phase in cycles; advance it while walking. */
+  phase?: number;
+  /** 0..1 how much it is walking (0 = standing still, legs and body settle). */
+  moving?: number;
   mood?: CrawlMood;
 }> = ({x, y, scale = 1, heading = 0, phase = 0, moving = 1, mood = 'calm'}) => {
   const f = useCurrentFrame();
   const a = phase * Math.PI * 2;
   const cycle = (f + 37) % 140;
   const blink = cycle > 134 ? Math.abs(cycle - 137) / 3 : 1;
-  const twitch = Math.sin(f / 11) * 4;
+  const gillWiggle = Math.sin(f / 14) * 5;
 
+  // body silhouette as overlapping discs along a swaying spine
   const discs: React.ReactNode[] = [];
-  for (let sx = 70; sx >= -200; sx -= 4) {
+  for (let sx = 90; sx >= -185; sx -= 4) {
     discs.push(<circle key={sx} cx={sx} cy={sway(sx, a, moving)} r={width(sx)} fill={INK} />);
   }
-  const tipY = sway(-200, a, moving), tipY2 = sway(-192, a, moving);
-  const tipAng = (Math.atan2(tipY - tipY2, -8) * 180) / Math.PI;
-  const legSwing = (off: number) => Math.sin(a + off) * 30 * moving;
+  const legSwing = (off: number) => Math.sin(a + off) * 28 * moving;
   const headY = sway(110, a, moving);
   const look = mood === 'look' ? 4 : 0;
   return (
     <g transform={`translate(${x} ${y}) rotate(${heading}) scale(${scale})`}>
-      <defs>
-        <filter id="eyeglow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation={5} /></filter>
-      </defs>
-      <Leg x={42} y={sway(42, a, moving) + 26} side={1} swing={legSwing(0)} />
-      <Leg x={42} y={sway(42, a, moving) - 26} side={-1} swing={legSwing(Math.PI)} />
-      <Leg x={-38} y={sway(-38, a, moving) + 28} side={1} swing={legSwing(Math.PI)} />
-      <Leg x={-38} y={sway(-38, a, moving) - 28} side={-1} swing={legSwing(0)} />
+      {/* legs: front-left with back-right, front-right with back-left */}
+      <Leg x={40} y={sway(40, a, moving) + 22} side={1} swing={legSwing(0)} />
+      <Leg x={40} y={sway(40, a, moving) - 22} side={-1} swing={legSwing(Math.PI)} />
+      <Leg x={-50} y={sway(-50, a, moving) + 22} side={1} swing={legSwing(Math.PI)} />
+      <Leg x={-50} y={sway(-50, a, moving) - 22} side={-1} swing={legSwing(0)} />
       {discs}
-      {/* fin tip on the whip tail */}
-      <g transform={`translate(-200 ${tipY}) rotate(${tipAng})`}>
-        <path d="M 4 0 L -14 -13 L -30 0 L -14 13 Z" fill={INK} />
-      </g>
-      {/* jagged gill spikes: the devilish crown */}
+      {/* gills fan back from both sides of the head */}
       {[-1, 1].map((s) => [0, 1, 2].map((k) => (
-        <Spike key={`${s}${k}`} x={122 - k * 16} y={headY + s * (34 - k * 3)} len={[46, 54, 42][k]}
-               angle={s * ([62, 98, 132][k] + twitch * (k % 2 ? -1 : 1))} />
+        <Gill key={`${s}${k}`} x={118 - k * 13} y={headY + s * (40 - k * 3)} angle={s * (62 + k * 30 + gillWiggle * (k % 2 ? -1 : 1))} />
       )))}
-      {/* head: wide and slightly squared */}
-      <rect x={78} y={headY - 46} width={100} height={92} rx={40} fill={INK} />
-      {/* glowing round eyes */}
+      {/* wide, flat head */}
+      <ellipse cx={124} cy={headY} rx={52} ry={50} fill={INK} />
+      <ellipse cx={146} cy={headY} rx={36} ry={44} fill={INK} />
+      {/* eyes near the front edges of the head */}
       {[-1, 1].map((s) => (
-        <g key={s} transform={`translate(${152 + look} ${headY + s * 24}) scale(1 ${blink})`}>
-          <circle r={15} fill={EYE} opacity={0.35} filter="url(#eyeglow)" />
-          <circle r={10} fill={EYE} />
+        <g key={s} transform={`translate(${148 + look} ${headY + s * 27}) scale(1 ${blink})`}>
+          <circle r={9.5} fill={EYE} />
         </g>
       ))}
     </g>

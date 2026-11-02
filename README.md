@@ -151,7 +151,7 @@ cd animation && npm install
 - Colors are in `animation/src/lib/theme.ts`.
 - Every scene draws on a 1920×1080 canvas. Run `npm run studio` inside `animation/` to preview scenes in your browser while you work on them.
 
-Animated scenes take longer to render than slides: the 1:27 example takes about 3–4 minutes.
+Animated scenes take much longer to render than slides. The detailed 1:41 example takes about 25 minutes on a 4-core machine. Finished animations are cached in `output/.anim-cache/`, so changing music, text or one scene's narration only re-renders what changed. Editing code under `animation/src` re-renders all animated scenes.
 
 ## Uploading tips
 

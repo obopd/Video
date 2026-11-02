@@ -190,10 +190,12 @@ export const Freeze: React.FC<SceneProps> = (props) => {
   const c18 = cue('eighteen', 0.35);
   const c73 = cue('seventy', 0.6);
   const plants = cue('plants', 0.7);
-  const temp = f < c18 ? tween(f, cold, c18, 15, -18) : tween(f, c18 + 5, c73, -18, -73);
-  const icy = tween(f, cold, c73 + 30, 0, 1);
+  const yr = cue('year', 0.55);
+  // 15 °C -> -18 °C by "eighteen" (one week), hold, then -> -73 °C between "year" and "seventy"
+  const temp = f < yr ? tween(f, cold, c18, 15, -18) : tween(f, yr, c73, -18, -73);
+  const icy = f < yr ? tween(f, cold, c18 + 20, 0, 0.35) : tween(f, yr, c73 + 30, 0.35, 1);
   const ex = 700, ey = 540, er = 330;
-  const when = f >= cue('year', 0.55) ? 'after 1 year' : f >= cue('week', 0.3) ? 'after 1 week' : 'today';
+  const when = f >= yr ? 'after 1 year' : f >= cue('week', 0.3) ? 'after 1 week' : 'today';
 
   // thermometer: -80..+20 °C mapped onto the tube
   const tx = 1400, tTop = 230, tBot = 800;

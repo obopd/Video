@@ -110,7 +110,7 @@ export const Globe: React.FC<GlobeProps> = ({
         </radialGradient>
         <filter id={`${id}b`} x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation={blur} /></filter>
         <filter id={`${id}s`} x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation={blur * 0.35} /></filter>
-        <filter id={`${id}c2`} x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation={Math.max(0.5, r * 0.012)} /></filter>
+        <filter id={`${id}c2`} x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation={Math.max(0.5, r * 0.009)} /></filter>
         <filter id={`${id}n`} x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation={r * 0.06} /></filter>
       </defs>
 
@@ -143,8 +143,16 @@ export const Globe: React.FC<GlobeProps> = ({
         {/* clouds */}
         <g opacity={0.8 * clouds} filter={`url(#${id}c2)`} fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round">
           {CLOUDS.map((c, i) => (
-            <path key={i} opacity={c.o} strokeWidth={Math.max(0.8, r * 0.04 * c.w)}
-                  d={path({type: 'LineString', coordinates: c.pts.map(([x, y]) => [x + cloudDrift, y])}) ?? ''} />
+            // each cloud is a few thin, uneven wisps rather than one solid bar
+            <g key={i} opacity={c.o}>
+              {[[0, 0, 1, 1], [0.9, 0.15, 0.7, 0.55], [-0.8, 0.3, 0.6, 0.45], [0.4, 0.5, 0.35, 0.3]].map(([dl, s0, s1, wk], k) => {
+                const n = c.pts.length;
+                const pts = c.pts.slice(Math.floor(s0 * n * 0.5), Math.max(2, Math.ceil(n * (s0 * 0.5 + s1))))
+                  .map(([x, y]) => [x + cloudDrift + dl * 0.6, y + dl]);
+                return <path key={k} strokeWidth={Math.max(0.5, r * 0.018 * c.w * wk)} opacity={k ? 0.75 : 1}
+                             d={path({type: 'LineString', coordinates: pts}) ?? ''} />;
+              })}
+            </g>
           ))}
           {STORMS.map(([slon, slat, dir], i) => (
             <path key={`s${i}`} opacity={0.75} strokeWidth={Math.max(0.8, r * 0.04)}

@@ -196,11 +196,18 @@ class Builder:
         anim_dir = Path(self.cfg.get("animation_dir", ANIMATION_DIR)).resolve()
         if not (anim_dir / "node_modules" / "remotion").is_dir():
             raise RuntimeError(f"animated scenes need the Remotion project installed: run `npm install` in {anim_dir}")
-        jobs = []
+        # Cache rendered animations by (props + animation source code), so changing music,
+        # text or one scene's narration doesn't re-render every animation.
+        src_hash = hashlib.sha1()
+        for f in sorted((anim_dir / "src").rglob("*")) + [anim_dir / "package-lock.json"]:
+            if f.is_file():
+                src_hash.update(f.relative_to(anim_dir).as_posix().encode() + f.read_bytes())
+        cache = self.out.parent / ".anim-cache"
+        cache.mkdir(exist_ok=True)
+        jobs, cached = [], []
         for sc in scenes:
             if not sc.spec.get("component"):
                 raise ValueError(f"scene {sc.index + 1}: animated scenes need a `component`")
-            sc.animation = self.work / f"anim{sc.index:03}.mp4"
             props = dict(sc.spec.get("props") or {})
             props.update(
                 component=sc.spec["component"],
@@ -209,13 +216,26 @@ class Builder:
                 # word times relative to the start of the scene (the voice starts after LEAD_IN)
                 words=[{**w, "start": w["start"] + LEAD_IN, "end": w["end"] + LEAD_IN} for w in sc.words],
             )
-            jobs.append({"out": str(sc.animation), "props": props, "crf": 28 if self.preview else 16})
+            crf = 28 if self.preview else 16
+            key = hashlib.sha1((src_hash.hexdigest() + json.dumps([props, crf], sort_keys=True)).encode()).hexdigest()[:20]
+            sc.animation = cache / f"{key}.mp4"
+            if sc.animation.exists() and sc.animation.stat().st_size > 0:
+                cached.append(sc)
+                continue
+            tmp = cache / f"{key}.partial.mp4"
+            jobs.append({"out": str(tmp), "final": str(sc.animation), "props": props, "crf": crf})
+        if cached:
+            log(f"reusing {len(cached)} cached animation(s)")
+        if not jobs:
+            return
         jobs_file = self.work / "animation-jobs.json"
         jobs_file.write_text(json.dumps(jobs))
         log(f"rendering {len(jobs)} animated scene(s) with Remotion...")
         res = subprocess.run(["node", str(anim_dir / "render.mjs"), str(jobs_file)], cwd=anim_dir)
         if res.returncode != 0:
             raise RuntimeError("Remotion render failed (see output above)")
+        for job in jobs:  # only finished renders enter the cache
+            Path(job["out"]).replace(job["final"])
 
     def render_clip(self, sc: Scene) -> None:
         w, h = self.size

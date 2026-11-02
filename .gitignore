@@ -4,3 +4,4 @@ output/
 .build-*/
 .tts-cache/
 node_modules/
+.anim-cache/

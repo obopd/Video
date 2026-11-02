@@ -476,7 +476,7 @@ export const RiddleSolve: React.FC<SceneProps> = (props) => {
   const three = cue('Three times', 0.15), floors = cue('Five floors', 0.28), hopC = cue('hop', 0.36), minus = cue('so minus', 0.45);
   const flip = cue('flips', 0.58), about = cue('pH is about', 0.72), done = cue('Done', 0.86);
   const cx = 470, cy = 520;
-  const Y = (v: number) => cy + (v + 2.5) * 130; // v in [-5, 0] -> 845 .. 195
+  const Y = (v: number) => cy - (v + 2.5) * 130; // v in [-5, 0]: floor 0 at the top, floor -5 at the bottom
   const lvl = f < hopC ? -5 : -5 + 0.48 * ease(clamp01((f - hopC) / 16));
   const ang = 180 * ease(clamp01((f - flip) / 22));
   const flipped = ang > 90;
@@ -515,7 +515,7 @@ export const RiddleSolve: React.FC<SceneProps> = (props) => {
             )}
             {f >= hopC && <path d={`M ${cx + 200} ${Y(-5)} q 40 ${-(Y(-5) - Y(-4.52)) / 2} 0 ${-(Y(-5) - Y(-4.52))}`} stroke={ORANGE} strokeWidth={5} fill="none" strokeLinecap="round" />}
           </g>
-          <InkCircle cx={1560} cy={322} rx={190} ry={110} progress={circ} />
+          <InkCircle cx={1490} cy={326} rx={156} ry={104} progress={circ} />
           {f >= done && Array.from({length: 70}).map((_, i) => {
             const t = (f - done) / 30;
             const x = random(`cx${i}`) * 1920, y = -40 + t * (300 + random(`cy${i}`) * 500) + random(`c0${i}`) * 200 - 200;

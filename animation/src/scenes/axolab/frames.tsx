@@ -163,4 +163,83 @@ export const Thumb: React.FC<SceneProps> = (props) => {
   );
 };
 
-export const frameScenes = {FrameHook, FrameCrate, FrameElevator, Thumb};
+/** Axo's ink hand seen from first person: a stubby arm with four round fingers. */
+const PovArm: React.FC<{from: [number, number]; to: [number, number]; w?: number}> = ({from, to, w = 120}) => {
+  const ang = (Math.atan2(to[1] - from[1], to[0] - from[0]) * 180) / Math.PI;
+  return (
+    <g>
+      <line x1={from[0]} y1={from[1]} x2={to[0]} y2={to[1]} stroke={INK} strokeWidth={w} strokeLinecap="round" />
+      <g transform={`translate(${to[0]} ${to[1]}) rotate(${ang})`}>
+        <ellipse cx={10} cy={0} rx={w * 0.62} ry={w * 0.56} fill={INK} />
+        {[-0.42, -0.14, 0.14, 0.42].map((k, i) => (
+          <ellipse key={i} cx={w * 0.62 + (i === 0 || i === 3 ? -4 : 8)} cy={k * w * 1.05} rx={w * 0.2} ry={w * 0.13} fill={INK} />
+        ))}
+      </g>
+    </g>
+  );
+};
+
+// Thumbnail, first person: Axo's ink hands over an MCAT paper exam with the pH question.
+export const ThumbExam: React.FC<SceneProps> = (props) => {
+  const tag = (props.tag as string) ?? 'MCAT PREP';
+  const big = (props.big as string) ?? 'pH in';
+  const hero = (props.hero as string) ?? '10s?';
+  const sub = (props.sub as string) ?? 'no calculator';
+  const choices: [string, string][] = [['A', '3.48'], ['B', '4.52'], ['C', '5.00'], ['D', '5.48']];
+  return (
+    <Frame
+      html={
+        <>
+          {/* the exam sheet on the desk, seen from above */}
+          <div style={{position: 'absolute', left: 860, top: 70, width: 900, height: 1180, transformOrigin: '50% 0%',
+            transform: 'perspective(2200px) rotateX(16deg) rotateZ(-5deg)'}}>
+            <div style={{position: 'absolute', inset: 0, background: '#fffdf8', border: `5px solid ${INK}`, borderRadius: 14,
+              boxShadow: '0 30px 60px rgba(58,42,16,0.18)', padding: '46px 60px'}}>
+              <div style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', borderBottom: `5px solid ${INK}`, paddingBottom: 18}}>
+                <div style={{fontFamily: DISPLAY, fontWeight: 800, fontSize: 150, lineHeight: 0.85, color: INK, letterSpacing: '-0.03em'}}>MCAT</div>
+                <div style={{textAlign: 'right', fontFamily: SANS, fontWeight: 800, color: INK}}>
+                  <div style={{fontSize: 30, letterSpacing: 5, whiteSpace: 'nowrap'}}>PRACTICE TEST</div>
+                  <div style={{fontSize: 21, letterSpacing: 2, color: P.muted, marginTop: 8, whiteSpace: 'nowrap'}}>CHEM / PHYS · SECTION 1</div>
+                </div>
+              </div>
+              <div style={{marginTop: 40, display: 'flex', alignItems: 'center', gap: 22}}>
+                <Tag style={{fontSize: 26, padding: '8px 22px 8px 26px'}}>Q 12</Tag>
+                <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 26, color: ORANGE, letterSpacing: 3}}>NO CALCULATOR</div>
+              </div>
+              <div style={{marginTop: 26, fontFamily: DISPLAY, fontWeight: 600, fontSize: 62, lineHeight: 1.18, color: INK}}>
+                [H<sup style={{fontSize: '0.55em'}}>+</sup>] = 3 × 10<sup style={{fontSize: '0.55em'}}>−5</sup> M.<br />What is the pH?
+              </div>
+              <div style={{marginTop: 34}}>
+                {choices.map(([k, v]) => (
+                  <div key={k} style={{display: 'flex', alignItems: 'center', gap: 26, height: 88}}>
+                    <div style={{width: 58, height: 58, borderRadius: 99, border: `4px solid ${INK}`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: SANS, fontWeight: 800, fontSize: 28, background: k === 'B' ? INK : 'transparent', color: k === 'B' ? PAPER : INK}}>{k}</div>
+                    <div style={{fontFamily: DISPLAY, fontWeight: 600, fontSize: 56, color: INK}}>{v}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* the headline */}
+          <div style={{position: 'absolute', left: 96, top: 92}}><Tag style={{fontSize: 40, padding: '16px 38px 16px 44px', background: ORANGE, color: INK}}>{tag}</Tag></div>
+          <div style={{position: 'absolute', left: 88, top: 250, fontFamily: DISPLAY, fontWeight: 800, fontSize: 230, lineHeight: 0.95, color: INK, letterSpacing: '-0.03em'}}>{big}</div>
+          <div style={{position: 'absolute', left: 88, top: 480, fontFamily: DISPLAY, fontWeight: 800, fontSize: 310, lineHeight: 0.95, color: ORANGE, letterSpacing: '-0.035em'}}>{hero}</div>
+          {sub && <div style={{position: 'absolute', left: 100, top: 820, fontFamily: DISPLAY, fontWeight: 600, fontSize: 62, color: P.muted}}>{sub}</div>}
+        </>
+      }
+    >
+      {/* Axo's hands: the left one pins the sheet, the right one has just circled B */}
+      <g transform="rotate(-6 1075 758)">
+        <path d="M 1222 742 C 1230 700, 1150 690, 1070 692 C 970 694, 905 715, 905 760 C 905 805, 985 826, 1075 824 C 1160 822, 1238 800, 1236 756"
+              fill="none" stroke={ORANGE} strokeWidth={10} strokeLinecap="round" />
+      </g>
+      <PovArm from={[800, 1260]} to={[870, 1065]} w={110} />
+      <g transform={`translate(${props.px ?? 1570} ${props.py ?? 888}) rotate(${props.pr ?? 194})`}>
+        <Pencil len={400} w={40} />
+      </g>
+      <PovArm from={[1860, 1260]} to={[1520, 905]} w={120} />
+    </Frame>
+  );
+};
+
+export const frameScenes = {FrameHook, FrameCrate, FrameElevator, Thumb, ThumbExam};

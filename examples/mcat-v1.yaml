@@ -34,12 +34,12 @@ pronounce:
   MCAT: em-cat
 
 thumbnail:
-  component: Thumb
+  component: ThumbExam   # first person: Axo's hands over an MCAT paper exam
   props:
-    tag: "NO CALCULATOR"
-    sub: "[H⁺] = 3 × 10⁻⁵"
+    tag: "MCAT PREP"
     big: "pH in"
     hero: "10s?"
+    sub: "no calculator"
 
 scenes:
   # ---------------------------------------------------------------- 0. hook

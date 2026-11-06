@@ -235,7 +235,7 @@ export const V1Tiny: React.FC<SceneProps> = (props) => {
           ]} />
           {f >= zero - 4 && ['0', '0', '0', '0', '4', '5'].map((d, i) => (
             <div key={i} style={{position: 'absolute', left: x0 + i * (bw + gap), top: Y - 220, width: bw, textAlign: 'center', fontFamily: DISPLAY, fontWeight: 700, fontSize: 230,
-              lineHeight: 1, color: INK, opacity: (i >= firstVisible ? 1 : 0) * fin(f, zero - 4, 8), transform: `translateY(${i === firstVisible && frac < 0.7 && kInt < 4 ? 0 : 0}px)`}}>{d}</div>
+              lineHeight: 1, color: INK, opacity: (i >= 4 ? 1 : clamp01((k - (3 - i)) * 2.2)) * fin(f, zero - 4, 8), transform: `translateY(${i < 4 ? (1 - clamp01((k - (3 - i)) * 2.2)) * 30 : 0}px)`}}>{d}</div>
           ))}
           <div style={{position: 'absolute', left: 0, width: 1920, top: 880, textAlign: 'center', opacity: fin(f, zero), fontFamily: DISPLAY, fontWeight: 700, fontSize: 64, color: P.muted, fontVariantNumeric: 'tabular-nums'}}>
             {values[shown]}
@@ -376,7 +376,7 @@ export const V1Dollars: React.FC<SceneProps> = (props) => {
                   {' '}× 10<sup style={{fontSize: '0.55em', verticalAlign: '0.85em', color: ORANGE, display: 'inline-block', transform: `translateY(${rollY * 0.5}px)`}}>{expo}</sup>
                 </span>
               ) : (
-                <span style={{display: 'inline-block', transform: `scale(${0.9 + 0.1 * join})`}}>{rich('[[3.2]] × 10^{5}')}</span>
+                <span style={{display: 'inline-block', opacity: join, transform: `scale(${0.9 + 0.1 * join})`}}>{rich('[[3.2]] × 10^{5}')}</span>
               )}
             </div>
           )}

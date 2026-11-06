@@ -159,7 +159,7 @@ export const V1SigCombine: React.FC<SceneProps> = (props) => {
               <span style={{display: 'inline-block', transform: `translateX(${(1 - meet) * -120}px)`}}><Big>3.1416</Big></span>
               <Big color={P.muted}> × </Big>
               <span style={{display: 'inline-block', filter: 'blur(3px)', transform: `translateX(${(1 - meet) * 120}px)`}}><Big>2.1</Big></span>
-              {meet >= 1 && <><Big color={P.muted}> = </Big><span style={{filter: 'blur(3px)'}}><Big color={ORANGE}>6.6</Big></span></>}
+              {meet >= 1 && <span style={{opacity: fin(f, mul + 26, 10)}}><Big color={P.muted}> = </Big><span style={{filter: 'blur(3px)'}}><Big color={ORANGE}>6.6</Big></span></span>}
             </div>
           )}
           {ph === 2 && (
@@ -384,7 +384,7 @@ export const V1Trip: React.FC<SceneProps> = (props) => {
       svg={
         <g>
           {beat === 1 && (
-            <g opacity={fin(f, test - 4, 10)}>
+            <g opacity={fin(f, test - 4, 10) * (1 - fin(f, t2 - 14, 8))}>
               <g transform="translate(560 650)">
                 <path d="M -230 0 A 230 230 0 0 1 230 0" fill={PAPER} stroke={INK} strokeWidth={LINE} />
                 {[0, 1, 2, 3].map((v) => { const a = Math.PI + (v / 3) * Math.PI; return <g key={v}><line x1={Math.cos(a) * 200} y1={Math.sin(a) * 200} x2={Math.cos(a) * 170} y2={Math.sin(a) * 170} stroke={INK} strokeWidth={4} /><text x={Math.cos(a) * 140} y={Math.sin(a) * 140 + 12} textAnchor="middle" fontFamily={DISPLAY} fontWeight={700} fontSize={32} fill={INK}>{v}</text></g>; })}
@@ -405,7 +405,7 @@ export const V1Trip: React.FC<SceneProps> = (props) => {
             </g>
           )}
           {beat === 2 && (
-            <g opacity={fin(f, t2 - 6, 10)}>
+            <g opacity={fin(f, t2 - 6, 10) * (1 - fin(f, t3 - 14, 8))}>
               <path d="M 960 760 l -60 120 h 120 Z" fill={PAPER} stroke={INK} strokeWidth={LINE} strokeLinejoin="round" />
               <g transform={`rotate(${tilt} 960 760)`}>
                 <rect x={460} y={736} width={1000} height={28} rx={14} fill={PAPER} stroke={INK} strokeWidth={LINE} />

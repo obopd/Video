@@ -39,7 +39,7 @@ export const Frame: React.FC<{svg?: React.ReactNode; html?: React.ReactNode; tag
             <Paper />
             <div style={{position: 'absolute', inset: 0, ...moveCss}}>
               <div style={{position: 'absolute', inset: 0, opacity: o, transform: `scale(${z})`, transformOrigin: '50% 52%'}}>
-                {tag && <div style={{position: 'absolute', left: 80, top: 64, opacity: tagOpacity}}><Tag>{tag}</Tag></div>}
+                {tag && <div style={{position: 'absolute', left: 0, width: 1920, top: 46, textAlign: 'center', opacity: tagOpacity}}><Tag>{tag}</Tag></div>}
                 {html}
               </div>
             </div>

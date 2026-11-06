@@ -58,7 +58,7 @@ export const V1Hook: React.FC<SceneProps> = (props) => {
               {[0, 1, 2, 3].map((i) => <div key={i} style={{marginTop: 22, height: 10, width: 480 - i * 60, borderRadius: 5, background: '#e9e2d6', opacity: fin(f, here, 10)}} />)}
             </div>
           )}
-          <KeySeq x={90} y={70} w={620} size={72} items={[
+          <KeySeq x={90} y={60} w={1740} align="center" size={72} items={[
             {at: c96, text: '[[96]] seconds.'},
             {at: noCalc, text: 'No calculator.'},
             {at: here, text: "Here's one."},
@@ -67,7 +67,7 @@ export const V1Hook: React.FC<SceneProps> = (props) => {
             {at: why, text: 'And know [[why.]]'},
           ]} />
           {close > 0 && f >= c96 && (
-            <div style={{position: 'absolute', left: 1210, top: 120, opacity: close, fontFamily: DISPLAY, fontWeight: 700, fontSize: 46,
+            <div style={{position: 'absolute', left: 1180, top: 210, opacity: close, fontFamily: DISPLAY, fontWeight: 700, fontSize: 46,
               color: ringColor, fontVariantNumeric: 'tabular-nums'}}>{Math.ceil(secs)}s</div>
           )}
         </>
@@ -81,15 +81,15 @@ export const V1Hook: React.FC<SceneProps> = (props) => {
               <line x1={0} x2={4400} y1={860} y2={860} stroke={INK} strokeWidth={3} opacity={0.4} />
               {desks.map((x, i) => (
                 <g key={i} filter={i < 5 ? 'url(#dof)' : undefined} opacity={i < 5 ? 0.55 : 1}>
-                  {i === 5 && <AxoSide x={x - 60} y={860} scale={1.25} rear={1} arm={-60} />}
                   <Desk x={x} y={650} s={1} />
+                  {i === 5 && <AxoSide x={x - 420} y={860} scale={1.05} rear={1} arm={-40} />}
                 </g>
               ))}
             </g>
           )}
           {/* phase 2: over the shoulder: desk top, sheet, ring, empty tray, Axo */}
           {close > 0 && (
-            <g opacity={close} transform={`translate(960 540) scale(${0.92 + 0.08 * close}) translate(-960 -540)`}>
+            <g opacity={close} transform={`translate(960 640) scale(${0.8 + 0.06 * close}) translate(-960 -540)`}>
               <path d="M -50 600 L 1970 600 L 1970 1130 L -50 1130 Z" fill="#efe7da" stroke={INK} strokeWidth={LINE} />
               <g transform="rotate(-3 1020 500)">
                 <rect x={710} y={190} width={620} height={600} rx={10} fill="#fffdf8" stroke={INK} strokeWidth={LINE} />
@@ -150,14 +150,14 @@ export const V1Zeros: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[2, 'fizz', 0.6], [mole, 'whoosh', 0.6], ...Array.from({length: 21}).map((_, i) => [runA + 8 + i * 2.4, 'tick', 0.18, 1.2] as S),
             ...Array.from({length: 7}).map((_, i) => [count + i * 4, 'clack', 0.3, 1.4 + i * 0.05] as S), [count + 32, 'pop', 0.7], [expo, 'chime', 0.4]]} />
-          <KeySeq x={90} y={80} w={1100} size={78} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={78} items={[
             {at: absurd, text: 'Chemistry numbers are [[absurd.]]'},
             {at: nobody, text: 'Nobody wants to write that.'},
             {at: count, text: "Don't write zeros. [[Count]] them."},
             {at: expo, text: 'That count is the [[exponent.]]'},
           ]} />
           {f >= mole && f < count + 30 && (
-            <div style={{position: 'absolute', right: 90, top: 90, fontFamily: DISPLAY, fontWeight: 700, fontSize: 54, color: TEAL, fontVariantNumeric: 'tabular-nums'}}>
+            <div style={{position: 'absolute', right: 120, top: 330, fontFamily: DISPLAY, fontWeight: 700, fontSize: 54, color: TEAL, fontVariantNumeric: 'tabular-nums'}}>
               {passed} <span style={{fontFamily: SANS, fontSize: 22, letterSpacing: 3, color: P.muted}}>ZEROS</span>
             </div>
           )}
@@ -285,7 +285,7 @@ export const V1ZeroOps: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[mul, 'swish', 0.4], [meet + 6, 'clack', 0.9], [meet + 8, 'pop', 0.4], [seven, 'ding', 0.45], [div, 'swish', 0.4],
             [div + 24, 'pop', 0.5], [div + 26, 'pop', 0.5, 1.15], [div + 44, 'clack', 0.5], [sub, 'ding', 0.4]]} />
-          <KeySeq x={90} y={90} w={1500} size={80} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={80} items={[
             {at: pay, text: 'Multiplying = [[counting.]]'},
             {at: seven, text: '10^{4} × 10^{3} = [[10^{7}]]', sub: 'four zeros + three zeros'},
             {at: add, text: '× → exponents [[add]]'},
@@ -357,7 +357,7 @@ export const V1Dollars: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[dollars, 'swish', 0.35], [dimes, 'tap', 0.6], [dimes + 6, 'tap', 0.6], [five, 'blip', 0.4], [fuse + 6, 'whoosh', 0.3, 1.5],
             [fuse + 22, 'clack', 0.7], [match, 'ding', 0.4], [powers, 'sparkle', 0.4], [turn + 6, 'tick', 0.5], [turn + 16, 'tick', 0.5, 1.2], [done, 'clack', 0.7], [done + 4, 'chime', 0.4]]} />
-          <KeySeq x={90} y={90} w={1600} size={78} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={78} items={[
             {at: diff, text: 'Adding is [[different.]]'},
             {at: five, text: '$3 + 2 dimes ≠ 5 of anything'},
             {at: match, text: 'Match the units: [[$3.20]]'},

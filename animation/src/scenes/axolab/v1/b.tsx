@@ -46,7 +46,7 @@ export const V1LogRuler: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[4, 'whoosh', 0.35, 0.6], [ends - 30, 'boing', 0.35, 1.4], [step1 - 14, 'boing', 0.5], [step1, 'pop', 0.5], [two, 'pop', 0.5, 1.12],
             [three, 'pop', 0.5, 1.25], [minus - 8, 'swish', 0.4]]} />
-          <KeySeq x={90} y={110} w={1700} size={80} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={80} items={[
             {at: forget, text: 'Forget the formula.'},
             {at: asks, text: 'A log asks: [[how many tens?]]'},
             {at: l1000, text: 'log 1000 = [[3]]'},
@@ -104,7 +104,7 @@ export const V1Hops: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[...hops.flatMap(([at], i) => [[at + 5, 'hop', 0.55, 1 + i * 0.1], [at + 21, 'tap', 0.6]] as S[]), [almost, 'boing', 0.3, 1.6],
             [third, 'swish', 0.4], [l2, 'ding', 0.4], [tri - 10, 'slide', 0.35], [half, 'swish', 0.4], [l3, 'ding', 0.4, 1.1]]} />
-          <KeySeq x={90} y={110} w={1700} size={80} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={80} items={[
             {at: q, text: 'log 2 = [[?]]'},
             {at: measure, text: 'Measure it: keep [[doubling.]]'},
             {at: third, text: '3 doublings ≈ 1 step', sub: 'so 1 doubling ≈ a third of a step'},
@@ -181,7 +181,7 @@ export const V1SlideRule: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[...lands.map(([, at], i) => [at + 4, 'pop', 0.55, 1 + i * 0.08] as S), [memo, 'chime', 0.35], [slide, 'slide', 0.5], [slide + 1.2 * fps, 'clack', 0.9],
             [two3, 'swish', 0.4], [read, 'ding', 0.5]]} />
-          <KeySeq x={90} y={110} w={1740} size={78} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={78} items={[
             {at: steps, text: 'Everything else is [[steps added.]]'},
             {at: c4, text: 'log 4 = 0.3 + 0.3 = [[0.6]]'},
             {at: c6, text: 'log 6 = 0.3 + 0.48 = [[0.78]]'},
@@ -260,7 +260,7 @@ export const V1pH: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[ours, 'swish', 0.45], [ours + 20, 'fizz', 0.6], [costs, 'rise', 0.5, 1.2], [costs + 1.2 * fps, 'clack', 0.6], [exact, 'ding', 0.45],
             [halfway, 'pop', 0.4], [ten, 'thud', 0.8], [ten + 4, 'chime', 0.4]]} />
-          <KeySeq x={90} y={110} w={1300} size={74} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={74} items={[
             {at: back, text: 'Back to the riddle.'},
             {at: idea, text: 'pH = ÷10 steps [[down]] from 1'},
             {at: five, text: '10^{−5} → pH [[5]]'},
@@ -270,7 +270,7 @@ export const V1pH: React.FC<SceneProps> = (props) => {
             {at: sanity, text: 'Sanity check.'},
             {at: ten, text: '[[10 seconds.]] No calculator.'},
           ]} />
-          <div style={{position: 'absolute', right: 90, top: 120, opacity: fin(f, idea), fontFamily: DISPLAY, fontWeight: 600, fontSize: 40, color: P.muted}}>pH = −log [H⁺]</div>
+          <div style={{position: 'absolute', right: 300, top: 320, opacity: fin(f, idea), fontFamily: DISPLAY, fontWeight: 600, fontSize: 40, color: P.muted}}>pH = −log [H⁺]</div>
           {f >= five && (
             <div style={{position: 'absolute', left: mx - 150, width: 300, top: Y - 230, textAlign: 'center', opacity: fin(f, five)}}>
               <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 22, letterSpacing: 3, color: P.muted}}>pH</div>
@@ -334,7 +334,7 @@ export const V1Flood: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[ten, 'fizz', 0.6], [hund, 'fizz', 0.9], [hund + 4, 'whoosh', 0.4]]} />
-          <KeySeq x={0} y={140} w={1920} align="center" size={84} items={[
+          <KeySeq x={0} y={150} w={1920} align="center" size={84} items={[
             {at: 0, text: 'Each pH step = [[10×]] the acid'},
             {at: hund, text: 'pH 3 vs pH 5 = [[100×]]'},
           ]} />
@@ -375,7 +375,7 @@ export const V1Ln: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[h1 + 5, 'hop', 0.5, 1.2], [h2 + 5, 'hop', 0.5, 1.3], [h3 + 5, 'hop', 0.4, 1.5], [h3 + 13, 'ding', 0.5], [rule, 'swish', 0.4], [ln2, 'pop', 0.5]]} />
-          <KeySeq x={90} y={110} w={1740} size={80} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={80} items={[
             {at: meet, text: 'ln: the [[natural]] log'},
             {at: e, text: 'each step: × [[e]] ≈ 2.7'},
             {at: reach, text: 'about [[2.3]] steps to reach 10'},

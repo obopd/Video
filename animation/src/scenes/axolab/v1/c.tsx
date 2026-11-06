@@ -27,7 +27,7 @@ export const V1SigRuler: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[read, 'pop', 0.5], [guess, 'tap', 0.6], [write, 'scribble', 0.5], [didnt, 'whoosh', 0.4, 1.4], [didnt + 2, 'fizz', 0.4]]} />
-          <KeySeq x={90} y={110} w={1300} size={76} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={76} items={[
             {at: conf, text: 'Every number [[confesses]] its ruler.'},
             {at: read, text: 'Millimetre ruler: read [[7.3 cm]]'},
             {at: guess, text: '+ one guessed digit, at most'},
@@ -107,7 +107,7 @@ export const V1SigZeros: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[nonzero, 'pop', 0.5], [start, 'blip', 0.4], [two, 'ding', 0.4], [end, 'swish', 0.35], [h2, 'blip', 0.4],
             [six - 10, 'pop', 0.6, 1.3], ...[0, 1, 2, 3].map((i) => [six + i * 2, 'tick', 0.45, 1 + i * 0.1] as S), [six + 10, 'ding', 0.45]]} />
-          <KeySeq x={90} y={110} w={1740} size={72} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={72} items={[
             {at: which, text: 'Which digits [[count?]]'},
             {at: nonzero, text: 'Nonzero digits, and zeros [[between]] them'},
             {at: start, text: 'Leading zeros: [[placeholders]]'},
@@ -147,7 +147,7 @@ export const V1SigCombine: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[mul + 26, 'clack', 0.6], [add, 'swish', 0.4], [add + 20, 'blip', 0.4], [habit, 'swish', 0.4], ...Array.from({length: 10}).map((_, i) => [habit + 10 + i * 4, 'tick', 0.2, 1.3] as S),
             [round, 'slide', 0.4], [round + 10, 'ding', 0.45], [aamc, 'pop', 0.4]]} />
-          <KeySeq x={90} y={110} w={1740} size={72} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={72} items={[
             {at: comb, text: 'No sharper than your [[blurriest]] number.'},
             {at: mul, text: '× ÷ : fewest [[digits]] wins'},
             {at: add, text: '+ − : fewest [[decimal places]] wins'},
@@ -203,7 +203,7 @@ export const V1EstMul: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[...[0, 1, 2, 3].map((i) => [choices + i * 4, 'tap', 0.5] as S), [far, 'thud', 0.4], [close, 'swish', 0.4], [close + 18, 'clack', 0.4, 1.4],
             [round, 'boing', 0.4, 1.3], [cancel - 30, 'swish', 0.35], [cancel + 16, 'clack', 0.6], [real, 'ding', 0.45]]} />
-          <KeySeq x={90} y={110} w={1740} size={74} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={74} items={[
             {at: est, text: 'Estimating = rounding with a [[memory]]'},
             {at: choices, text: 'First: look at the [[answer choices]]'},
             {at: far, text: 'Far apart → round [[hard]]'},
@@ -296,7 +296,7 @@ export const V1EstDiv: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[round + 4, 'rise', 0.35, 1.5], [tru, 'ding', 0.4], [real, 'swish', 0.4], [digits + 4, 'slide', 0.4], [tens + 6, 'fizz', 0.5],
             ...Array.from({length: 8}).map((_, i) => [tens + 6 + i * 2.5, 'pop', 0.25, 1.3 + i * 0.03] as S), [six, 'clack', 0.7], [six + 3, 'chime', 0.45], [eight, 'thud', 0.5]]} />
-          <KeySeq x={90} y={110} w={1740} size={74} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={74} items={[
             {at: opp, text: 'Dividing: round both the [[same way]]'},
             {at: tru, text: '12 ÷ 4 = 3   (true: [[3.03]])'},
             {at: pct, text: 'Same % change cancels in a [[ratio]]', size: 66},
@@ -346,7 +346,7 @@ export const V1EstDiv: React.FC<SceneProps> = (props) => {
               <text x={1460} y={720} fontFamily={DISPLAY} fontWeight={700} fontSize={56} fill={INK}>10<tspan dy={-26} fontSize={34}>24−23</tspan><tspan dy={26}> = 10</tspan></text>
             </g>
           )}
-          {ph2 && <g opacity={fin(f, real, 8)}><Ring x={1720} y={190} r={90} frac={sw / 10} label={`${Math.floor(sw)}s`} sub="STOPWATCH" color={TEAL} /></g>}
+          {ph2 && <g opacity={fin(f, real, 8)}><Ring x={1730} y={900} r={90} frac={sw / 10} label={`${Math.floor(sw)}s`} sub="STOPWATCH" color={TEAL} /></g>}
           <AxoSide x={170} y={1010} scale={0.42} rear={f > six ? 1 : 0} arm={-40} />
         </g>
       }
@@ -374,7 +374,7 @@ export const V1Trip: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[twenty, 'boing', 0.4, 1.4], [two, 'boing', 0.4, 1.2], [diff, 'blip', 0.6], [t2, 'swish', 0.4], [wrote, 'boing', 0.5, 0.7], [t3, 'swish', 0.4],
             [t3 + 22, 'thud', 0.6], [match, 'whoosh', 0.3, 1.5], [match + 14, 'clack', 0.7], [match + 16, 'ding', 0.4]]} />
-          <KeySeq x={90} y={110} w={1740} size={72} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={72} items={[
             {at: one, text: '[[1.]] log(a + b) ≠ log a + log b'},
             {at: t2, text: '[[2.]] pH runs [[backwards]]', sub: 'more acid → lower pH'},
             {at: t3, text: '[[3.]] Match the [[units]] first', sub: '3×10⁵ + 2×10⁴ ≠ 5×10⁵, ≠ 5×10⁹'},
@@ -495,7 +495,7 @@ export const V1TurnA: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[sub, 'rise', 0.4, 1.4], [r1, 'pop', 0.6], [two, 'rise', 0.5, 0.8], [two + 1.4 * fps, 'clack', 0.5], [r2, 'chime', 0.5]]} />
-          <KeySeq x={90} y={110} w={1740} size={76} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={76} items={[
             {at: four, text: '10^{−4}: four steps down → pH 4'},
             {at: sub, text: 'the 2 costs 0.3 → pH [[3.7]]'},
             {at: dil, text: 'Dilute 100× = [[two more]] steps'},
@@ -532,7 +532,7 @@ export const V1Recap: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[zeros, 'pop', 0.5], [logs, 'hop', 0.5], [nums, 'pop', 0.5, 1.1], [est, 'pop', 0.5, 1.2], [next, 'whoosh', 0.4], [next + 20, 'tick', 0.4],
             [snapAt - 12, 'tap', 0.6], [snapAt - 10, 'slide', 0.5, 1.6], [snapAt, 'clack', 1, 0.8], [snapAt, 'thud', 0.7]]} />
-          <KeySeq x={90} y={110} w={1740} size={78} items={[
+          <KeySeq x={90} y={150} w={1740} align="center" size={78} items={[
             {at: recap, text: 'Recap.'},
             {at: zeros, text: 'Count the zeros, [[don’t write them.]]'},
             {at: logs, text: 'A log counts [[tens.]]'},

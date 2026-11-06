@@ -440,7 +440,7 @@ const ConcRuler: React.FC<{mx: number; ripple?: number; o?: number}> = ({mx, rip
       {[3, 4, 5, 6].map((n) => (
         <g key={n}>
           <line x1={X(n)} x2={X(n)} y1={600} y2={680} stroke={INK} strokeWidth={6} />
-          <text x={X(n)} y={740} textAnchor="middle" fontFamily={DISPLAY} fontWeight={700} fontSize={44} fill={INK}>10⁻{n}</text>
+          <text x={X(n)} y={740} textAnchor="middle" fontFamily={DISPLAY} fontWeight={700} fontSize={44} fill={INK}>10{'⁻' + '⁰¹²³⁴⁵⁶⁷⁸⁹'[n]}</text>
         </g>
       ))}
       {ripple > 0 && ripple < 1 && <rect x={220 + 1360 * ripple - 60} y={626} width={120} height={28} rx={14} fill={TEAL} opacity={0.6 * (1 - Math.abs(ripple - 0.5) * 2) + 0.2} />}

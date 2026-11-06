@@ -47,7 +47,7 @@ export const V1Hook: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[0, 'whoosh', 0.25, 0.6], ...ticks, [noCalc, 'blip', 0.5], [h0, 'swish', 0.35], [h0 + 46, 'swish', 0.25, 0.8],
             [h0 + 68, 'pop', 0.5, 0.55], [why, 'clack', 0.8], [why + 2, 'tick', 0.6], [D - 12, 'whoosh', 0.7]]} />
-          {close > 0 && (
+          {false && (
             <div style={{position: 'absolute', left: 740, top: 230, width: 560, transform: 'rotate(-3deg)', opacity: close}}>
               <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 22, letterSpacing: 4, color: P.muted}}>QUESTION 1 OF 59</div>
               <div style={{marginTop: 26, opacity: fin(f, here, 8), fontFamily: SANS, fontSize: 26, color: '#5c564d', lineHeight: 1.5}}>
@@ -76,12 +76,12 @@ export const V1Hook: React.FC<SceneProps> = (props) => {
         <g>
           {/* phase 1: the row of desks, only the last one sharp */}
           {close < 1 && (
-            <g opacity={1 - close} transform={`translate(960 600) scale(${z}) translate(${-cx} -600)`}>
+            <g opacity={Math.max(0, 1 - close * 2)} transform={`translate(960 600) scale(${z}) translate(${-cx} -600)`}>
               <defs><filter id="dof" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation={6} /></filter></defs>
               <line x1={0} x2={4400} y1={860} y2={860} stroke={INK} strokeWidth={3} opacity={0.4} />
               {desks.map((x, i) => (
                 <g key={i} filter={i < 5 ? 'url(#dof)' : undefined} opacity={i < 5 ? 0.55 : 1}>
-                  {i === 5 && <AxoSide x={x - 80} y={860} scale={0.8} rear={1} arm={-60} />}
+                  {i === 5 && <AxoSide x={x - 60} y={860} scale={1.25} rear={1} arm={-60} />}
                   <Desk x={x} y={650} s={1} />
                 </g>
               ))}
@@ -89,10 +89,19 @@ export const V1Hook: React.FC<SceneProps> = (props) => {
           )}
           {/* phase 2: over the shoulder: desk top, sheet, ring, empty tray, Axo */}
           {close > 0 && (
-            <g opacity={close}>
+            <g opacity={close} transform={`translate(960 540) scale(${0.92 + 0.08 * close}) translate(-960 -540)`}>
               <path d="M -50 600 L 1970 600 L 1970 1130 L -50 1130 Z" fill="#efe7da" stroke={INK} strokeWidth={LINE} />
               <g transform="rotate(-3 1020 500)">
                 <rect x={710} y={190} width={620} height={600} rx={10} fill="#fffdf8" stroke={INK} strokeWidth={LINE} />
+                <foreignObject x={740} y={220} width={570} height={560}>
+                  <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 22, letterSpacing: 4, color: P.muted}}>QUESTION 1 OF 59</div>
+                  <div style={{marginTop: 26, opacity: fin(f, here, 8), fontFamily: SANS, fontSize: 26, color: '#5c564d', lineHeight: 1.5}}>
+                    A solution has a hydrogen ion concentration of
+                  </div>
+                  <div style={{marginTop: 10}}><KineticLine text="3 × 10^{−5} M" at={hyd} size={78} /></div>
+                  <div style={{marginTop: 24}}><KineticLine text="pH = [[?]]" at={ph} size={78} /></div>
+                  {[0, 1, 2, 3].map((i) => <div key={i} style={{marginTop: 22, height: 10, width: 480 - i * 60, borderRadius: 5, background: '#e9e2d6', opacity: fin(f, here, 10)}} />)}
+                </foreignObject>
                 <RectRing x={680} y={160} w={680} h={660} frac={secs / 96} color={ringColor} r={30} />
               </g>
               {/* empty calculator tray, lit */}
@@ -222,13 +231,13 @@ export const V1Tiny: React.FC<SceneProps> = (props) => {
           <KeySeq x={0} y={150} w={1920} align="center" size={76} items={[
             {at: tiny, text: 'Tiny numbers: [[reverse.]]'},
             {at: zero, text: '0.00045 = 4.5 ÷ 10 ÷ 10 ÷ 10 ÷ 10', size: 64},
-            {at: neg, text: '= 4.5 × 10^{[[−4]]}', size: 96, sub: 'negative exponent = divide by ten that many times'},
+            {at: neg, text: '= 4.5 × [[10^{−4}]]', size: 96, sub: 'negative exponent = divide by ten that many times'},
           ]} />
           {f >= zero - 4 && ['0', '0', '0', '0', '4', '5'].map((d, i) => (
             <div key={i} style={{position: 'absolute', left: x0 + i * (bw + gap), top: Y - 220, width: bw, textAlign: 'center', fontFamily: DISPLAY, fontWeight: 700, fontSize: 230,
               lineHeight: 1, color: INK, opacity: (i >= firstVisible ? 1 : 0) * fin(f, zero - 4, 8), transform: `translateY(${i === firstVisible && frac < 0.7 && kInt < 4 ? 0 : 0}px)`}}>{d}</div>
           ))}
-          <div style={{position: 'absolute', left: 0, width: 1920, top: 820, textAlign: 'center', opacity: fin(f, zero), fontFamily: DISPLAY, fontWeight: 700, fontSize: 64, color: P.muted, fontVariantNumeric: 'tabular-nums'}}>
+          <div style={{position: 'absolute', left: 0, width: 1920, top: 880, textAlign: 'center', opacity: fin(f, zero), fontFamily: DISPLAY, fontWeight: 700, fontSize: 64, color: P.muted, fontVariantNumeric: 'tabular-nums'}}>
             {values[shown]}
           </div>
         </>
@@ -241,7 +250,7 @@ export const V1Tiny: React.FC<SceneProps> = (props) => {
             const t = clamp01((f - at) / 18);
             if (f < at) return null;
             return (
-              <g key={i} transform={`translate(${bx(5 - i - 0.5)} ${Y - 290 - 20 * ease(t)}) scale(${0.6 + 0.4 * tsp(f, at, at + 10)})`} opacity={i === shown - 1 ? 1 : 0.35}>
+              <g key={i} transform={`translate(${bx(5 - i - 0.5)} ${Y + 120 + 20 * ease(t)}) scale(${0.6 + 0.4 * tsp(f, at, at + 10)})`} opacity={i === shown - 1 ? 1 : 0.35}>
                 <rect x={-58} y={-30} width={116} height={60} rx={30} fill={INK} />
                 <text y={13} textAnchor="middle" fontFamily={DISPLAY} fontWeight={700} fontSize={36} fill={PAPER}>÷10</text>
               </g>
@@ -278,10 +287,10 @@ export const V1ZeroOps: React.FC<SceneProps> = (props) => {
             [div + 24, 'pop', 0.5], [div + 26, 'pop', 0.5, 1.15], [div + 44, 'clack', 0.5], [sub, 'ding', 0.4]]} />
           <KeySeq x={90} y={90} w={1500} size={80} items={[
             {at: pay, text: 'Multiplying = [[counting.]]'},
-            {at: seven, text: '10^{4} × 10^{3} = 10^{[[7]]}', sub: 'four zeros + three zeros'},
+            {at: seven, text: '10^{4} × 10^{3} = [[10^{7}]]', sub: 'four zeros + three zeros'},
             {at: add, text: '× → exponents [[add]]'},
             {at: div, text: 'Divide: zeros cancel in [[pairs]]'},
-            {at: sub, text: '10^{5} ÷ 10^{2} = 10^{[[3]]}', sub: '÷ → exponents subtract'},
+            {at: sub, text: '10^{5} ÷ 10^{2} = [[10^{3}]]', sub: '÷ → exponents subtract'},
           ]} />
           {!phase2 && f >= seven && (
             <div style={{position: 'absolute', left: 0, width: 1920, top: 720, textAlign: 'center', fontFamily: DISPLAY, fontWeight: 800, fontSize: 96, color: ORANGE, opacity: fin(f, seven)}}>4 + 3 = 7</div>
@@ -389,8 +398,7 @@ export const V1Dollars: React.FC<SceneProps> = (props) => {
               {[[690, '5'], [1240, '4']].map(([x, e], i) => (
                 <g key={i} transform={`translate(${x} 470) scale(${0.6 + 0.4 * toTags})`}>
                   <rect x={-130} y={-60} width={260} height={120} rx={60} fill={PAPER} stroke={ORANGE} strokeWidth={6} />
-                  <text y={22} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={64} fill={ORANGE}>×10</text>
-                  <text x={76} y={-12} fontFamily={DISPLAY} fontWeight={800} fontSize={36} fill={ORANGE}>{e}</text>
+                  <text y={22} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={64} fill={ORANGE}>×10<tspan dy={-26} fontSize={38}>{e}</tspan></text>
                 </g>
               ))}
             </g>

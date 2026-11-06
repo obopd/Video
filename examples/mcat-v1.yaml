@@ -29,6 +29,10 @@ music:
 subtitles:
   burn: false
 
+# how the narrator should say certain words (captions keep the written form)
+pronounce:
+  MCAT: em-cat
+
 thumbnail:
   component: Thumb
   props:

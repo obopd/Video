@@ -130,17 +130,22 @@ class Builder:
     def prepare_audio(self, sc: Scene) -> None:
         spec = sc.spec
         sc.narration = " ".join(str(spec.get("narration", "")).split())
+        # pronunciation fixes for the voice only (captions keep the written form), e.g. {MCAT: em-cat}
+        spoken = sc.narration
+        for written, say in (self.cfg.get("pronounce") or {}).items():
+            import re
+            spoken = re.sub(rf"\b{re.escape(written)}\b", say, spoken)
         if spec.get("audio"):  # user-recorded voiceover for this scene
             sc.audio = self.path(spec["audio"])
         elif sc.narration:
-            key = hashlib.sha1(json.dumps([sc.narration, self.engine, self.voice], sort_keys=True).encode()).hexdigest()[:16]
+            key = hashlib.sha1(json.dumps([spoken, self.engine, self.voice], sort_keys=True).encode()).hexdigest()[:16]
             cache = self.out.parent / ".tts-cache"
             cache.mkdir(exist_ok=True)
             mp3 = cache / f"{key}.mp3"
             words_file = mp3.with_suffix(".words.json")
             if not mp3.exists() or mp3.stat().st_size == 0:
                 try:
-                    made, words = tts.synthesize(sc.narration, mp3, self.engine, self.voice)
+                    made, words = tts.synthesize(spoken, mp3, self.engine, self.voice)
                 except Exception as e:  # network/voice errors from the TTS backend
                     mp3.unlink(missing_ok=True)
                     raise RuntimeError(f"scene {sc.index + 1}: voiceover failed ({self.engine}): {e}\n"

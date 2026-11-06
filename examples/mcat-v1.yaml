@@ -1,0 +1,243 @@
+# Axol's Lab, Video 1: Math without a calculator (count the zeros, count the tens).
+# Render: python -m ytvideo examples/mcat-v1.yaml
+# Scenes: animation/src/scenes/axolab/v1/*.tsx (paper/ink style, synced to narration words).
+
+title: "MCAT Math Without a Calculator: Count the Zeros, Count the Tens"
+description: |
+  96 seconds per question, no calculator. A hydrogen ion concentration of 3 × 10⁻⁵: what's the pH?
+  In ten minutes you'll answer it in ten seconds, and know why it works: scientific notation as
+  counting zeros, logarithms as counting tens (log 2 ≈ 0.3, log 3 ≈ 0.48), pH, the natural log,
+  significant digits, and estimation, plus three tripwires and a practice problem.
+
+  Next time: units, the words that give numbers their meaning.
+tags: [MCAT, MCAT chemistry, MCAT math, logarithms, pH, scientific notation, significant figures, premed, Axol's Lab]
+
+output: output/mcat-v1.mp4
+resolution: landscape
+fps: 30
+
+voice:
+  engine: auto
+  name: en-US-AndrewMultilingualNeural
+  rate: "+8%"
+
+music:
+  file: assets/ambient.mp3
+  volume: 0.11
+  duck: true
+
+subtitles:
+  burn: false
+
+thumbnail:
+  component: Thumb
+  props:
+    tag: "NO CALCULATOR"
+    sub: "[H⁺] = 3 × 10⁻⁵"
+    big: "pH in"
+    hero: "10s?"
+
+scenes:
+  # ---------------------------------------------------------------- 0. hook
+  - type: animated
+    fade: false
+    component: V1Black
+    duration: 0.7
+    chapter: "The 96-second question"
+
+  - type: animated
+    fade: false
+    component: V1Hook
+    narration: >
+      Ninety-six seconds. That's all you get for each MCAT question, and there is no calculator.
+      Here's one. A solution has a hydrogen ion concentration of three times ten to the minus five.
+      What's its pH? Most people freeze. In ten minutes you'll answer this in ten seconds, and you'll
+      know why it works, not just how.
+
+  # ---------------------------------------------------------------- 1. count the zeros
+  - type: animated
+    fade: false
+    component: V1Zeros
+    chapter: "Count the zeros"
+    narration: >
+      Chemistry numbers are absurd. One mole is six hundred two, followed by twenty-one zeros, of
+      particles. Nobody wants to write that. So don't write the zeros. Count them. A number is really
+      two things: the digits that matter, and how many tens are stacked on top. Here: six-point-oh-two,
+      and twenty-three tens. That count is the exponent.
+
+  - type: animated
+    fade: false
+    component: V1Tiny
+    narration: >
+      Tiny numbers work the same way, in reverse. Zero-point-zero-zero-zero-four-five is four-point-five,
+      divided by ten, four times. A negative exponent just means: divide by ten that many times.
+
+  - type: animated
+    fade: false
+    component: V1ZeroOps
+    narration: >
+      Now the payoff. Multiplying becomes counting. Ten thousand times a thousand: four zeros meet three
+      zeros, and you get seven. So when you multiply, exponents add. Divide, and zeros cancel in pairs,
+      so exponents subtract.
+
+  - type: animated
+    fade: false
+    component: V1Dollars
+    narration: >
+      Adding is different. Three dollars plus two dimes. You can't call that five of anything. Two dimes
+      is point-two dollars. Now the units match: three-point-two dollars. Powers of ten are your units.
+      Three times ten to the five, plus two times ten to the four: turn the second into point-two times
+      ten to the five, then add. Three-point-two times ten to the five.
+
+  # ---------------------------------------------------------------- 2. logarithms
+  - type: animated
+    fade: false
+    component: V1LogRuler
+    chapter: "Count the tens: logarithms"
+    narration: >
+      Now logarithms. Forget the formula. A log asks one question: how many tens? How many times do you
+      multiply by ten to get from one to this number? One to ten is one step. To a hundred, two. To a
+      thousand, three. So the log of a thousand is three. Go the other way: a hundredth is two steps of
+      dividing by ten, so its log is minus two.
+
+  - type: animated
+    fade: false
+    component: V1Hops
+    narration: >
+      Easy for powers of ten. But what's the log of two? Let's measure it. Start at one, and keep doubling.
+      Two. Four. Eight. Three doublings, and we're almost at ten. So three doublings is almost one full
+      step, which means one doubling is about a third of a step. The log of two is about 0.3.
+      Same trick with three. Triple once: three. Twice: nine. Two triplings nearly make a full step,
+      so one tripling is about half a step. More precisely, the log of three is 0.48.
+
+  - type: animated
+    fade: false
+    component: V1SlideRule
+    narration: >
+      Now everything else is steps added together. Four is two doublings: 0.6. Six is a doubling and a
+      tripling: 0.3 plus 0.48, so 0.78. Eight is three doublings: 0.9. Five is ten cut in half: a full
+      step forward, one doubling back: 0.7. Memorize two numbers, and every digit follows.
+      Notice what just happened. Multiplying turned into adding steps. Slide one ruler along another, and
+      distances add, so numbers multiply. People built calculators out of this idea; they were called
+      slide rules. Two times three: slide, read six.
+
+  # ---------------------------------------------------------------- 3. the riddle, solved
+  - type: animated
+    fade: false
+    component: V1pH
+    chapter: "The riddle, solved"
+    narration: >
+      Back to the riddle. pH is the log idea pointed at acid: how many divide-by-ten steps down from one
+      is the concentration of hydrogen ions? Ten to the minus five is five steps down: pH five.
+      Ours is three times ten to the minus five. That's three times bigger: a bit more acid, so fewer
+      steps down, so the pH is a bit under five. How much under? The three costs us 0.48. Five minus 0.48
+      is about four and a half. The exact answer is 4.52.
+      Sanity check. Ten to the minus five is pH five. Ten to the minus four is pH four. Three sits roughly
+      halfway between them on the ruler, so the pH sits roughly halfway between five and four.
+      Ten seconds. No calculator.
+
+  - type: animated
+    fade: false
+    component: V1Flood
+    narration: >
+      One more thing: each pH step is ten times more acid. A pH of three versus a pH of five is a
+      hundred times.
+
+  # ---------------------------------------------------------------- 4. natural log
+  - type: animated
+    fade: false
+    component: V1Ln
+    chapter: "The natural log"
+    narration: >
+      Meet the natural log, written L N. Same idea, but each step multiplies by e, about 2.7, instead of
+      ten. Smaller steps, so you need more of them: about 2.3 to reach ten. That gives the rule: L N of a
+      number is about 2.3 times its log. One more value to keep: L N of two is about 0.69. In half-life
+      problems you'll see it as about point seven.
+
+  # ---------------------------------------------------------------- 5. significant digits
+  - type: animated
+    fade: false
+    component: V1SigRuler
+    chapter: "Significant digits"
+    narration: >
+      Every number is a confession about your ruler. Measure a leaf with a ruler marked in millimeters,
+      and you can honestly read seven-point-three centimeters, and guess one more digit at most. Write
+      seven-point-three-one-five-seven, and you're claiming to see ten-thousandths of a centimeter.
+      You didn't.
+
+  - type: animated
+    fade: false
+    component: V1SigZeros
+    narration: >
+      Which digits count? Nonzero digits always count, and so do zeros between them. Zeros at the start
+      don't: zero-point-zero-one-zero has two significant digits. Zeros at the end count only if there's
+      a decimal point. So forty-three hundred has two, and forty-three hundred point zero zero has six.
+
+  - type: animated
+    fade: false
+    component: V1SigCombine
+    narration: >
+      When you combine numbers, the answer can't be sharper than your blurriest one. Multiplying or
+      dividing: keep as many digits as the number with the fewest. Adding or subtracting: keep as many
+      decimal places as the number with the fewest. And one habit: carry extra digits through the whole
+      calculation, and round only at the end. The A A M C expects a general understanding of significant
+      digits, and now you know the idea behind the rules.
+
+  # ---------------------------------------------------------------- 6. estimation
+  - type: animated
+    fade: false
+    component: V1EstMul
+    chapter: "Estimation"
+    narration: >
+      Estimating is rounding with a memory. First, look at the answer choices. If they're far apart,
+      round hard. If they're close together, round gently. Multiplying: six-point-nine times four-point-one.
+      Round to seven and four: twenty-eight. I rounded one up and one down, so the errors roughly cancel.
+      The true answer is 28.3.
+
+  - type: animated
+    fade: false
+    component: V1EstDiv
+    narration: >
+      Dividing is the opposite. Round both the same way. Eleven-point-eight divided by three-point-nine:
+      round both up, twelve over four, three. The true answer is 3.03. Both numbers moved by about the
+      same percentage, so the change cancels in the ratio. Now a real one. Three-point-six times ten to
+      the twenty-fourth molecules, divided by Avogadro's number, six times ten to the twenty-third. Digits
+      first: 3.6 over 6 is 0.6. Tens next: ten to the twenty-fourth over ten to the twenty-third is one
+      ten. So 0.6 times ten: six moles. About eight seconds.
+
+  # ---------------------------------------------------------------- 7. tripwires
+  - type: animated
+    fade: false
+    component: V1Trip
+    chapter: "Three tripwires"
+    narration: >
+      Three tripwires. One: the log of a plus b is not log a plus log b. Test it. The log of ten plus ten
+      is the log of twenty: about 1.3. Log ten plus log ten is 2. Different. Only multiplication turns
+      into adding. Two: pH runs backwards. More acid means a lower pH. If you wrote more acid and a
+      higher pH, check your sign. Three: never add numbers with different powers of ten as if the units
+      matched. Three times ten to the five plus two times ten to the four is not five times ten to the
+      five, and it is not five times ten to the nine. Match the units first.
+
+  # ---------------------------------------------------------------- 8. your turn, recap
+  - type: animated
+    fade: false
+    component: V1TurnQ
+    chapter: "Your turn"
+    duration: 11.5
+    narration: >
+      Your turn. A strong acid has a hydrogen ion concentration of two times ten to the minus four.
+      What's the pH? Five seconds.
+
+  - type: animated
+    fade: false
+    component: V1TurnA
+    narration: >
+      Four steps down, but the two is bigger than one, so subtract 0.3. The pH is 3.7. Now dilute it a
+      hundred times. That's two more divide-by-ten steps, so two more pH units: 5.7.
+
+  - type: animated
+    fade: false
+    component: V1Recap
+    narration: >
+      Recap. Count the zeros, don't write them. A log counts tens. Two numbers, 0.3 and 0.48, unlock
+      the rest. Estimate first, round later. Next time: units, the words that give numbers their meaning.

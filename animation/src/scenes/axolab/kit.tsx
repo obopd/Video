@@ -13,27 +13,39 @@ export const tw = (f: number, a: number, b: number, from = 0, to = 1, e: (t: num
 export const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 /** Paper frame with an HTML layer (type) under an SVG layer (characters, props). */
-export const Frame: React.FC<{svg?: React.ReactNode; html?: React.ReactNode; tag?: string; tagOpacity?: number; still?: boolean}> = ({svg, html, tag, tagOpacity = 1, still = false}) => {
+export type Transition = 'fade' | 'whip' | 'cut';
+
+export const Frame: React.FC<{svg?: React.ReactNode; html?: React.ReactNode; tag?: string; tagOpacity?: number; still?: boolean;
+  enter?: Transition; exit?: Transition; push?: number}> = ({svg, html, tag, tagOpacity = 1, still = false, enter = 'fade', exit = 'fade', push = 0.025}) => {
   useFontsReady();
   const f = useCurrentFrame();
   const {durationInFrames: D} = useVideoConfig();
-  // paper-to-paper transitions: content fades in from blank paper and back out at the end,
-  // and the "camera" pushes in very slowly so no frame feels frozen.
-  const o = still ? 1 : Math.min(clamp01(f / 7), clamp01((D - 1 - f) / 6));
-  const z = still ? 1 : 1 + 0.025 * (f / Math.max(1, D));
+  // paper-to-paper transitions: content fades in from blank paper and back out at the end
+  // (or whips sideways with motion blur), and the "camera" pushes in very slowly.
+  const fin = enter === 'fade' ? clamp01(f / 7) : 1;
+  const fout = exit === 'fade' ? clamp01((D - 1 - f) / 6) : 1;
+  const o = still ? 1 : Math.min(fin, fout);
+  const z = still ? 1 : 1 + push * (f / Math.max(1, D));
+  const wIn = enter === 'whip' ? 1 - clamp01(f / 12) : 0;
+  const wOut = exit === 'whip' ? clamp01((f - (D - 12)) / 12) : 0;
+  const wx = 2300 * Math.pow(wIn, 2) - 2300 * Math.pow(wOut, 2);
+  const blur = 22 * Math.max(Math.sin(wIn * Math.PI / 2), Math.sin(wOut * Math.PI / 2));
+  const moveCss = {transform: `translateX(${wx}px)`, filter: blur > 0.3 ? `blur(${blur}px)` : undefined};
   return (
     <AbsoluteFill>
       <Stage
         html={
           <>
             <Paper />
-            <div style={{position: 'absolute', inset: 0, opacity: o, transform: `scale(${z})`, transformOrigin: '50% 52%'}}>
-              {tag && <div style={{position: 'absolute', left: 80, top: 64, opacity: tagOpacity}}><Tag>{tag}</Tag></div>}
-              {html}
+            <div style={{position: 'absolute', inset: 0, ...moveCss}}>
+              <div style={{position: 'absolute', inset: 0, opacity: o, transform: `scale(${z})`, transformOrigin: '50% 52%'}}>
+                {tag && <div style={{position: 'absolute', left: 80, top: 64, opacity: tagOpacity}}><Tag>{tag}</Tag></div>}
+                {html}
+              </div>
             </div>
           </>
         }
-        over={<g opacity={o} transform={`translate(960 561.6) scale(${z}) translate(-960 -561.6)`}>{svg}</g>}
+        over={<g style={moveCss}><g opacity={o} transform={`translate(960 561.6) scale(${z}) translate(-960 -561.6)`}>{svg}</g></g>}
       />
     </AbsoluteFill>
   );
@@ -178,4 +190,6 @@ export const Ring: React.FC<{x: number; y: number; r?: number; frac: number; lab
 };
 
 export const fall = (f: number, at: number, from: number, to: number, d = 14) => interpolate(f, [at, at + d], [from, to], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+export const TEAL = '#11a596';
+export const RED = '#e5484d';
 export {INK, PAPER, ORANGE, COBALT, LINE, DISPLAY, SANS, P};

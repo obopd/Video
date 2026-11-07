@@ -185,7 +185,9 @@ export const ThumbExam: React.FC<SceneProps> = (props) => {
   const big = (props.big as string) ?? 'pH in';
   const hero = (props.hero as string) ?? '10s?';
   const sub = (props.sub as string) ?? 'no calculator';
-  const choices: [string, string][] = [['A', '3.48'], ['B', '4.52'], ['C', '5.00'], ['D', '5.48']];
+  const vals = (props.choices as string[] | undefined) ?? ['3.48', '4.52', '5.00', '5.48'];
+  const choices: [string, string][] = vals.map((v, i) => ['ABCD'[i], v]);
+  const qLines = typeof props.q === 'string' ? (props.q as string).split('|') : null;  // custom question (answer stays on B)
   return (
     <Frame
       html={
@@ -207,7 +209,7 @@ export const ThumbExam: React.FC<SceneProps> = (props) => {
                 <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 26, color: ORANGE, letterSpacing: 3}}>NO CALCULATOR</div>
               </div>
               <div style={{marginTop: 26, fontFamily: DISPLAY, fontWeight: 600, fontSize: 62, lineHeight: 1.18, color: INK}}>
-                [H<sup style={{fontSize: '0.55em'}}>+</sup>] = 3 × 10<sup style={{fontSize: '0.55em'}}>−5</sup> M.<br />What is the pH?
+                {qLines ? qLines.map((l, i) => <div key={i}>{l}</div>) : <>[H<sup style={{fontSize: '0.55em'}}>+</sup>] = 3 × 10<sup style={{fontSize: '0.55em'}}>−5</sup> M.<br />What is the pH?</>}
               </div>
               <div style={{marginTop: 34}}>
                 {choices.map(([k, v]) => (

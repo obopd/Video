@@ -1,0 +1,257 @@
+# Axol's Lab, Video 2: Units, ratios, and chance (the rest of the calculator-free toolkit).
+# Render: python -m ytvideo examples/mcat-v2.yaml
+# Scenes: animation/src/scenes/axolab/v2/*.tsx (paper/ink style, synced to narration words).
+
+title: "MCAT Units, Ratios & Probability: No Calculator Needed"
+description: |
+  A spacecraft was lost at Mars because two teams used different units. On the MCAT, a missing unit costs
+  you a point. In ten minutes: metric prefixes as counts of tens, conversions by multiplying by one,
+  dimensional analysis as a lie detector, ratios and scaling (track the multipliers), percentages and
+  percent change, probability (and, or, at least one), and square-root estimation. Plus three practice
+  questions at the end.
+
+  Next time: angles, triangles, and graphs with rulers that bend.
+tags: [MCAT, MCAT math, MCAT chemistry, MCAT physics, unit conversion, dimensional analysis, probability, ratios, percentages, square roots, premed, Axol's Lab]
+
+output: output/mcat-v2.mp4
+resolution: landscape
+fps: 30
+
+voice:
+  engine: auto
+  name: en-US-AndrewMultilingualNeural
+  rate: "+8%"
+
+music:
+  file: assets/ambient.mp3
+  volume: 0.11
+  duck: true
+
+subtitles:
+  burn: false
+
+pronounce:
+  MCAT: em-cat
+
+thumbnail:
+  component: ThumbExam
+  props:
+    tag: "MCAT PREP"
+    big: "Units"
+    hero: "in 3s?"
+    sub: "no calculator"
+    q: "A cell is 20 µm across.|How many fit across 1 mm?"
+    choices: ["5", "50", "500", "5,000"]
+    answer: 1
+
+scenes:
+  # ---------------------------------------------------------------- 0. hook
+  - type: animated
+    fade: false
+    component: V2Mars
+    chapter: "A $125 million unit mistake"
+    narration: >
+      In 1999, NASA lost a hundred-and-twenty-five-million-dollar spacecraft at Mars. One team sent its
+      thruster data in pounds of force. The other team's software assumed newtons. Same numbers. Different
+      units. Different meaning.
+
+  - type: animated
+    fade: false
+    component: V2HookQ
+    narration: >
+      A number without its unit is just noise, and the MCAT knows it. Here's your version. A cell is twenty
+      micrometers across. How many of them fit side by side across one millimeter? Hold that thought. By the
+      end of this video you'll see it in about three seconds, and you'll have the whole toolkit for units,
+      ratios, percentages, probability, and square roots.
+
+  # ---------------------------------------------------------------- 1. prefixes
+  - type: animated
+    fade: false
+    component: V2Prefix
+    chapter: "Prefixes are a count of tens"
+    narration: >
+      Start with prefixes. They look like a vocabulary list, but they're something you already know. Each one
+      is a count of tens, just like the exponents in the last video. Kilo is three tens: a thousand. Mega is
+      six: a million. Giga is nine: a billion. Going the other way, milli is minus three: a thousandth. Micro
+      is minus six: a millionth. Nano is minus nine. Pico is minus twelve. And centi is minus two: a hundredth.
+
+  - type: animated
+    fade: false
+    component: V2PrefixSolve
+    narration: >
+      Notice the pattern. The big ones step by three tens at a time. So you don't memorize a table. You
+      memorize one ruler. Now your question. One millimeter is minus three. One micrometer is minus six.
+      Three ticks apart: a thousand micrometers in a millimeter. A thousand, twenty per cell: fifty cells.
+      Three seconds.
+
+  # ---------------------------------------------------------------- 2. multiply by one
+  - type: animated
+    fade: false
+    component: V2Stick
+    chapter: "Multiply by one"
+    narration: >
+      Here's the idea behind every conversion: you never change the amount. You only change the ruler. Five
+      meters is the same stick whether you call it five meters or five thousand millimeters. Smaller unit,
+      bigger number. Bigger unit, smaller number.
+
+  - type: animated
+    fade: false
+    component: V2One
+    narration: >
+      To do it without thinking, multiply by one in disguise. One meter equals a thousand millimeters, so a
+      thousand millimeters per meter is exactly one. Multiply by it and the amount can't change. And the units
+      cancel, just like the zeros did last time. Five meters times a thousand millimeters per meter: the meters
+      cancel, and you're left with five thousand millimeters. The rule: put the unit you want to get rid of on
+      the bottom.
+
+  - type: animated
+    fade: false
+    component: V2Speed
+    narration: >
+      It stacks. Thirty-six kilometers per hour, into meters per second. Multiply by a thousand meters per
+      kilometer. Multiply by one hour per thirty-six hundred seconds. Kilometers cancel. Hours cancel.
+      Thirty-six thousand over thirty-six hundred: ten meters per second.
+
+  - type: animated
+    fade: false
+    component: V2Given
+    narration: >
+      What about pounds and inches? The exam hands you the conversion factors when you need them. What it
+      tests is whether you can set up the fractions so the units cancel.
+
+  - type: animated
+    fade: false
+    component: V2Lie
+    narration: >
+      And here's a bonus: units are a lie detector. Someone claims speed equals distance times time. Meters
+      times seconds is not meters per second, so the formula is wrong before you do any math. Force is mass
+      times acceleration: kilograms times meters per second squared. That mashup is what we call a newton.
+      Kinetic energy: kilograms times meters squared per second squared. That's a joule. If the units on the
+      two sides don't match, stop.
+
+  # ---------------------------------------------------------------- 3. ratios and scaling
+  - type: animated
+    fade: false
+    component: V2Direct
+    chapter: "Ratios and scaling"
+    narration: >
+      Half of MCAT math isn't arithmetic. It's asking: if I change this, what happens to that? Two things can
+      be tied together in two ways. Directly: double one, and the other doubles. Their ratio stays fixed. Or
+      inversely: double one, and the other halves. Their product stays fixed. Picture a rectangle with a fixed
+      area. Stretch it wider and it has to get shorter.
+
+  - type: animated
+    fade: false
+    component: V2Squares
+    narration: >
+      Then there are squares. Double the side of a square, and the area isn't doubled. It's four times, because
+      four of the old squares fit inside. Triple it: nine. That's why light from a lamp, spreading over a bigger
+      and bigger area, gets weaker with the square of the distance. Twice as far, a quarter as bright.
+
+  - type: animated
+    fade: false
+    component: V2Multipliers
+    narration: >
+      So here's the trick. Don't plug in numbers. Track the multipliers. Suppose something is proportional to a
+      charge and inversely proportional to the distance squared. The charge doubles: times two. The distance
+      triples: times one-ninth. Together: two-ninths. No calculator, no numbers. Plain ratios work the same way.
+      If four milliliters hold six tenths of a milligram of a drug, then ten milliliters is two-and-a-half
+      times as much: one-point-five milligrams.
+
+  # ---------------------------------------------------------------- 4. percentages
+  - type: animated
+    fade: false
+    component: V2Percent
+    chapter: "Percentages"
+    narration: >
+      Percent means per hundred. Fifteen percent of eighty? Build it from ten percent, which is just moving the
+      decimal: eight. Five percent is half of that: four. Eight plus four: twelve. A free trick: x percent of y
+      equals y percent of x. Eight percent of fifty looks awkward. Fifty percent of eight is just half of
+      eight: four.
+
+  - type: animated
+    fade: false
+    component: V2PctChange
+    narration: >
+      Percent change is the change divided by where you started. New minus old, over old. Forty to fifty: a
+      change of ten, over forty, is twenty-five percent. Always divide by the starting value. That leads to the
+      classic trap. A price rises fifty percent, then falls fifty percent. Are you back where you started? No.
+      A hundred goes to a hundred-fifty. Half of a hundred-fifty is seventy-five. The second percentage was
+      taken from a bigger number.
+
+  # ---------------------------------------------------------------- 5. probability
+  - type: animated
+    fade: false
+    component: V2Prob
+    chapter: "Probability"
+    narration: >
+      Probability is a fraction: the outcomes you want, over all the equally likely outcomes. One face of a die
+      out of six: one-sixth. "And" means multiply, when the events don't affect each other. Heads on a coin and
+      a six on a die: half of one-sixth is one-twelfth. Picture a grid. Take half of it, then a sixth of that.
+
+  - type: animated
+    fade: false
+    component: V2Or
+    narration: >
+      "Or" means add, when the events can't both happen. Rolling a two or a three: one-sixth plus one-sixth is
+      one-third. But if they can overlap, you've counted the overlap twice, so subtract it. Even, or greater
+      than three? Three-sixths plus three-sixths is a whole, which can't be right. Four and six are on both
+      lists. Subtract the overlap, two-sixths. That leaves four-sixths: two-thirds.
+
+  - type: animated
+    fade: false
+    component: V2AtLeast
+    narration: >
+      One more trick. "At least one" is easier as one minus "none." At least one head in three flips? The only
+      way to fail is three tails: one-eighth. So the answer is seven-eighths.
+
+  # ---------------------------------------------------------------- 6. square roots
+  - type: animated
+    fade: false
+    component: V2Roots
+    chapter: "Square roots"
+    narration: >
+      Square roots. A square root asks: what number times itself gives this? So learn your perfect squares up
+      to a hundred: one, four, nine, sixteen, twenty-five, thirty-six, forty-nine, sixty-four, eighty-one, a
+      hundred. Every estimate sandwiches between two of them. The square root of fifty. It sits between
+      forty-nine and sixty-four, so between seven and eight. But fifty is barely past forty-nine. About
+      seven-point-one.
+
+  - type: animated
+    fade: false
+    component: V2Roots2
+    narration: >
+      Memorize two more: the square root of two is about one-point-four, and the square root of three about
+      one-point-seven. You'll meet them in triangles next time. With scientific notation, halve the exponent.
+      The square root of four times ten to the six: two times ten to the three. If the exponent is odd, borrow
+      a ten: nine times ten to the five becomes ninety times ten to the four, which gives about
+      nine-and-a-half times ten squared.
+
+  # ---------------------------------------------------------------- 7. your turn, recap, teaser
+  - type: animated
+    fade: false
+    component: V2TurnQ
+    chapter: "Your turn"
+    duration: 28
+    narration: >
+      Your turn. Three quick ones. One: how many kilograms are two liters of water, if a milliliter weighs one
+      gram? Two: a force is proportional to a charge and inversely proportional to the distance squared. The
+      charge doubles and the distance triples. What happens to the force? Three: what's the square root of
+      eighty?
+
+  - type: animated
+    fade: false
+    component: V2TurnA
+    narration: >
+      Answers. Two liters is two thousand milliliters, which is two thousand grams: two kilograms. The force
+      gets multiplied by two-ninths. And the square root of eighty is just under nine: about eight-point-nine.
+
+  - type: animated
+    fade: false
+    component: V2Recap
+    chapter: "Recap"
+    narration: >
+      Recap. Prefixes are counts of tens. Conversions multiply by one, so units cancel. Units catch wrong
+      formulas. Track multipliers, not numbers. Percent change divides by where you started. "And" means
+      multiply. "Or" means add, minus the overlap. Square roots sandwich between perfect squares. Next time:
+      angles, triangles, and graphs with rulers that bend.

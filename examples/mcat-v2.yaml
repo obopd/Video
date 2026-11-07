@@ -40,7 +40,7 @@ thumbnail:
     big: "Units"
     hero: "in 3s?"
     sub: "no calculator"
-    q: "A cell is 20 µm across.|How many fit across 1 mm?"
+    q: "A cell is 20 µm wide.|How many fit in 1 mm?"
     choices: ["5", "50", "500", "5,000"]
     answer: 1
 

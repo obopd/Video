@@ -225,7 +225,7 @@ export const ThumbExam: React.FC<SceneProps> = (props) => {
           {/* the headline */}
           <div style={{position: 'absolute', left: 96, top: 92}}><Tag style={{fontSize: 40, padding: '16px 38px 16px 44px', background: ORANGE, color: INK}}>{tag}</Tag></div>
           <div style={{position: 'absolute', left: 88, top: 250, fontFamily: DISPLAY, fontWeight: 800, fontSize: 230, lineHeight: 0.95, color: INK, letterSpacing: '-0.03em'}}>{big}</div>
-          <div style={{position: 'absolute', left: 88, top: 480, fontFamily: DISPLAY, fontWeight: 800, fontSize: 310, lineHeight: 0.95, color: ORANGE, letterSpacing: '-0.035em'}}>{hero}</div>
+          <div style={{position: 'absolute', left: 88, top: 480, fontFamily: DISPLAY, fontWeight: 800, fontSize: hero.length > 4 ? 230 : 310, lineHeight: 0.95, color: ORANGE, letterSpacing: '-0.035em', whiteSpace: 'nowrap'}}>{hero}</div>
           {sub && <div style={{position: 'absolute', left: 100, top: 820, fontFamily: DISPLAY, fontWeight: 600, fontSize: 62, color: P.muted}}>{sub}</div>}
         </>
       }

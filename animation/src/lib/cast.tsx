@@ -13,7 +13,7 @@ export const COBALT_TINT = '#dfe6ff';
 export const LINE = 5; // standard ink line width for props
 
 /** A feathery gill: stalk with filaments. */
-const Gill: React.FC<{x: number; y: number; angle: number; len?: number}> = ({x, y, angle, len = 52}) => (
+export const Gill: React.FC<{x: number; y: number; angle: number; len?: number}> = ({x, y, angle, len = 52}) => (
   <g transform={`translate(${x} ${y}) rotate(${angle})`}>
     <rect x={0} y={-4.5} width={len} height={9} rx={4.5} fill={INK} />
     {Array.from({length: 4}).map((_, i) => {

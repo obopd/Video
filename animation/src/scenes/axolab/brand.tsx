@@ -97,30 +97,92 @@ export const BrandAvatar: React.FC<SceneProps> = (props) => {
 };
 
 const sup = (s: string) => <sup style={{fontSize: '0.55em', verticalAlign: '0.85em'}}>{s}</sup>;
+const sub = (s: string) => <sub style={{fontSize: '0.55em', verticalAlign: '-0.25em'}}>{s}</sub>;
+
+// Faint line-art doodles for the banner margins (ink strokes, no fills), drawn around (0,0).
+const L = {fill: 'none', stroke: INK, strokeWidth: 7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const};
+const Stethoscope = () => (
+  <g {...L}>
+    <path d="M -70 -150 L -70 -40 C -70 30, 70 30, 70 -40 L 70 -150" />
+    <circle cx={-70} cy={-160} r={9} /><circle cx={70} cy={-160} r={9} />
+    <path d="M 0 5 L 0 70 C 0 160, 150 160, 150 70 L 150 40" />
+    <circle cx={150} cy={10} r={34} /><circle cx={150} cy={10} r={14} />
+  </g>
+);
+const Heart = () => (
+  <g {...L}>
+    <path d="M 0 90 C -40 60, -120 10, -120 -50 C -120 -110, -40 -120, 0 -60 C 40 -120, 120 -110, 120 -50 C 120 10, 40 60, 0 90 Z" />
+    <path d="M -95 -20 L -45 -20 L -25 -65 L 5 30 L 30 -40 L 45 -20 L 95 -20" strokeWidth={6} />
+  </g>
+);
+const Dna = ({n = 7}: {n?: number}) => (
+  <g {...L}>
+    <path d={Array.from({length: n * 8 + 1}).map((_, i) => `${i ? 'L' : 'M'} ${Math.sin(i / 8 * Math.PI) * 60} ${i * 15}`).join(' ')} />
+    <path d={Array.from({length: n * 8 + 1}).map((_, i) => `${i ? 'L' : 'M'} ${-Math.sin(i / 8 * Math.PI) * 60} ${i * 15}`).join(' ')} />
+    {Array.from({length: n * 2}).map((_, k) => {
+      const i = k * 4 + 2; const xx = Math.sin(i / 8 * Math.PI) * 60;
+      return <line key={k} x1={-xx} x2={xx} y1={i * 15} y2={i * 15} strokeWidth={5} />;
+    })}
+  </g>
+);
+const Atom = () => (
+  <g {...L}>
+    {[0, 60, 120].map((a) => <ellipse key={a} cx={0} cy={0} rx={130} ry={44} transform={`rotate(${a})`} />)}
+    <circle cx={0} cy={0} r={14} fill={INK} />
+  </g>
+);
+const Flask = () => (
+  <g {...L}>
+    <path d="M -30 -130 L -30 -40 L -110 100 C -118 116, -108 128, -90 128 L 90 128 C 108 128, 118 116, 110 100 L 30 -40 L 30 -130" />
+    <line x1={-48} x2={48} y1={-130} y2={-130} />
+    <path d="M -78 50 C -40 35, 40 65, 78 50" />
+    <circle cx={-15} cy={90} r={10} /><circle cx={25} cy={70} r={7} />
+  </g>
+);
+const Capsule = () => (
+  <g {...L} transform="rotate(-35)">
+    <rect x={-110} y={-40} width={220} height={80} rx={40} />
+    <line x1={0} x2={0} y1={-40} y2={40} />
+  </g>
+);
+const Neuron = () => (
+  <g {...L}>
+    <circle cx={0} cy={0} r={34} />
+    {[200, 250, 140, 100].map((a) => (
+      <path key={a} transform={`rotate(${a})`} d="M 34 0 L 95 0 M 70 0 L 105 -28 M 70 0 L 108 26" />
+    ))}
+    <path d="M 30 18 C 120 60, 200 40, 300 70" />
+    {[110, 170, 230].map((x0) => <rect key={x0} x={x0 - 22} y={(x0 - 110) * 0.12 + 40} width={44} height={26} rx={13} transform={`rotate(10 ${x0} 60)`} />)}
+    <path d="M 300 70 L 340 45 M 300 70 L 345 85" />
+  </g>
+);
 
 // Banner (2560x1440). Everything important sits in the 1546x423 centre that shows on every device.
 export const BrandBanner: React.FC<SceneProps> = () => {
   useFontsReady();
-  const faint: React.CSSProperties = {position: 'absolute', fontFamily: DISPLAY, fontWeight: 600, color: INK, opacity: 0.09, whiteSpace: 'nowrap'};
+  const faint: React.CSSProperties = {position: 'absolute', fontFamily: DISPLAY, fontWeight: 600, color: INK, opacity: 0.1, whiteSpace: 'nowrap'};
+  const doodle = (x: number, y: number, el: React.ReactNode, sc = 1, rot = 0) => (
+    <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${sc})`} opacity={0.11}>{el}</g>
+  );
   return (
     <AbsoluteFill>
       <PaperBg />
-      {/* faint margin notes, only seen on wide screens and TVs */}
-      <div style={{...faint, left: 120, top: 180, fontSize: 120}}>6.02 × 10{sup('23')}</div>
-      <div style={{...faint, left: 260, top: 1080, fontSize: 110}}>log 2 ≈ 0.3</div>
-      <div style={{...faint, right: 140, top: 200, fontSize: 110}}>pH = −log[H{sup('+')}]</div>
-      <div style={{...faint, right: 220, top: 1090, fontSize: 120}}>ln 2 ≈ 0.69</div>
+      {/* faint margin notes across biology, chemistry, physics and math (wide screens and TVs) */}
+      <div style={{...faint, left: 150, top: 150, fontSize: 92}}>pH = −log[H{sup('+')}]</div>
+      <div style={{...faint, left: 940, top: 1180, fontSize: 92}}>F = ma</div>
+      <div style={{...faint, right: 170, top: 1180, fontSize: 88}}>ΔG = ΔH − TΔS</div>
+      <div style={{...faint, left: 1560, top: 150, fontSize: 88}}>C{sub('6')}H{sub('12')}O{sub('6')}</div>
       <svg viewBox="0 0 2560 1440" width={2560} height={1440} style={{position: 'absolute', inset: 0}}>
-        {/* a log ruler running along the bottom of the safe area */}
-        <g transform="translate(560 912)" opacity={0.85}>
-          <line x1={0} x2={1440} y1={0} y2={0} stroke={INK} strokeWidth={4} />
-          {Array.from({length: 4}).map((_, d) =>
-            [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
-              const xx = (d + Math.log10(n)) * 360;
-              return n === 1 || d < 3 ? <line key={`${d}${n}`} x1={xx} x2={xx} y1={0} y2={n === 1 ? -26 : -12} stroke={INK} strokeWidth={n === 1 ? 4 : 2.5} /> : null;
-            }),
-          )}
-        </g>
+        {doodle(280, 470, <Dna n={7} />, 0.9, 18)}
+        {doodle(2330, 640, <Stethoscope />, 1.1, 12)}
+        {doodle(1080, 230, <Atom />, 0.9)}
+        {doodle(2240, 230, <Heart />, 0.9, -8)}
+        {doodle(620, 1230, <Flask />, 0.85, -10)}
+        {doodle(250, 1250, <Capsule />, 0.9)}
+        {doodle(1500, 1230, <Neuron />, 0.7, -8)}
+        {/* a heartbeat line running along the bottom of the safe area */}
+        <path d="M 560 912 L 1060 912 L 1082 892 L 1104 912 L 1130 912 L 1155 862 L 1182 930 L 1204 896 L 1222 912 L 2000 912"
+              fill="none" stroke={INK} strokeWidth={5} strokeLinejoin="round" strokeLinecap="round" opacity={0.85} />
         <AxoSide x={1760} y={905} scale={1.1} rear={1} arm={-6} holding="pencil" />
       </svg>
       <div style={{position: 'absolute', left: 600, top: 530}}>
@@ -129,7 +191,7 @@ export const BrandBanner: React.FC<SceneProps> = () => {
         <div style={{fontFamily: DISPLAY, fontWeight: 800, fontSize: 168, lineHeight: 0.95, color: INK, letterSpacing: '-0.03em', marginTop: 22}}>
           Axol’s <span style={{color: ORANGE}}>Lab</span>
         </div>
-        <div style={{fontFamily: DISPLAY, fontWeight: 600, fontSize: 46, color: P.muted, marginTop: 14}}>MCAT science, no calculator required.</div>
+        <div style={{fontFamily: DISPLAY, fontWeight: 600, fontSize: 46, color: P.muted, marginTop: 14}}>Bio, chem, physics &amp; psych, made simple.</div>
       </div>
     </AbsoluteFill>
   );

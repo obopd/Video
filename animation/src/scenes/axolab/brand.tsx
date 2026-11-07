@@ -33,6 +33,55 @@ export const AxoFace: React.FC<{x: number; y: number; scale?: number; look?: num
   </g>
 );
 
+
+/** A puffy gill frond: soft stalk with round bumps (cuter than the feathery one). */
+const PuffGill: React.FC<{x: number; y: number; angle: number; len?: number}> = ({x, y, angle, len = 70}) => (
+  <g transform={`translate(${x} ${y}) rotate(${angle})`}>
+    <rect x={0} y={-11} width={len} height={22} rx={11} fill={INK} />
+    {[0.35, 0.62, 0.88].map((t, i) => (
+      <g key={i}>
+        <circle cx={len * t} cy={-15} r={10.5 - i * 1.2} fill={INK} />
+        <circle cx={len * t} cy={15} r={10.5 - i * 1.2} fill={INK} />
+      </g>
+    ))}
+    <circle cx={len + 4} cy={0} r={16} fill={INK} />
+  </g>
+);
+
+/** Cute Axo: round head, big sparkly eyes set low, blush, chubby body peeking up with little paws. */
+export const AxoCute: React.FC<{x: number; y: number; scale?: number; tilt?: number; bg?: string}> = ({x, y, scale = 1, tilt = -6, bg = ORANGE}) => (
+  <g transform={`translate(${x} ${y}) scale(${scale}) rotate(${tilt})`}>
+    {/* body peeking up from below */}
+    <ellipse cx={0} cy={215} rx={135} ry={125} fill={INK} />
+    {[-1, 1].map((s) => (
+      <g key={s} transform={`scale(${s} 1)`}>
+        <PuffGill x={-112} y={-50} angle={-138} len={64} />
+        <PuffGill x={-128} y={-8} angle={-166} len={72} />
+        <PuffGill x={-118} y={34} angle={-194} len={60} />
+      </g>
+    ))}
+    <ellipse cx={0} cy={0} rx={140} ry={112} fill={INK} />
+    {[-1, 1].map((s) => (
+      <g key={s}>
+        {/* eye: white, big ink pupil, two sparkles */}
+        <circle cx={s * 54} cy={10} r={33} fill={PAPER} />
+        <circle cx={s * 54} cy={16} r={24} fill={INK} />
+        <circle cx={s * 54 - 8} cy={5} r={9} fill={PAPER} />
+        <circle cx={s * 54 + 9} cy={26} r={4} fill={PAPER} />
+        {/* blush */}
+        <ellipse cx={s * 96} cy={54} rx={22} ry={12} fill={P.pink} />
+        {/* little paw resting on the edge */}
+        <g transform={`translate(${s * 56} 112)`}>
+          {/* outlined in the background colour so the paw reads against the body */}
+          {[-18, 0, 18].map((t) => <circle key={t} cx={t} cy={-18} r={11} fill={INK} stroke={bg} strokeWidth={7} />)}
+          <ellipse cx={0} cy={0} rx={34} ry={24} fill={INK} stroke={bg} strokeWidth={7} />
+          {[-18, 0, 18].map((t) => <circle key={t} cx={t} cy={-18} r={11} fill={INK} />)}
+        </g>
+      </g>
+    ))}
+  </g>
+);
+
 // Profile picture (800x800; YouTube crops it to a circle).
 export const BrandAvatar: React.FC<SceneProps> = (props) => {
   useFontsReady();
@@ -41,7 +90,7 @@ export const BrandAvatar: React.FC<SceneProps> = (props) => {
     <AbsoluteFill>
       <PaperBg color={bg} grain={0.35} />
       <svg viewBox="0 0 800 800" width={800} height={800} style={{position: 'absolute', inset: 0}}>
-        <AxoFace x={400} y={445} scale={1.8} />
+        {props.face !== 'cute' ? <AxoFace x={400} y={445} scale={1.8} /> : <AxoCute x={400} y={370} scale={1.55} bg={bg} />}
       </svg>
     </AbsoluteFill>
   );

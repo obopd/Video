@@ -34,15 +34,12 @@ pronounce:
   MCAT: em-cat
 
 thumbnail:
-  component: ThumbExam
+  component: ThumbMars   # each video gets its own thumbnail design
   props:
     tag: "MCAT PREP"
-    big: "Units"
-    hero: "in 3s?"
-    sub: "no calculator"
-    q: "A cell is 20 µm wide.|How many fit in 1 mm?"
-    choices: ["5", "50", "500", "5,000"]
-    answer: 1
+    big: "$125M"
+    hero: "unit error"
+    sub: "Don't make it on the MCAT."
 
 scenes:
   # ---------------------------------------------------------------- 0. hook

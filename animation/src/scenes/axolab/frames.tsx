@@ -244,4 +244,60 @@ export const ThumbExam: React.FC<SceneProps> = (props) => {
   );
 };
 
-export const frameScenes = {FrameHook, FrameCrate, FrameElevator, Thumb, ThumbExam};
+
+// Thumbnail for Video 2: the spacecraft lost at Mars to a units mix-up.
+const TEAL_T = '#11a596', AMBER_T = '#f2a23a', RED_T = '#e5484d';
+export const ThumbMars: React.FC<SceneProps> = (props) => {
+  const tag = (props.tag as string) ?? 'MCAT PREP';
+  const big = (props.big as string) ?? '$125M';
+  const hero = (props.hero as string) ?? 'unit error';
+  const sub = (props.sub as string) ?? "Don't make it on the MCAT.";
+  const M = {x: 1470, y: 470, r: 210};
+  const stars = Array.from({length: 46}).map((_, i) => [1000 + ((i * 197) % 900), 60 + ((i * 131) % 900), 2 + (i % 3)]);
+  return (
+    <Frame
+      html={
+        <>
+          <div style={{position: 'absolute', left: 96, top: 92}}><Tag style={{fontSize: 40, padding: '16px 38px 16px 44px', background: ORANGE, color: INK}}>{tag}</Tag></div>
+          <div style={{position: 'absolute', left: 84, top: 230, fontFamily: DISPLAY, fontWeight: 800, fontSize: 280, lineHeight: 0.9, color: INK, letterSpacing: '-0.04em'}}>{big}</div>
+          <div style={{position: 'absolute', left: 92, top: 520, fontFamily: DISPLAY, fontWeight: 800, fontSize: 170, lineHeight: 0.95, color: ORANGE, letterSpacing: '-0.03em', whiteSpace: 'nowrap'}}>{hero}</div>
+          {sub && <div style={{position: 'absolute', left: 100, top: 740, fontFamily: DISPLAY, fontWeight: 600, fontSize: 56, color: P.muted}}>{sub}</div>}
+        </>
+      }
+    >
+      {stars.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill={INK} opacity={0.3} />)}
+      {/* Mars and its thin atmosphere */}
+      <circle cx={M.x} cy={M.y} r={M.r + 90} fill={ORANGE} opacity={0.08} />
+      <circle cx={M.x} cy={M.y} r={M.r + 45} fill={ORANGE} opacity={0.1} />
+      <circle cx={M.x} cy={M.y} r={M.r} fill={ORANGE} stroke={INK} strokeWidth={LINE + 2} />
+      <ellipse cx={M.x - 60} cy={M.y - 50} rx={60} ry={30} fill={INK} opacity={0.16} />
+      <ellipse cx={M.x + 70} cy={M.y + 70} rx={40} ry={22} fill={INK} opacity={0.13} />
+      <ellipse cx={M.x - 20} cy={M.y + 110} rx={30} ry={14} fill={INK} opacity={0.1} />
+      {/* the plan (dotted teal orbit) vs what happened (amber path into the atmosphere) */}
+      <circle cx={M.x} cy={M.y} r={M.r + 130} fill="none" stroke={TEAL_T} strokeWidth={7} strokeDasharray="4 22" strokeLinecap="round" />
+      <path d="M 1000 1080 Q 1060 820 1160 680" fill="none" stroke={TEAL_T} strokeWidth={7} strokeDasharray="4 22" strokeLinecap="round" />
+      <path d="M 1160 680 Q 1215 610 1268 572" fill="none" stroke={AMBER_T} strokeWidth={9} strokeLinecap="round" />
+      {/* the probe, going dark, with a puff where it hit the air */}
+      <g transform="translate(1278 566) rotate(-38)">
+        <rect x={-62} y={-12} width={40} height={24} fill={PAPER} stroke={INK} strokeWidth={4} />
+        <rect x={22} y={-12} width={40} height={24} fill={PAPER} stroke={INK} strokeWidth={4} />
+        <rect x={-20} y={-20} width={40} height={40} rx={7} fill={INK} />
+      </g>
+      {[[1300, 540, 22], [1330, 520, 16], [1322, 556, 13]].map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill={PAPER} stroke={INK} strokeWidth={3} opacity={0.9} />)}
+      {/* same digits, different units */}
+      <g transform="translate(1070 880) rotate(-4)">
+        <rect x={-140} y={-46} width={280} height={92} rx={46} fill={PAPER} stroke={INK} strokeWidth={LINE} />
+        <text x={0} y={18} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={52} fill={INK}>lbf·s</text>
+      </g>
+      <text x={1290} y={910} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={110} fill={RED_T}>≠</text>
+      <g transform="translate(1490 880) rotate(3)">
+        <rect x={-110} y={-46} width={220} height={92} rx={46} fill={PAPER} stroke={INK} strokeWidth={LINE} />
+        <text x={0} y={18} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={52} fill={INK}>N·s</text>
+      </g>
+      {/* Axo, horrified */}
+      <AxoSide x={1850} y={1080} scale={0.8} rear={1} dir={-1} arm={-150} sweat />
+    </Frame>
+  );
+};
+
+export const frameScenes = {FrameHook, FrameCrate, FrameElevator, Thumb, ThumbExam, ThumbMars};

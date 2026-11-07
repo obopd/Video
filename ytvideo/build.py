@@ -138,7 +138,7 @@ class Builder:
         if spec.get("audio"):  # user-recorded voiceover for this scene
             sc.audio = self.path(spec["audio"])
         elif sc.narration:
-            key = hashlib.sha1(json.dumps([spoken, self.engine, self.voice], sort_keys=True).encode()).hexdigest()[:16]
+            key = hashlib.sha1(json.dumps([spoken, self.engine, self.voice, "tts-v2"], sort_keys=True).encode()).hexdigest()[:16]
             cache = self.out.parent / ".tts-cache"
             cache.mkdir(exist_ok=True)
             mp3 = cache / f"{key}.mp3"
@@ -165,6 +165,7 @@ class Builder:
             sc.words = tts.estimate_words(sc.narration, sc.voice_seconds)
         natural = LEAD_IN + sc.voice_seconds + TAIL if sc.voice_seconds else 0
         sc.seconds = max(float(spec.get("duration", 0) or 0), natural) or 4.0
+        sc.seconds = max(1, round(sc.seconds * self.fps)) / self.fps  # whole frames: no A/V drift at joins
 
     def render_frames(self, sc: Scene) -> None:
         s, size, theme = sc.spec, self.size, self.theme
@@ -270,7 +271,7 @@ class Builder:
         d = sc.seconds
         kind = sc.spec.get("type", "text")
         motion = sc.spec.get("motion", "zoom" if kind in ("image", "title") else "none")
-        clip = self.work / f"scene{sc.index:03}.mp4"
+        clip = self.work / f"scene{sc.index:03}.mkv"
         frames_n = max(1, round(d * self.fps))
 
         if sc.animation:
@@ -321,13 +322,13 @@ class Builder:
                "-map", "[v]", "-map", "[a]", "-t", f"{d:.3f}",
                "-c:v", "libx264", "-preset", "ultrafast" if self.preview else "medium",
                "-crf", "28" if self.preview else "18", "-r", str(self.fps),
-               "-c:a", "aac", "-b:a", "192k", "-ar", "48000", str(clip))
+               "-c:a", "pcm_s16le", "-ar", "48000", str(clip))
         sc.clip = clip
 
     def assemble(self, scenes: list[Scene], total: float) -> None:
         listing = self.work / "scenes.txt"
         listing.write_text("".join(f"file '{s.clip.as_posix()}'\n" for s in scenes))
-        body = self.work / "body.mp4"
+        body = self.work / "body.mkv"
         ffmpeg("-f", "concat", "-safe", "0", "-i", str(listing), "-c", "copy", str(body))
 
         sub_cfg = self.cfg.get("subtitles", {}) or {}
@@ -354,7 +355,7 @@ class Builder:
                            f"atrim=0:{total:.3f},afade=t=in:d=1,afade=t=out:st={max(0, total - fade_out):.3f}:d={fade_out}[m]")
             if music.get("duck", True):  # lower music while the voice is speaking
                 filters.append("[0:a]asplit=2[voice][sc]")
-                filters.append("[m][sc]sidechaincompress=threshold=0.02:ratio=8:attack=20:release=400[md]")
+                filters.append("[m][sc]sidechaincompress=threshold=0.015:ratio=4:attack=60:release=1500[md]")
                 filters.append("[voice][md]amix=inputs=2:duration=first:normalize=0[a]")
             else:
                 filters.append("[0:a][m]amix=inputs=2:duration=first:normalize=0[a]")
@@ -373,8 +374,21 @@ class Builder:
             vlabel = "[v]"
 
         # Normalize to YouTube's playback loudness (-14 LUFS) so the video isn't quieter than others.
+        # Two passes: measure first, then apply one steady (linear) gain. Single-pass loudnorm
+        # rides the gain up and down, which you can hear as pumping or "lagging" audio.
         src = alabel if alabel.startswith("[") else f"[{alabel}]"
-        filters.append(f"{src}loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]")
+        target = "I=-14:TP=-1.5:LRA=11"
+        audio_only = [f for f in filters if "subtitles=" not in f]
+        probe = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", *inputs, "-filter_complex",
+                                ";".join(audio_only + [f"{src}loudnorm={target}:print_format=json[aout]"]),
+                                "-map", "[aout]", "-f", "null", "-"], cwd=self.work, capture_output=True, text=True)
+        try:
+            m = json.loads(probe.stderr[probe.stderr.rindex("{"):probe.stderr.rindex("}") + 1])
+            target += (f":measured_I={m['input_i']}:measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}"
+                       f":measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+        except (ValueError, KeyError):
+            log("loudness measurement failed; using single-pass normalization")
+        filters.append(f"{src}loudnorm={target},aresample=48000[aout]")
         alabel = "[aout]"
         args = [*inputs, "-filter_complex", ";".join(filters), "-map", vlabel, "-map", alabel]
         args += ["-c:v", "libx264", "-preset", "ultrafast" if self.preview else "medium",

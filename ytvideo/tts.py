@@ -116,7 +116,15 @@ def split_sentences(text: str) -> list[tuple[str, float]]:
         else:
             pause = 0.08 + 0.14 * jitter
         out.append((p.rstrip("\u2014").strip(), pause))
-    return out
+    # Very short sentences ("No calculator.") give the multilingual voice too little context
+    # to recognise English, and it can slip into another accent. Send them with a neighbour.
+    merged: list[tuple[str, float]] = []
+    for sent, pause in out:
+        if merged and (len(merged[-1][0].split()) < 4 or len(sent.split()) < 4):
+            merged[-1] = (merged[-1][0] + " " + sent, pause)
+        else:
+            merged.append((sent, pause))
+    return merged
 
 
 # Subtle "recorded voice" treatment: remove rumble, add a little chest warmth and
@@ -146,7 +154,8 @@ def _edge(text: str, out_mp3: Path, voice: dict) -> list[dict]:
             trimmed = tmpd / f"s{i}.wav"
             # drop the service's trailing silence so we control the pauses ourselves
             subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-af",
-                            "areverse,silenceremove=start_periods=1:start_threshold=-48dB:start_silence=0.05,areverse,"
+                            "areverse,silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.09,"
+                            "afade=t=in:d=0.03,areverse,afade=t=in:d=0.004,"  # soft edges: no clicks at sentence joins
                             "aresample=48000", "-ac", "1", str(trimmed)], check=True)
             dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                         "-of", "csv=p=0", str(trimmed)], capture_output=True, text=True).stdout)

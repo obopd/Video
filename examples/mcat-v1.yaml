@@ -46,52 +46,89 @@ scenes:
   - type: animated
     fade: false
     component: V1Black
-    duration: 0.7
+    duration: 0.5
     chapter: "The 96-second question"
 
   - type: animated
     fade: false
-    component: V1Hook
+    component: V1HookRoom
+    duration: 6.8
     narration: >
-      Ninety-six seconds. That's all you get for each MCAT question, and there is no calculator.
-      Here's one. A solution has a hydrogen ion concentration of three times ten to the minus five.
-      What's its pH? Most people freeze. In ten minutes you'll answer this in ten seconds, and you'll
-      know why it works, not just how.
-
-  # ---------------------------------------------------------------- 1. count the zeros
-  - type: animated
-    fade: false
-    component: V1Zeros
-    chapter: "Count the zeros"
-    narration: >
-      Chemistry numbers are absurd. One mole is six hundred two, followed by twenty-one zeros, of
-      particles. Nobody wants to write that. So don't write the zeros. Count them. A number is really
-      two things: the digits that matter, and how many tens are stacked on top. Here: six-point-oh-two,
-      and twenty-three tens. That count is the exponent.
+      Ninety-six seconds. That's all you get for each MCAT question.
 
   - type: animated
     fade: false
-    component: V1Tiny
+    component: V1HookPOV
+    duration: 18.5
     narration: >
-      Tiny numbers work the same way, in reverse. Zero-point-zero-zero-zero-four-five is four-point-five,
-      divided by ten, four times. A negative exponent just means: divide by ten that many times.
+      And you have no calculator. Here's one. A solution has a hydrogen ion concentration of three times
+      ten to the minus five. What's its pH? Most people freeze. In ten minutes you'll answer this in ten
+      seconds, and you'll know why it works, not just how.
+
+  # ---------------------------------------------------------------- 1. what is scientific notation?
+  - type: animated
+    fade: false
+    component: V1Mole
+    duration: 13
+    chapter: "What is scientific notation?"
+    narration: >
+      Chemistry numbers are absurd. This chamber holds exactly one mole of gas particles. How many is that?
+      Six hundred and two, followed by twenty-one zeros. Nobody wants to write that.
 
   - type: animated
     fade: false
-    component: V1ZeroOps
+    component: V1Notation
     narration: >
-      Now the payoff. Multiplying becomes counting. Ten thousand times a thousand: four zeros meet three
-      zeros, and you get seven. So when you multiply, exponents add. Divide, and zeros cancel in pairs,
-      so exponents subtract.
+      So chemists write it like this: six-point-oh-two times ten to the twenty-three. That number is called
+      Avogadro's number. It's how many particles are in one mole. Think of a mole as a chemist's dozen: a
+      dozen is twelve of anything, and a mole is six-point-oh-two times ten to the twenty-three of anything,
+      atoms, molecules, whatever you're counting.
 
   - type: animated
     fade: false
-    component: V1Dollars
+    component: V1Rule
     narration: >
-      Adding is different. Three dollars plus two dimes. You can't call that five of anything. Two dimes
-      is point-two dollars. Now the units match: three-point-two dollars. Powers of ten are your units.
-      Three times ten to the five, plus two times ten to the four: turn the second into point-two times
-      ten to the five, then add. Three-point-two times ten to the five.
+      Writing a number this way is called scientific notation, and it always has two parts. A front number
+      that is at least one and less than ten, then ten raised to a power. Six-point-oh-two fits. Sixty-two
+      doesn't, and neither does zero-point-six. The power counts how many times you multiply by ten. Here,
+      twenty-three times.
+
+  - type: animated
+    fade: false
+    component: V1Slide
+    narration: >
+      To land the front number between one and ten, slide the decimal point. Slide it left, and the exponent
+      goes up. Slide it right, and it goes down. Zero-point-zero-zero-zero-four-five: slide four places right
+      and you get four-point-five times ten to the minus four. A negative exponent just means: divide by ten
+      that many times.
+
+  - type: animated
+    fade: false
+    component: V1Mult
+    narration: >
+      Now the payoff: calculating. When you multiply, multiply the front numbers and add the exponents. Ten
+      thousand times a thousand: four zeros meet three zeros, seven zeros. So three times ten to the four,
+      times two times ten to the three, is six times ten to the seven. If the front number lands outside one
+      to ten, slide the decimal and fix the exponent. Five times ten to the three, times four times ten to the
+      two, gives twenty times ten to the five, which is two times ten to the six.
+
+  - type: animated
+    fade: false
+    component: V1Div
+    narration: >
+      When you divide, divide the front numbers and subtract the exponents. The zeros cancel in pairs. Eight
+      times ten to the six, over four times ten to the two, is two times ten to the four.
+
+  - type: animated
+    fade: false
+    component: V1AddSub
+    narration: >
+      Adding and subtracting are different. Three dollars plus two dimes. You can't call that five of
+      anything. Two dimes is point-two dollars. Now the units match: three-point-two dollars. Powers of ten
+      are your units. Three times ten to the five, plus two times ten to the four: turn the second into
+      point-two times ten to the five, then add. Three-point-two times ten to the five. Subtracting works the
+      same way: three dollars minus two dimes is two-point-eight dollars. Match the exponents first, then
+      subtract.
 
   # ---------------------------------------------------------------- 2. logarithms
   - type: animated

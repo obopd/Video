@@ -55,8 +55,8 @@ export const Pencil: React.FC<{len?: number; w?: number; face?: boolean}> = ({le
  */
 export const AxoSide: React.FC<{
   x: number; y: number; scale?: number; dir?: 1 | -1; rear?: number; arm?: number;
-  holding?: 'pencil' | null; sweat?: boolean; wink?: boolean; run?: number;
-}> = ({x, y, scale = 1, dir = 1, rear = 0, arm = 40, holding = null, sweat = false, wink = false, run}) => {
+  holding?: 'pencil' | null; sweat?: boolean; wink?: boolean; run?: number; look?: number;
+}> = ({x, y, scale = 1, dir = 1, rear = 0, arm = 40, holding = null, sweat = false, wink = false, run, look = 0}) => {
   const f = useCurrentFrame();
   const ph = (run ?? 0) * Math.PI * 2;
   const tilt = -rear * 62;
@@ -94,7 +94,7 @@ export const AxoSide: React.FC<{
           <Gill x={-40} y={22} angle={152 + wig} />
           <ellipse cx={0} cy={0} rx={66} ry={58} fill={INK} />
           {/* eyes: near eye bigger, far eye smaller (3/4 view) */}
-          <g transform={`scale(${dir} 1)`}>
+          <g transform={`scale(${dir} 1) translate(${look} 0)`}>
             {wink ? (
               <path d="M 4 -10 Q 18 -22 32 -10" stroke={PAPER} strokeWidth={6} strokeLinecap="round" fill="none" />
             ) : (

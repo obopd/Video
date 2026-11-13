@@ -111,13 +111,6 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
         <>
           <SfxList items={[[absurd + 8, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
             [tStop, 'slide', 0.3, 0.7], [nobody, 'thud', 0.3]]} />
-          <Heads items={[
-            {at: absurd, text: 'Chemistry numbers are [[absurd.]]'},
-            {at: chamber, text: 'This chamber: [[1 mole]] of gas'},
-            {at: how, text: 'How many is that?'},
-            {at: six, text: '602, then [[21 zeros]]'},
-            {at: nobody, text: 'Nobody wants to write that.'},
-          ]} />
         </>
       }
       svg={
@@ -189,6 +182,17 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
               {[0, 1, 2].map((k) => <text key={k} x={((2200 - (f - six) * 70 - k * 700) % 2400 + 2400) % 2400 - 200} y={950 - k * 40} fontFamily={DISPLAY} fontWeight={800} fontSize={300} fill={INK} filter="url(#fgblur)">0</text>)}
             </g>
           )}
+          {/* headlines on top of the swarm, on a soft paper band while we're inside it */}
+          <rect x={0} y={120} width={1920} height={150} fill={PAPER} opacity={0.82 * (1 - pb)} />
+          <foreignObject x={0} y={0} width={1920} height={420}>
+            <Heads items={[
+            {at: absurd, text: 'Chemistry numbers are [[absurd.]]'},
+            {at: chamber, text: 'This chamber: [[1 mole]] of gas'},
+            {at: how, text: 'How many is that?'},
+            {at: six, text: '602, then [[21 zeros]]'},
+            {at: nobody, text: 'Nobody wants to write that.'},
+            ]} />
+          </foreignObject>
           {/* the rolling zero counter */}
           {f >= six && (
             <g opacity={fin(f, six, 8)}>
@@ -652,7 +656,7 @@ export const V1AddSub: React.FC<SceneProps> = (props) => {
               {toTags > 0 && (
                 <g opacity={toTags}>
                   {/* match cut: bills become ×10⁵, the dime-bill becomes ×10⁴ */}
-                  <g transform={`translate(${-260 * join} 0)`}>
+                  <g opacity={1 - join}>
                     <T x={600} y={600} size={120} anchor="end">3</T>
                     <rect x={620} y={500} width={240} height={130} rx={34} fill={AMBER} fillOpacity={0.35} stroke={INK} strokeWidth={4} />
                     <T x={740} y={600} size={96}>×10<Sp>5</Sp></T>
@@ -665,9 +669,9 @@ export const V1AddSub: React.FC<SceneProps> = (props) => {
                     <RollT x={1450} y={560} a="4" b="5" t={roll} size={58} anchor="start" color={ORANGE} />
                   </g>
                   {join > 0 && (
-                    <g opacity={join}>
-                      <rect x={330} y={470} width={1000} height={190} rx={40} fill="none" stroke={TEAL} strokeWidth={5} opacity={join} />
-                      <T x={1080} y={600} size={100} anchor="start" color={TEAL} o={fin(f, done + 10, 8)}>= 3.2 × 10<Sp>5</Sp></T>
+                    <g opacity={join} transform={`translate(960 570) scale(${tsp(f, done - 6, done + 12, 0.7, 1)})`}>
+                      <rect x={-330} y={-100} width={660} height={190} rx={40} fill={PAPER} stroke={TEAL} strokeWidth={5} />
+                      <T x={0} y={30} size={110} color={TEAL}>3.2 × 10<Sp>5</Sp></T>
                     </g>
                   )}
                 </g>

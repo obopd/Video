@@ -68,7 +68,7 @@ scenes:
   - type: animated
     fade: false
     component: V1Mole
-    duration: 13
+    duration: 12.4
     chapter: "What is scientific notation?"
     narration: >
       Chemistry numbers are absurd. This chamber holds exactly one mole of gas particles. How many is that?

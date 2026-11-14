@@ -96,12 +96,16 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
   const arc = Math.sin(pb * Math.PI / 2) * 1;         // a gentle 20° arc, faked with parallax
   // the digits stream out of the valve one after another (6, 0, 2, then zeros); the camera follows the newest one, then brakes
   const N = 24, emitEvery = 3, GAP = 86;
-  const runLen = Math.max(N * emitEvery, D - 14 - six);   // keep streaming until the line ends
+  const runLen = Math.max(N * emitEvery, nobody - 2 - six);   // keep streaming until "Nobody…"
   const u = clamp01((f - six) / runLen);
   const shape = (x: number) => (x < 0.2 ? 2.5 * x * x : x > 0.85 ? 1 - (1 - x) * (1 - x) / 0.3 : 0.1 + (x - 0.2) * (0.925 - 0.1) / 0.65);
   const headX = 1290 + GAP * (N - 1) * shape(u);
   const tStop = six + runLen;
-  const camX = Math.max(0, headX - 1450);
+  // on "Nobody wants to write that": every zero folds into the ×10²³ and the number forms
+  const fold = inOut((f - nobody - 4) / 26);
+  const foldX = 1290 + 3 * GAP, camFinal = 730;
+  const camX = Math.max(0, headX - 1450) * (1 - fold) + camFinal * fold;
+  const formed = clamp01((fold - 0.7) / 0.3);
   const space = clamp01((f - six - 10) / 36);
   const shownN = f < six ? 0 : Math.min(N, Math.floor((headX - 1290) / GAP) + 1);
   const zerosOut = Math.max(0, shownN - 3);
@@ -111,7 +115,7 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[0, 'sparkle', 0.25, 0.8], [pbStart, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
-            [tStop, 'slide', 0.3, 0.7], [nobody, 'thud', 0.3]]} />
+            [nobody + 4, 'swish', 0.35, 1.2], [nobody + 28, 'clack', 0.5]]} />
         </>
       }
       svg={
@@ -148,7 +152,7 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
               </g>
               {space > 0 && <g transform={`translate(${C.x} ${C.y}) scale(${1 / camS}) translate(${-C.x} ${-C.y}) translate(${camX} 0)`}><Grid o={space} dx={camX * 0.5} /></g>}
               {/* the chamber, with particles bouncing inside */}
-              <g opacity={1 - 0.75 * space}>
+              <g opacity={1 - space}>
                 <rect x={760} y={300} width={400} height={580} rx={40} fill={TEAL} fillOpacity={0.06} stroke={INK} strokeWidth={LINE} />
                 <rect x={740} y={280} width={440} height={36} rx={12} fill={PAPER} stroke={INK} strokeWidth={LINE} />
                 <text x={960} y={850} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={34} letterSpacing={4} fill={INK} opacity={0.5}>1 mole</text>
@@ -181,11 +185,14 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
             </g>
             {/* the ribbon of digits */}
             {f >= six && Array.from({length: shownN}).map((_, k) => {
-              const x = 1290 + k * GAP;
-              const pop = k === shownN - 1 ? clamp01((headX - x) / GAP + 0.4) : 1;
-              return <ZeroTile key={k} x={x - GAP * (1 - pop) * 0.6} y={600} s={0.95 * (0.7 + 0.3 * pop)} o={pop} ch={digit(k)} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />;
+              const x0 = 1290 + k * GAP;
+              const pop = k === shownN - 1 ? clamp01((headX - x0) / GAP + 0.4) : 1;
+              const x = k < 3 ? x0 : x0 + (foldX - x0) * fold;
+              const sc = k < 3 ? 1 : 1 - 0.6 * fold;
+              return <ZeroTile key={k} x={x - GAP * (1 - pop) * 0.6} y={600} s={0.95 * (0.7 + 0.3 * pop) * sc} o={pop * (1 - formed)} ch={digit(k)} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />;
             })}
           </g>
+          {formed > 0 && <T x={960} y={610} size={170} o={formed}>6.02 × 10<tspan baselineShift="super" fontSize="0.58em" fill={ORANGE}>23</tspan></T>}
           {/* foreground zeros blurring past */}
           {space > 0 && f < tStop + 10 && (
             <g opacity={0.25 * space}>
@@ -204,7 +211,7 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
           </foreignObject>
           {/* the rolling zero counter */}
           {f >= six && (
-            <g opacity={fin(f, six, 8)}>
+            <g opacity={fin(f, six, 8) * (1 - fold)}>
               <rect x={1610} y={900} width={250} height={110} rx={20} fill={PAPER} stroke={INK} strokeWidth={4} />
               <text x={1735} y={942} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={22} letterSpacing={3} fill={P.muted}>ZEROS</text>
               <text x={1735} y={994} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={56} fill={INK}>{zerosOut}</text>
@@ -239,7 +246,7 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
   const dozen = cue("chemist's dozen", 0.42), twelve = cue('dozen is twelve', 0.5), moleIs = cue('a mole is', 0.6), atoms = cue('atoms', 0.8), mols = cue('molecules', 0.86);
   const W = 76, X0 = 960 - (24 * W) / 2;
   const squeeze = tsp(f, write + 4, write + 26, 0, 1);
-  const resolve = fin(f, sixp, 10);
+  const resolve = 1;   // the number already formed at the end of the previous scene
   const spoolX = 1200;
   const toCorner = tio(f, parts, parts + 22);
   const numX = 960, numY = 560 + (380 - 560) * toCorner, numS = 1 - 0.4 * toCorner;
@@ -252,7 +259,7 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
     <Frame enter="cut" push={0.015}
       html={
         <>
-          <SfxList items={[[write + 4, 'swish', 0.4, 1.3], [write + 26, 'clack', 0.55], [sixp, 'pop', 0.4], [parts, 'slide', 0.3], [twelve, 'pop', 0.35], [moleIs, 'rise', 0.3, 1.2], [atoms, 'pop', 0.35, 1.2], [mols, 'pop', 0.35, 1.3]]} />
+          <SfxList items={[[sixp, 'pop', 0.4], [parts, 'slide', 0.3], [twelve, 'pop', 0.35], [moleIs, 'rise', 0.3, 1.2], [atoms, 'pop', 0.35, 1.2], [mols, 'pop', 0.35, 1.3]]} />
           <Heads items={[
             {at: write, text: 'Write it like [[this:]]'},
             {at: avo, text: "[[Avogadro's]] number"},
@@ -265,7 +272,7 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
         <g>
           <Grid o={1 - paperBack} />
           {/* the ribbon squeezes like an accordion into a spool */}
-          {resolve < 1 && (
+          {false && (
             <g opacity={1 - resolve}>
               {Array.from({length: 24}).map((_, k) => {
                 const x0 = X0 + k * W + W / 2;
@@ -275,7 +282,7 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
             </g>
           )}
           {resolve > 0 && (
-            <g opacity={resolve} transform={`translate(${numX} ${numY}) scale(${numS})`}>
+            <g opacity={resolve} transform={`translate(${numX} ${numY}) scale(${numS * (f > sixp && f < sixp + 20 ? 1 + 0.05 * Math.sin(((f - sixp) / 20) * Math.PI) : 1)})`}>
               <T x={0} y={50} size={170}>6.02 × 10<tspan baselineShift="super" fontSize="0.58em" fill={ORANGE}>23</tspan></T>
             </g>
           )}

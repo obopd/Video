@@ -72,47 +72,52 @@ const AxoAtDesk: React.FC<{x: number; y: number; s?: number; look: number}> = ({
   );
 };
 
-/** The exam room, front view. `secs` drives the wall countdown. */
+/** The exam room, front view at eye level: every head sits on Axo's eye line (the horizon),
+ *  rows run in straight lines and shrink with distance, the back wall shows the exam details. */
+const H = 470;   // eye line / horizon
+const rowBase = (s: number) => H + 252 * s;   // floor y for a row whose heads sit on the eye line
 const ExamRoom: React.FC<{secs: number}> = ({secs}) => {
   const f = useCurrentFrame();
   const look = [0, -7, 0, 7][Math.floor(f / 14) % 4];
-  const proX = 300 + 1300 * (0.5 - 0.5 * Math.cos(f / 90));
+  const proX = 1180 + 380 * (0.5 - 0.5 * Math.cos(f / 80));
+  const back = 0.62, mid = 1.15, front = 2.2;
   return (
     <g>
-      <rect x={-200} y={-200} width={2320} height={1480} fill={PAPER} />
-      {/* ceiling lights and a small security dome */}
-      <rect x={-200} y={-200} width={2320} height={262} fill="#ebe3d5" />
-      {[360, 960, 1560].map((x) => <rect key={x} x={x - 170} y={14} width={340} height={30} rx={6} fill="#fffdf3" stroke={INK} strokeWidth={3} />)}
-      <line x1={-200} x2={2120} y1={62} y2={62} stroke={INK} strokeWidth={4} />
-      <g transform="translate(1790 62)"><path d="M -26 0 A 26 26 0 0 0 26 0 Z" fill={INK} /><circle cx={0} cy={14} r={6} fill={RED} /></g>
-      {/* back wall: banner, rules, countdown clock */}
-      <rect x={560} y={98} width={800} height={74} rx={8} fill={PAPER} stroke={INK} strokeWidth={LINE} />
-      <text x={960} y={148} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={32} letterSpacing={3} fill={INK}>MCAT EXAM IN PROGRESS: SILENCE</text>
-      <g transform="translate(300 290)">
-        <rect x={-130} y={-52} width={260} height={104} rx={8} fill="#fffdf8" stroke={INK} strokeWidth={4} />
-        <text x={0} y={-10} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={24} fill={INK}>No calculators.</text>
-        <text x={0} y={24} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={24} fill={INK}>No phones.</text>
+      <rect x={-300} y={-300} width={2520} height={1680} fill={PAPER} />
+      {/* ceiling with lights and a small security dome */}
+      <rect x={-300} y={-300} width={2520} height={340} fill="#ebe3d5" />
+      {[460, 960, 1460].map((x) => <rect key={x} x={x - 150} y={0} width={300} height={24} rx={6} fill="#fffdf3" stroke={INK} strokeWidth={3} />)}
+      <line x1={-300} x2={2220} y1={40} y2={40} stroke={INK} strokeWidth={4} />
+      <g transform="translate(1700 40)"><path d="M -22 0 A 22 22 0 0 0 22 0 Z" fill={INK} /><circle cx={0} cy={12} r={5} fill={RED} /></g>
+      {/* back wall: banner, rules sign, countdown clock */}
+      <rect x={600} y={78} width={720} height={66} rx={8} fill={PAPER} stroke={INK} strokeWidth={LINE} />
+      <text x={960} y={122} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={30} letterSpacing={3} fill={INK}>MCAT EXAM IN PROGRESS: SILENCE</text>
+      <g transform="translate(330 250)">
+        <rect x={-140} y={-56} width={280} height={112} rx={8} fill="#fffdf8" stroke={INK} strokeWidth={4} />
+        <text x={0} y={-12} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={26} fill={INK}>No calculators.</text>
+        <text x={0} y={26} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={26} fill={INK}>No phones.</text>
       </g>
-      <g transform="translate(1620 290)">
-        <rect x={-110} y={-62} width={220} height={124} rx={16} fill={INK} />
-        <text x={0} y={24} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={76} fill={secs <= 10 ? RED : ORANGE}>{Math.ceil(secs)}</text>
-        <rect x={-90} y={40} width={180 * (secs / 96)} height={7} rx={3} fill={ORANGE} />
+      <g transform="translate(1590 250)">
+        <rect x={-120} y={-66} width={240} height={132} rx={16} fill={INK} />
+        <text x={0} y={26} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={82} fill={secs <= 10 ? RED : ORANGE}>{Math.ceil(secs)}</text>
+        <rect x={-96} y={44} width={192 * (secs / 96)} height={7} rx={3} fill={ORANGE} />
       </g>
-      <rect x={-200} y={520} width={2320} height={1000} fill="#ece4d6" />
-      <line x1={-200} x2={2120} y1={520} y2={520} stroke={INK} strokeWidth={4} />
-      {/* proctor, slowly walking along the back */}
-      <g transform={`translate(${proX} 560) scale(0.55)`}>
+      {/* floor meets the back wall a little below the eye line */}
+      <rect x={-300} y={540} width={2520} height={900} fill="#ece4d6" />
+      <line x1={-300} x2={2220} y1={540} y2={540} stroke={INK} strokeWidth={3} />
+      {/* proctor at the back */}
+      <g transform={`translate(${proX} ${rowBase(back) - 30}) scale(0.62)`}>
         <rect x={-34} y={-150} width={22} height={150} rx={10} fill={INK} />
         <rect x={12} y={-150} width={22} height={150} rx={10} fill={INK} />
         <path d="M -50 -150 Q -56 -280 0 -300 Q 56 -280 50 -150 Z" fill={INK} />
         <circle cx={0} cy={-330} r={30} fill={INK} />
       </g>
-      {/* back row, middle row, front row (Axo in the middle) */}
-      {[0, 1, 2, 3, 4].map((i) => <g key={`b${i}`}><FrontStudent x={360 + i * 300} y={690} s={0.48} seed={i} /><FrontDesk x={360 + i * 300} y={690} s={0.48} /></g>)}
-      {[0, 1, 2, 3].map((i) => <g key={`m${i}`}><FrontStudent x={390 + i * 380} y={830} s={0.66} seed={i + 5} /><FrontDesk x={390 + i * 380} y={830} s={0.66} /></g>)}
-      {[-1, 1].map((k) => <g key={`f${k}`}><FrontStudent x={960 + k * 560} y={1060} s={1.1} seed={k + 9} /><FrontDesk x={960 + k * 560} y={1060} s={1.1} /></g>)}
-      <AxoAtDesk x={960} y={1060} s={1.1} look={look} />
-      <FrontDesk x={960} y={1060} s={1.1} />
+      {/* back row, middle row: straight lines, heads on the eye line */}
+      {[-3, -2, -1, 0, 1, 2, 3].map((k) => { const x = 960 + k * 200; return <g key={`b${k}`}><FrontStudent x={x} y={rowBase(back)} s={back} seed={k + 3} /><FrontDesk x={x} y={rowBase(back)} s={back} /></g>; })}
+      {[-2, -1, 1, 2].map((k) => { const x = 960 + k * 430; return <g key={`m${k}`}><FrontStudent x={x} y={rowBase(mid)} s={mid} seed={k + 8} /><FrontDesk x={x} y={rowBase(mid)} s={mid} /></g>; })}
+      {/* front row: Axo in the middle, his neighbours cut by the frame */}
+      <AxoAtDesk x={960} y={rowBase(front) - 12} s={front} look={look} />
+      <FrontDesk x={960} y={rowBase(front) - 12} s={front} />
     </g>
   );
 };
@@ -129,8 +134,8 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
   const z = Math.exp(Math.log(70) * dive);
   const settle = ease((f - p0) / Math.max(1, D - 4 - p0));
   // framed close on Axo at his eye level, so he fills the middle of the screen; a gentle settle
-  const roomS = 3.0 - 0.4 * settle;
-  const CAM = {x: 960, y: 790};
+  const roomS = 1.12 - 0.12 * settle;
+  const CAM = {x: 960, y: 540};
   const secs = Math.max(0, 96 - Math.max(0, f - c96) / fps);
   const ticks: [number, 'tick' | 'tock', number][] = [];
   for (let t = c96, k = 0; t < D; t += fps, k++) ticks.push([t, k % 2 ? 'tock' : 'tick', 0.3]);
@@ -270,7 +275,7 @@ export const V1HookPOV: React.FC<SceneProps> = (props) => {
                     <PencilItem x={160} y={720} a={-24} />
                     <PencilItem x={300} y={850} a={8} len={260} />
                     <g transform="translate(480 520) rotate(18)"><rect x={-50} y={-26} width={100} height={52} rx={10} fill="#f3a5b8" stroke={INK} strokeWidth={4} /><rect x={-50} y={-26} width={36} height={52} rx={10} fill={PAPER} stroke={INK} strokeWidth={4} /></g>
-                    <g transform="translate(1180 160) rotate(4)">
+                    <g transform="translate(1180 236) rotate(4)">
                       <rect x={-330} y={-34} width={660} height={68} rx={8} fill={PAPER} stroke={INK} strokeWidth={4} />
                       {Array.from({length: 31}).map((_, i) => <line key={i} x1={-310 + i * 20.6} x2={-310 + i * 20.6} y1={-34} y2={i % 5 === 0 ? -4 : -18} stroke={INK} strokeWidth={2.5} />)}
                     </g>
@@ -323,7 +328,7 @@ export const V1HookPOV: React.FC<SceneProps> = (props) => {
               {blank > 0 && <rect x={-10} y={-10} width={1940} height={1100} fill={PAPER} opacity={blank} />}
               {f >= eyeEnd && macro < 0.3 && (
                 <foreignObject x={0} y={0} width={1920} height={400}>
-                  <KeySeq x={90} y={50} w={1740} align="center" size={64} items={[
+                  <KeySeq x={90} y={110} w={1740} align="center" size={64} items={[
                     {at: noCalc - 6, text: 'No [[calculator.]]'},
                     {at: here, text: "Here's one."},
                     {at: freeze, text: 'Most people [[freeze.]]'},

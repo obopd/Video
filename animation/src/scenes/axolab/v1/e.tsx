@@ -89,13 +89,14 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
   const absurd = cue('absurd', 0.02), chamber = cue('This chamber', 0.15), how = cue('How many is that', 0.35);
   const six = cue('Six hundred', 0.48), nobody = cue('Nobody', 0.85);
   // pull back from inside the swarm to the chamber on the bench
-  const pb = inOut((f - absurd - 8) / 90);
+  const pbStart = Math.max(absurd + 24, chamber - 62);
+  const pb = inOut((f - pbStart) / 76);
   const camS = 5.2 - 4.2 * pb;
   const C = {x: 960, y: 600};
   const arc = Math.sin(pb * Math.PI / 2) * 1;         // a gentle 20° arc, faked with parallax
   // the digits stream out of the valve one after another (6, 0, 2, then zeros); the camera follows the newest one, then brakes
   const N = 24, emitEvery = 3, GAP = 86;
-  const runLen = N * emitEvery;
+  const runLen = Math.max(N * emitEvery, D - 14 - six);   // keep streaming until the line ends
   const u = clamp01((f - six) / runLen);
   const shape = (x: number) => (x < 0.2 ? 2.5 * x * x : x > 0.85 ? 1 - (1 - x) * (1 - x) / 0.3 : 0.1 + (x - 0.2) * (0.925 - 0.1) / 0.65);
   const headX = 1290 + GAP * (N - 1) * shape(u);
@@ -109,7 +110,7 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
     <Frame enter="cut" push={0}
       html={
         <>
-          <SfxList items={[[absurd + 8, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
+          <SfxList items={[[0, 'sparkle', 0.25, 0.8], [pbStart, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
             [tStop, 'slide', 0.3, 0.7], [nobody, 'thud', 0.3]]} />
         </>
       }
@@ -157,9 +158,12 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
                   const depth = 0.4 + random(`pd${i}`) * 0.6;
                   const sp = (0.6 + random(`ps${i}`) * 1.4) * depth;
                   const tri = (u: number) => Math.abs(((u % 2) + 2) % 2 - 1);
-                  const px = 790 + 340 * tri(random(`px${i}`) * 2 + (f * sp) / 120);
-                  const py = 330 + 520 * tri(random(`py${i}`) * 2 + (f * sp) / 170);
-                  return <circle key={i} cx={px} cy={py} r={4 + 7 * depth} fill={ORANGE} fillOpacity={0.25 + 0.55 * depth} stroke={INK} strokeWidth={depth > 0.7 ? 1.5 : 0} />;
+                  const jx = Math.sin(f / (7 + 5 * random(`jx${i}`)) + i) * 3, jy = Math.cos(f / (6 + 6 * random(`jy${i}`)) + i * 1.7) * 3;
+                  const px = 790 + 340 * tri(random(`px${i}`) * 2 + (f * sp) / 120) + jx;
+                  const py = 330 + 520 * tri(random(`py${i}`) * 2 + (f * sp) / 170) + jy;
+                  const born = random(`born${i}`) * 26, g = ease(clamp01((f - born) / 10));
+                  if (g <= 0) return null;
+                  return <circle key={i} cx={px} cy={py} r={(4 + 7 * depth) * (0.4 + 0.6 * g)} fill={ORANGE} fillOpacity={(0.25 + 0.55 * depth) * g} stroke={INK} strokeOpacity={g} strokeWidth={depth > 0.7 ? 1.5 : 0} />;
                 })}
                 {/* Axo, tiny beside it, hands on the glass, and his faint reflection */}
                 <g transform={`translate(${20 * arc} 0)`}>
@@ -183,11 +187,9 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
             </g>
           )}
           {/* headlines on top of the swarm, on a soft paper band while we're inside it */}
-          <rect x={0} y={120} width={1920} height={150} fill={PAPER} opacity={0.82 * (1 - pb)} />
           <foreignObject x={0} y={0} width={1920} height={420}>
             <Heads items={[
-            {at: absurd, text: 'Chemistry numbers are [[absurd.]]'},
-            {at: chamber, text: 'This chamber: [[1 mole]] of gas'},
+            {at: Math.max(chamber, pbStart + 72), text: 'This chamber: [[1 mole]] of gas'},
             {at: how, text: 'How many is that?'},
             {at: six, text: '602, then [[21 zeros]]'},
             {at: nobody, text: 'Nobody wants to write that.'},
@@ -231,9 +233,9 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
   const W = 76, X0 = 960 - (24 * W) / 2;
   const squeeze = tsp(f, write + 4, write + 26, 0, 1);
   const resolve = fin(f, sixp, 10);
-  const spoolX = X0 + 3 * W + 150;
+  const spoolX = 1200;
   const toCorner = tio(f, parts, parts + 22);
-  const numX = 960 + (480 - 960) * toCorner, numY = 560 + (360 - 560) * toCorner, numS = 1 - 0.42 * toCorner;
+  const numX = 960, numY = 560 + (380 - 560) * toCorner, numS = 1 - 0.4 * toCorner;
   const paperBack = clamp01((f - avo) / 24);
   const eggs = fin(f, twelve, 6);
   const row = fin(f, moleIs, 10);
@@ -263,24 +265,19 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
                 const x = k < 3 ? x0 : x0 + (spoolX - x0) * squeeze;
                 return <ZeroTile key={k} x={x} y={560} s={0.8 * (k < 3 ? 1 : 1 - 0.55 * squeeze)} ch={k === 0 ? '6' : k === 2 ? '2' : '0'} color={k < 3 ? ORANGE : INK} />;
               })}
-              {squeeze > 0.6 && <rect x={spoolX - 70} y={500} width={140} height={120} rx={26} fill={AMBER} opacity={0.35 * squeeze} stroke={INK} strokeWidth={4} />}
             </g>
           )}
           {resolve > 0 && (
             <g opacity={resolve} transform={`translate(${numX} ${numY}) scale(${numS})`}>
-              <T x={-120} y={50} size={170} anchor="end">6.02</T>
-              <g transform="translate(-60 0)">
-                <rect x={0} y={-80} width={420} height={160} rx={40} fill={AMBER} fillOpacity={0.35} stroke={INK} strokeWidth={5} />
-                <T x={210} y={50} size={140}>×10<Sp>23</Sp></T>
-              </g>
+              <T x={0} y={50} size={170}>6.02 × 10<tspan baselineShift="super" fontSize="0.58em" fill={ORANGE}>23</tspan></T>
             </g>
           )}
-          {f >= parts && <T x={480} y={500} size={44} font={SANS} weight={800} o={fin(f, parts + 10, 10)}>1 mole = 6.02 × 10<Sp>23</Sp> particles</T>}
+          {f >= parts && <T x={960} y={480} size={44} font={SANS} weight={800} o={fin(f, parts + 10, 10)}>1 mole = 6.02 × 10<Sp>23</Sp> particles</T>}
           {/* a dozen is twelve: eggs */}
           {eggs > 0 && (
             <g>
-              {Array.from({length: 12}).map((_, i) => <g key={i} opacity={fin(f, twelve + i * 2, 5)}><Egg x={1020 + i * 64} y={640} s={tsp(f, twelve + i * 2, twelve + i * 2 + 10, 0.4, 1)} /></g>)}
-              <T x={1370} y={730} size={40} font={SANS} weight={800}>1 dozen = 12</T>
+              {Array.from({length: 12}).map((_, i) => <g key={i} opacity={fin(f, twelve + i * 2, 5)}><Egg x={608 + i * 64} y={620} s={tsp(f, twelve + i * 2, twelve + i * 2 + 10, 0.4, 1)} /></g>)}
+              <T x={960} y={710} size={40} font={SANS} weight={800}>1 dozen = 12</T>
             </g>
           )}
           {/* a mole: a row that runs off the screen; the icons change, the count never does */}
@@ -291,8 +288,8 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
                 if (x > 2000) return null;
                 return <g key={i}>{icon === 'egg' ? <Egg x={x} y={880} s={0.8} /> : icon === 'atom' ? <Atom x={x} y={880} s={0.9} /> : <Molecule x={x} y={884} s={0.85} />}</g>;
               })}
-              <rect x={80} y={950} width={560} height={70} rx={35} fill={PAPER} stroke={INK} strokeWidth={4} />
-              <T x={360} y={998} size={38} font={SANS} weight={800}>1 mole = 6.02 × 10<Sp>23</Sp></T>
+              <rect x={680} y={930} width={560} height={70} rx={35} fill={PAPER} stroke={INK} strokeWidth={4} />
+              <T x={960} y={978} size={38} font={SANS} weight={800}>1 mole = 6.02 × 10<Sp>23</Sp></T>
             </g>
           )}
         </g>
@@ -308,7 +305,7 @@ export const V1Rule: React.FC<SceneProps> = (props) => {
   const called = cue('called scientific notation', 0.03), two = cue('two parts', 0.12), front = cue('A front number', 0.2), raised = cue('ten raised', 0.32);
   const fits = cue('fits', 0.42), sixty = cue('Sixty-two', 0.48), neither = cue('neither does', 0.58), power = cue('The power counts', 0.72), times = cue('twenty-three times', 0.9);
   const split = tio(f, two, two + 18);
-  const G = {x0: 230, y: 830, dec: 290, lo: -1, hi: 2};
+  const G = {x0: 525, y: 830, dec: 290, lo: -1, hi: 2};
   // what sits in the "a" block, and its exponent
   const phase = f < sixty ? 0 : f < neither ? 1 : f < power ? 2 : 3;
   const hop1 = tio(f, sixty + 26, sixty + 44), hop2 = tio(f, neither + 26, neither + 44);
@@ -319,7 +316,7 @@ export const V1Rule: React.FC<SceneProps> = (props) => {
   const chain = phase === 3 ? clamp01((f - power) / 40) : 0;
   const squash = tio(f, times, times + 18);
   const nLinks = Math.round(23 * chain);
-  const aX = 640 - 180 * split, eX = 1100 + 120 * split;
+  const aX = 760 - 130 * split, eX = 1160 + 130 * split;
   return (
     <Frame
       html={
@@ -347,7 +344,7 @@ export const V1Rule: React.FC<SceneProps> = (props) => {
             <T x={aX} y={400} size={30} font={SANS} weight={800} color={P.muted} o={split}>front number a</T>
             {phase === 0 || phase === 3 ? <T x={aX} y={570} size={130}>6.02</T> : <DecNum x={aX - (digits.length * 0.6 * 130) / 2} y={570} digits={digits} pos={pos} size={130} color={ok ? INK : RED} />}
             {/* the power of ten */}
-            <rect x={eX - 210} y={420} width={420} height={200} rx={30} fill={AMBER} fillOpacity={0.3} stroke={INK} strokeWidth={LINE} opacity={split} />
+            <rect x={eX - 210} y={420} width={420} height={200} rx={30} fill={PAPER} stroke={INK} strokeWidth={LINE} opacity={split} />
             <T x={eX} y={400} size={30} font={SANS} weight={800} color={P.muted} o={split}>× 10 to a power</T>
             <T x={eX - 30} y={570} size={130}>×10</T>
             {phase === 3 ? (
@@ -366,11 +363,11 @@ export const V1Rule: React.FC<SceneProps> = (props) => {
             <g opacity={1 - squash}>
               {Array.from({length: nLinks}).map((_, k) => {
                 const r = Math.floor(k / 12), c = k % 12;
-                const x0 = 260 + c * 120, y0 = 790 + r * 90;
+                const x0 = 300 + c * 120, y0 = 790 + r * 90;
                 const x = x0 + (eX + 150 - x0) * squash, y = y0 + (480 - y0) * squash;
                 return <UnitTag key={k} x={x} y={y} text="×10" color={k % 2 ? INK : ORANGE} s={0.82 * (1 - 0.7 * squash)} />;
               })}
-              <T x={1700} y={940} size={50} color={ORANGE} o={chain}>{nLinks}</T>
+              <T x={960} y={1010} size={50} color={ORANGE} o={chain}>{nLinks} × 10</T>
             </g>
           )}
         </g>
@@ -433,11 +430,11 @@ export const V1Slide: React.FC<SceneProps> = (props) => {
           )}
           {mainO > 0 && (
             <g opacity={mainO}>
-              <DecNum x={360} y={600} digits="000045" pos={pos} size={150} color={value >= 1 ? TEAL : INK} />
-              <T x={1000} y={600} size={120} anchor="start">× 10</T>
-              <T x={1245} y={530} size={74} anchor="start" color={ORANGE}>{expV === 0 ? '0' : `−${-expV}`}</T>
+              <DecNum x={480} y={600} digits="000045" pos={pos} size={150} color={value >= 1 ? TEAL : INK} />
+              <T x={1120} y={600} size={120} anchor="start">× 10</T>
+              <T x={1365} y={530} size={74} anchor="start" color={ORANGE}>{expV === 0 ? '0' : `−${-expV}`}</T>
               {/* a ÷10 tag for each hop */}
-              {[0, 1, 2, 3].map((k) => hopT > k + 0.5 && <UnitTag key={k} x={1250 + k * 130} y={420} text="÷10" color={ORANGE} s={tsp(f, four + Math.round((k + 0.5) * span / 4), four + Math.round((k + 0.5) * span / 4) + 10, 0.5, 0.85)} />)}
+              {[0, 1, 2, 3].map((k) => hopT > k + 0.5 && <UnitTag key={k} x={765 + k * 130} y={420} text="÷10" color={ORANGE} s={tsp(f, four + Math.round((k + 0.5) * span / 4), four + Math.round((k + 0.5) * span / 4) + 10, 0.5, 0.85)} />)}
               <Gauge {...G} />
               <Marker x={gaugeX(value, G.x0, G.dec, G.lo)} y={G.y} ok={value >= 1} />
               {/* ghost replay: 4.5 shrinks by ten at each hop */}
@@ -471,7 +468,7 @@ export const V1Mult: React.FC<SceneProps> = (props) => {
   const five = cue('Five times ten to the three', 0.64), twenty = cue('twenty times ten', 0.8), two6 = cue('two times ten to the six', 0.92);
   const lanes = fin(f, mult, 10) * (1 - fin(f, outside - 6, 8));
   const inL = tio(f, tenK, tenK + 20), lock = tsp(f, meet, meet + 14, 0, 1);
-  const lx = -400 + (360 + 400) * inL + 60 * lock, rx = 2200 + (750 - 2200) * inL - 60 * lock;
+  const lx = -400 + (640 + 400) * inL + 60 * lock, rx = 2200 + (1030 - 2200) * inL - 60 * lock;
   const fr = fin(f, so3, 10), frJoin = tio(f, so3 + 30, so3 + 50);
   const merge = tio(f, is6 - 4, is6 + 18);
   const fix = fin(f, five, 10);
@@ -507,14 +504,14 @@ export const V1Mult: React.FC<SceneProps> = (props) => {
                 <ZeroRibbon x={lx} y={760} n={4} />
                 <ZeroRibbon x={rx} y={760} n={3} lead="" />
               </g>
-              {f >= seven && <UnitTag x={1500} y={760} text="4 + 3 = 7" color={TEAL} s={tsp(f, seven, seven + 12, 0.6, 1.1)} />}
+              {f >= seven && <UnitTag x={1530} y={760} text="4 + 3 = 7" color={TEAL} s={tsp(f, seven, seven + 12, 0.6, 1.1)} />}
               {/* front lane: 3 × 2 forms a 6 */}
               {fr > 0 && (
                 <g opacity={fr}>
-                  <T x={700 + 160 * frJoin} y={500} size={110} o={1 - frJoin}>3</T>
-                  <T x={860} y={500} size={80} color={P.muted} o={1 - frJoin}>×</T>
-                  <T x={1020 - 160 * frJoin} y={500} size={110} o={1 - frJoin}>2</T>
-                  {frJoin > 0 && <T x={860} y={500} size={130} color={ORANGE} o={frJoin} s={tsp(f, so3 + 30, so3 + 44, 0.6, 1)}>6</T>}
+                  <T x={800 + 160 * frJoin} y={500} size={110} o={1 - frJoin}>3</T>
+                  <T x={960} y={500} size={80} color={P.muted} o={1 - frJoin}>×</T>
+                  <T x={1120 - 160 * frJoin} y={500} size={110} o={1 - frJoin}>2</T>
+                  {frJoin > 0 && <T x={960} y={500} size={130} color={ORANGE} o={frJoin} s={tsp(f, so3 + 30, so3 + 44, 0.6, 1)}>6</T>}
                 </g>
               )}
             </g>
@@ -571,22 +568,22 @@ export const V1Div: React.FC<SceneProps> = (props) => {
           <T x={150} y={470} size={28} font={SANS} weight={800} color={P.muted} anchor="start">FRONT NUMBERS</T>
           <T x={150} y={690} size={28} font={SANS} weight={800} color={P.muted} anchor="start">ZEROS</T>
           {/* front lane */}
-          <T x={700 + 150 * fr} y={500} size={110} o={1 - fr}>8</T>
-          <T x={850} y={500} size={80} color={P.muted} o={1 - fr}>÷</T>
-          <T x={1000 - 150 * fr} y={500} size={110} o={1 - fr}>4</T>
-          {fr > 0 && <T x={850} y={500} size={130} color={ORANGE} o={fr}>2</T>}
+          <T x={810 + 150 * fr} y={500} size={110} o={1 - fr}>8</T>
+          <T x={960} y={500} size={80} color={P.muted} o={1 - fr}>÷</T>
+          <T x={1110 - 150 * fr} y={500} size={110} o={1 - fr}>4</T>
+          {fr > 0 && <T x={960} y={500} size={130} color={ORANGE} o={fr}>2</T>}
           {/* zeros lane, as a fraction: six on top, two below; pairs pop */}
-          <line x1={560} x2={1060} y1={760} y2={760} stroke={INK} strokeWidth={5} />
+          <line x1={740} x2={1240} y1={760} y2={760} stroke={INK} strokeWidth={5} />
           {Array.from({length: 6}).map((_, i) => {
             const gone = i < 2 && f >= popAt + i * 2;
             const settle = tio(f, popAt + 16, popAt + 34);
-            const x = 600 + i * 72 - (i >= 2 ? 2 * 72 * settle * 0.5 : 0);
-            return gone ? <Burst key={i} x={600 + i * 72} y={705} t={clamp01((f - popAt - i * 2) / 14)} color={ORANGE} r={30} /> : <ZeroTile key={i} x={x} y={705} s={0.6} />;
+            const x = 780 + i * 72 - (i >= 2 ? 2 * 72 * settle * 0.5 : 0);
+            return gone ? <Burst key={i} x={780 + i * 72} y={705} t={clamp01((f - popAt - i * 2) / 14)} color={ORANGE} r={30} /> : <ZeroTile key={i} x={x} y={705} s={0.6} />;
           })}
           {Array.from({length: 2}).map((_, i) => (
-            f >= popAt + i * 2 ? <Burst key={i} x={600 + i * 72} y={820} t={clamp01((f - popAt - i * 2) / 14)} color={ORANGE} r={30} /> : <ZeroTile key={i} x={600 + i * 72} y={820} s={0.6} />
+            f >= popAt + i * 2 ? <Burst key={i} x={780 + i * 72} y={820} t={clamp01((f - popAt - i * 2) / 14)} color={ORANGE} r={30} /> : <ZeroTile key={i} x={780 + i * 72} y={820} s={0.6} />
           ))}
-          {f >= popAt + 20 && <UnitTag x={1300} y={705} text="6 − 2 = 4" color={TEAL} s={tsp(f, popAt + 20, popAt + 32, 0.6, 1)} />}
+          {f >= popAt + 20 && <UnitTag x={1480} y={705} text="6 − 2 = 4" color={TEAL} s={tsp(f, popAt + 20, popAt + 32, 0.6, 1)} />}
           {res > 0 && (
             <g opacity={res} transform={`translate(1500 500) scale(${tsp(f, is2, is2 + 14, 0.6, 1)})`}>
               <rect x={-230} y={-90} width={460} height={140} rx={30} fill={PAPER} stroke={TEAL} strokeWidth={5} />
@@ -613,7 +610,7 @@ export const V1AddSub: React.FC<SceneProps> = (props) => {
   const toTags = tio(f, powers, powers + 16);
   const roll = tio(f, turn + 6, turn + 26);
   const join = tio(f, done - 6, done + 10);
-  const bills = [460, 690, 920];
+  const bills = [560, 790, 1020];
   // subtract phase
   const subIn = fin(f, subw, 10);
   const sFuse = tio(f, minus + 4, minus + 22), lift = tio(f, minus + 24, minus + 44);
@@ -648,23 +645,21 @@ export const V1AddSub: React.FC<SceneProps> = (props) => {
             <g>
               <g opacity={1 - toTags}>
                 {bills.map((x) => <Bill key={x} x={x} y={560} s={0.86} />)}
-                {fusion < 1 && [1180, 1290].map((x, i) => <Dime key={x} x={x + (1235 - x) * fusion} y={560} o={1 - fusion * 0.9} />)}
-                {fusion > 0 && <Bill x={1235} y={560} fill={0.2 * fusion} label="$0.20" o={fusion} s={0.7 + 0.3 * fusion} />}
-                {f >= five && f < fuse && <T x={1500} y={580} size={80} color={RED} o={fin(f, five, 6)}>5 ?</T>}
-                {f >= match && <T x={1560} y={590} size={90} color={TEAL} o={fin(f, match, 8)}>3.2</T>}
+                {fusion < 1 && [1280, 1390].map((x, i) => <Dime key={x} x={x + (1335 - x) * fusion} y={560} o={1 - fusion * 0.9} />)}
+                {fusion > 0 && <Bill x={1335} y={560} fill={0.2 * fusion} label="$0.20" o={fusion} s={0.7 + 0.3 * fusion} />}
+                {f >= five && f < fuse && <T x={1600} y={580} size={80} color={RED} o={fin(f, five, 6)}>5 ?</T>}
+                {f >= match && <T x={1640} y={590} size={90} color={TEAL} o={fin(f, match, 8)}>3.2</T>}
               </g>
               {toTags > 0 && (
                 <g opacity={toTags}>
                   {/* match cut: bills become ×10⁵, the dime-bill becomes ×10⁴ */}
                   <g opacity={1 - join}>
                     <T x={600} y={600} size={120} anchor="end">3</T>
-                    <rect x={620} y={500} width={240} height={130} rx={34} fill={AMBER} fillOpacity={0.35} stroke={INK} strokeWidth={4} />
                     <T x={740} y={600} size={96}>×10<Sp>5</Sp></T>
                   </g>
                   <T x={960} y={590} size={100} color={P.muted} o={1 - join}>+</T>
                   <g transform={`translate(${-520 * join} 0)`} opacity={1 - join}>
                     <RollT x={1250} y={600} a="2" b="0.2" t={roll} size={120} anchor="end" />
-                    <rect x={1270} y={500} width={240} height={130} rx={34} fill={AMBER} fillOpacity={roll > 0.5 ? 0.35 : 0.15} stroke={INK} strokeWidth={4} />
                     <T x={1355} y={600} size={96}>×10</T>
                     <RollT x={1450} y={560} a="4" b="5" t={roll} size={58} anchor="start" color={ORANGE} />
                   </g>
@@ -682,18 +677,16 @@ export const V1AddSub: React.FC<SceneProps> = (props) => {
             <g opacity={subIn * (1 - endPair)}>
               <g opacity={1 - sTags}>
                 {bills.map((x, i) => <Bill key={x} x={x} y={560} s={0.86} fill={i === 2 ? 1 - 0.2 * lift : 1} />)}
-                {sFuse < 1 && [1180, 1290].map((x) => <Dime key={x} x={x + (1235 - x) * sFuse} y={560} o={1 - sFuse * 0.9} />)}
-                {sFuse > 0 && <Bill x={1235 + (920 - 1235) * lift} y={560 - 160 * lift} fill={0.2} label="−$0.20" o={sFuse * (1 - 0.6 * lift)} s={0.7} />}
-                {f >= two8 && <T x={1560} y={590} size={90} color={TEAL} o={fin(f, two8, 8)}>2.8</T>}
+                {sFuse < 1 && [1280, 1390].map((x) => <Dime key={x} x={x + (1335 - x) * sFuse} y={560} o={1 - sFuse * 0.9} />)}
+                {sFuse > 0 && <Bill x={1335 + (1020 - 1335) * lift} y={560 - 160 * lift} fill={0.2} label="−$0.20" o={sFuse * (1 - 0.6 * lift)} s={0.7} />}
+                {f >= two8 && <T x={1640} y={590} size={90} color={TEAL} o={fin(f, two8, 8)}>2.8</T>}
               </g>
               {sTags > 0 && (
                 <g opacity={sTags}>
                   <T x={600} y={600} size={120} anchor="end">3</T>
-                  <rect x={620} y={500} width={240} height={130} rx={34} fill={AMBER} fillOpacity={0.35} stroke={INK} strokeWidth={4} />
                   <T x={740} y={600} size={96}>×10<Sp>5</Sp></T>
                   <T x={960} y={590} size={100} color={P.muted}>−</T>
                   <RollT x={1250} y={600} a="2" b="0.2" t={sRoll} size={120} anchor="end" />
-                  <rect x={1270} y={500} width={240} height={130} rx={34} fill={AMBER} fillOpacity={sRoll > 0.5 ? 0.35 : 0.15} stroke={INK} strokeWidth={4} />
                   <T x={1355} y={600} size={96}>×10</T>
                   <RollT x={1450} y={560} a="4" b="5" t={sRoll} size={58} anchor="start" color={ORANGE} />
                   {sJoin > 0 && <T x={960} y={820} size={110} color={TEAL} o={sJoin}>= 2.8 × 10<Sp>5</Sp></T>}

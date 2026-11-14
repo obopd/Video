@@ -52,14 +52,13 @@ scenes:
   - type: animated
     fade: false
     component: V1HookRoom
-    duration: 6.8
+    duration: 6.5
     narration: >
       Ninety-six seconds. That's all you get for each MCAT question.
 
   - type: animated
     fade: false
     component: V1HookPOV
-    duration: 18.5
     narration: >
       And you have no calculator. Here's one. A solution has a hydrogen ion concentration of three times
       ten to the minus five. What's its pH? Most people freeze. In ten minutes you'll answer this in ten

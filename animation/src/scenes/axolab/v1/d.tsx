@@ -128,14 +128,18 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
   const dive = inOut((f - p0) / (p1 - p0));
   const z = Math.exp(Math.log(70) * dive);
   const settle = ease((f - p0) / Math.max(1, D - 4 - p0));
-  const roomS = 1.18 - 0.18 * settle;
+  // framed close on Axo at his eye level, so he fills the middle of the screen; a gentle settle
+  const roomS = 3.0 - 0.4 * settle;
+  const CAM = {x: 960, y: 790};
   const secs = Math.max(0, 96 - Math.max(0, f - c96) / fps);
   const ticks: [number, 'tick' | 'tock', number][] = [];
   for (let t = c96, k = 0; t < D; t += fps, k++) ticks.push([t, k % 2 ? 'tock' : 'tick', 0.3]);
   // the hole of Fraunces' "9" at 520 px (measured): centre and radii in the 1920x1080 space
   const LX = 786, LY = 456, RX = 44, RY = 76;
   const PX = LX + (960 - LX) * dive, PY = LY + (540 - LY) * dive;
-  const open = z * RX > 1500;
+  // as the hole fills the screen, the 96 fades out and the room fills in (no 9 sweeping past)
+  const cover = clamp01((z * RX - 620) / 260);
+  const open = cover >= 1;
   return (
     <Frame enter="cut" exit="cut" push={0}
       html={<SfxList items={[...ticks, [c96, 'pop', 0.45, 0.8], [p0, 'whoosh', 0.4, 0.7], [p1 - 8, 'rise', 0.25, 1.3]]} />}
@@ -145,13 +149,16 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
           <defs><clipPath id="hole"><ellipse cx={PX} cy={PY} rx={RX * z} ry={RY * z} /></clipPath></defs>
           {/* the room, seen through the hole of the 9 */}
           <g clipPath={open ? undefined : 'url(#hole)'} opacity={f >= p0 ? 1 : 0}>
-            <g transform={`translate(960 540) scale(${roomS}) translate(-960 -540)`}><ExamRoom secs={secs} /></g>
+            <g transform={`translate(960 540) scale(${roomS}) translate(${-CAM.x} ${-CAM.y})`}><ExamRoom secs={secs} /></g>
+          </g>
+          <g opacity={cover > 0 && !open ? cover : 0}>
+            <g transform={`translate(960 540) scale(${roomS}) translate(${-CAM.x} ${-CAM.y})`}><ExamRoom secs={secs} /></g>
           </g>
           {/* the 96, flying past */}
           {f >= c96 && !open && (
             <g transform={`translate(${PX} ${PY}) scale(${z}) translate(${-LX} ${-LY})`}>
               <g transform={`translate(960 540) scale(${tsp(f, c96, c96 + 14, 0.9, 1)}) translate(-960 -540)`}>
-                <text x={960} y={720} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={520} fill={ORANGE} opacity={fin(f, c96, 5)}>96</text>
+                <text x={960} y={720} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={520} fill={ORANGE} opacity={fin(f, c96, 5) * (1 - cover)}>96</text>
               </g>
             </g>
           )}
@@ -222,9 +229,9 @@ export const V1HookPOV: React.FC<SceneProps> = (props) => {
   const rise = tio(f, why - 4, why + 14);
   // after the pencil touches the paper: a short push into its tip, then a quick fade to blank paper
   const m0 = Math.max(why + 16, D - 32);
-  const macro = inOut((f - m0) / 20);
+  const macro = inOut((f - m0) / 22);
   const mz = Math.exp(Math.log(5) * macro);
-  const blank = clamp01((f - m0 - 10) / 10);
+  const blank = ease((f - m0) / 22);                  // the push and the fade run together
   const TIP: [number, number] = [1010, 560];
   const kz = clamp01(macro * 4), cxm = 960 + (TIP[0] - 960) * kz, cym = 540 + (TIP[1] - 540) * kz;
   const pEnd: [number, number] = [TIP[0] + 380 * 0.469, TIP[1] + 380 * 0.883 + 420 * (1 - rise)];

@@ -163,7 +163,14 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
                   const py = 330 + 520 * tri(random(`py${i}`) * 2 + (f * sp) / 170) + jy;
                   const born = random(`born${i}`) * 26, g = ease(clamp01((f - born) / 10));
                   if (g <= 0) return null;
-                  return <circle key={i} cx={px} cy={py} r={(4 + 7 * depth) * (0.4 + 0.6 * g)} fill={ORANGE} fillOpacity={(0.25 + 0.55 * depth) * g} stroke={INK} strokeOpacity={g} strokeWidth={depth > 0.7 ? 1.5 : 0} />;
+                  const r = (2.2 + 4.2 * depth) * (0.4 + 0.6 * g);
+                  // the earlier particle look: a solid orange core inside a soft halo, no outline
+                  return (
+                    <g key={i} opacity={g}>
+                      <circle cx={px} cy={py} r={r * 1.9} fill={ORANGE} opacity={0.18} />
+                      <circle cx={px} cy={py} r={r} fill={ORANGE} opacity={0.75 + 0.25 * depth} />
+                    </g>
+                  );
                 })}
                 {/* Axo, tiny beside it, hands on the glass, and his faint reflection */}
                 <g transform={`translate(${20 * arc} 0)`}>

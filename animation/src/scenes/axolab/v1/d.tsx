@@ -127,12 +127,8 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
   const p0 = all, p1 = Math.max(all + 48, q + 4);
   const dive = inOut((f - p0) / (p1 - p0));
   const z = Math.exp(Math.log(70) * dive);
-  const eyeAt = D - 24;                                   // end of the shot: push into Axo's eye
-  const settle = ease((f - p0) / Math.max(1, eyeAt - p0));
+  const settle = ease((f - p0) / Math.max(1, D - 4 - p0));
   const roomS = 1.18 - 0.18 * settle;
-  const ep = inOut((f - eyeAt) / 24);
-  const ez = Math.exp(Math.log(14) * ep);
-  const ex = 960 + (928 - 960) * ep, ey = 540 + (774 - 540) * ep;
   const secs = Math.max(0, 96 - Math.max(0, f - c96) / fps);
   const ticks: [number, 'tick' | 'tock', number][] = [];
   for (let t = c96, k = 0; t < D; t += fps, k++) ticks.push([t, k % 2 ? 'tock' : 'tick', 0.3]);
@@ -142,14 +138,14 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
   const open = z * RX > 1500;
   return (
     <Frame enter="cut" exit="cut" push={0}
-      html={<SfxList items={[...ticks, [c96, 'pop', 0.45, 0.8], [p0, 'whoosh', 0.4, 0.7], [p1 - 8, 'rise', 0.25, 1.3], [eyeAt, 'whoosh', 0.3, 1.6]]} />}
+      html={<SfxList items={[...ticks, [c96, 'pop', 0.45, 0.8], [p0, 'whoosh', 0.4, 0.7], [p1 - 8, 'rise', 0.25, 1.3]]} />}
       svg={
         <g>
           <rect x={-10} y={-10} width={1940} height={1100} fill={PAPER} />
           <defs><clipPath id="hole"><ellipse cx={PX} cy={PY} rx={RX * z} ry={RY * z} /></clipPath></defs>
           {/* the room, seen through the hole of the 9 */}
           <g clipPath={open ? undefined : 'url(#hole)'} opacity={f >= p0 ? 1 : 0}>
-            <g transform={`translate(960 540) scale(${ez}) translate(${-ex} ${-ey})`}><g transform={`translate(960 540) scale(${roomS}) translate(-960 -540)`}><ExamRoom secs={secs} /></g></g>
+            <g transform={`translate(960 540) scale(${roomS}) translate(-960 -540)`}><ExamRoom secs={secs} /></g>
           </g>
           {/* the 96, flying past */}
           {f >= c96 && !open && (

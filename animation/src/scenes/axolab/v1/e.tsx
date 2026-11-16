@@ -384,11 +384,11 @@ export const V1Rule: React.FC<SceneProps> = (props) => {
             {/* the power of ten */}
             <rect x={eX - 210} y={420} width={420} height={200} rx={30} fill={PAPER} stroke={INK} strokeWidth={LINE} opacity={split} />
             <T x={eX} y={400} size={30} font={SANS} weight={800} color={P.muted} o={split}>× 10 to a power</T>
-            <T x={eX - 30} y={570} size={130}>×10</T>
+            <T x={eX + 50} y={570} size={130} anchor="end">×10</T>
             {phase === 3 ? (
-              <T x={eX + 120} y={500} size={70} anchor="start" color={ORANGE} s={squash > 0 ? 1 + 0.4 * Math.sin(squash * Math.PI) : 1}>23</T>
+              <T x={eX + 58} y={505} size={70} anchor="start" color={ORANGE} s={squash > 0 ? 1 + 0.4 * Math.sin(squash * Math.PI) : 1}>23</T>
             ) : (
-              <RollT x={eX + 120} y={500} a={expA} b={expB} t={expT} size={70} color={ORANGE} anchor="start" />
+              <RollT x={eX + 58} y={505} a={expA} b={expB} t={expT} size={70} color={ORANGE} anchor="start" />
             )}
           </g>
           {/* the gauge under a */}
@@ -566,7 +566,7 @@ export const V1Mult: React.FC<SceneProps> = (props) => {
                 <g opacity={lands}>
                   <DecNum x={760 - 0} y={680} digits="20" pos={2 - hop} size={140} color={hop > 0.5 ? TEAL : RED} />
                   <T x={1100} y={680} size={120}>× 10</T>
-                  <RollT x={1270} y={610} a="5" b="6" t={hop} size={70} color={ORANGE} anchor="start" />
+                  <RollT x={1222} y={612} a="5" b="6" t={hop} size={70} color={ORANGE} anchor="start" />
                   <Gauge {...G} />
                   <Marker x={gaugeX(20 / Math.pow(10, hop), G.x0, G.dec, G.lo)} y={G.y} ok={hop > 0.5} flash={hop > 0.5 ? clamp01((f - twenty - 52) / 16) : flash} />
                 </g>

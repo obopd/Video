@@ -138,14 +138,15 @@ class Builder:
         if spec.get("audio"):  # user-recorded voiceover for this scene
             sc.audio = self.path(spec["audio"])
         elif sc.narration:
-            key = hashlib.sha1(json.dumps([spoken, self.engine, self.voice, "tts-v2"], sort_keys=True).encode()).hexdigest()[:16]
+            voice = {**self.voice, "min_pause": float(spec["pause"])} if spec.get("pause") else self.voice  # per-scene sentence gaps
+            key = hashlib.sha1(json.dumps([spoken, self.engine, voice, "tts-v2"], sort_keys=True).encode()).hexdigest()[:16]
             cache = self.out.parent / ".tts-cache"
             cache.mkdir(exist_ok=True)
             mp3 = cache / f"{key}.mp3"
             words_file = mp3.with_suffix(".words.json")
             if not mp3.exists() or mp3.stat().st_size == 0:
                 try:
-                    made, words = tts.synthesize(spoken, mp3, self.engine, self.voice)
+                    made, words = tts.synthesize(spoken, mp3, self.engine, voice)
                 except Exception as e:  # network/voice errors from the TTS backend
                     mp3.unlink(missing_ok=True)
                     raise RuntimeError(f"scene {sc.index + 1}: voiceover failed ({self.engine}): {e}\n"

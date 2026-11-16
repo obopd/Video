@@ -132,7 +132,9 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
   const p0 = all, p1 = Math.max(all + 48, q + 4);
   const dive = inOut((f - p0) / (p1 - p0));
   const z = Math.exp(Math.log(70) * dive);
-  const settle = ease((f - p0) / Math.max(1, D - 4 - p0));
+  // the hole of the 9 opens onto blank paper; only then does the room fade in
+  const fadeIn = inOut((f - (p1 - 8)) / 22);
+  const settle = ease((f - p1) / Math.max(1, D - 2 - p1));
   // framed close on Axo at his eye level, so he fills the middle of the screen; a gentle settle
   const roomS = 1.12 - 0.12 * settle;
   const CAM = {x: 960, y: 540};
@@ -152,13 +154,12 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
         <g>
           <rect x={-10} y={-10} width={1940} height={1100} fill={PAPER} />
           <defs><clipPath id="hole"><ellipse cx={PX} cy={PY} rx={RX * z} ry={RY * z} /></clipPath></defs>
-          {/* the room, seen through the hole of the 9 */}
-          <g clipPath={open ? undefined : 'url(#hole)'} opacity={f >= p0 ? 1 : 0}>
-            <g transform={`translate(960 540) scale(${roomS}) translate(${-CAM.x} ${-CAM.y})`}><ExamRoom secs={secs} /></g>
-          </g>
-          <g opacity={cover > 0 && !open ? cover : 0}>
-            <g transform={`translate(960 540) scale(${roomS}) translate(${-CAM.x} ${-CAM.y})`}><ExamRoom secs={secs} /></g>
-          </g>
+          {/* the room fades in once the hole has filled the screen with paper */}
+          {fadeIn > 0 && (
+            <g opacity={fadeIn}>
+              <g transform={`translate(960 540) scale(${roomS}) translate(${-CAM.x} ${-CAM.y})`}><ExamRoom secs={secs} /></g>
+            </g>
+          )}
           {/* the 96, flying past */}
           {f >= c96 && !open && (
             <g transform={`translate(${PX} ${PY}) scale(${z}) translate(${-LX} ${-LY})`}>

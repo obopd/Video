@@ -93,7 +93,7 @@ def _edge_one(text: str, out_mp3: Path, voice: dict) -> list[dict]:
         aiohttp.ClientWebSocketResponse.send_str = orig
 
 
-def split_sentences(text: str) -> list[tuple[str, float]]:
+def split_sentences(text: str, min_pause: float = 0.0) -> list[tuple[str, float]]:
     """Split narration into sentences, each with the pause (seconds) that follows it.
 
     A real narrator doesn't leave identical gaps between sentences, so pauses vary a
@@ -115,12 +115,15 @@ def split_sentences(text: str) -> list[tuple[str, float]]:
             pause = 0.26 + 0.14 * jitter
         else:
             pause = 0.08 + 0.14 * jitter
+        if min_pause:  # a scene can ask for slower, more deliberate gaps between sentences
+            pause = max(pause, min_pause + 0.15 * jitter)
         out.append((p.rstrip("\u2014").strip(), pause))
     # Very short sentences ("No calculator.") give the multilingual voice too little context
     # to recognise English, and it can slip into another accent. Send them with a neighbour.
     merged: list[tuple[str, float]] = []
     for sent, pause in out:
-        if merged and (len(merged[-1][0].split()) < 4 or len(sent.split()) < 4):
+        short = 2 if min_pause else 4   # with explicit pauses, keep sentences apart unless one is a single word
+        if merged and (len(merged[-1][0].split()) < short or len(sent.split()) < short):
             merged[-1] = (merged[-1][0] + " " + sent, pause)
         else:
             merged.append((sent, pause))
@@ -143,7 +146,7 @@ def _edge(text: str, out_mp3: Path, voice: dict) -> list[dict]:
     """Sentence-by-sentence synthesis joined with natural pauses, then polished."""
     import tempfile
 
-    sentences = split_sentences(text) if voice.get("natural_pauses", True) else [(text, 0.0)]
+    sentences = split_sentences(text, float(voice.get("min_pause", 0) or 0)) if voice.get("natural_pauses", True) else [(text, 0.0)]
     words: list[dict] = []
     with tempfile.TemporaryDirectory() as tmp:
         tmpd = Path(tmp)

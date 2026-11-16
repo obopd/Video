@@ -81,6 +81,11 @@ const Marker: React.FC<{x: number; y: number; ok: boolean; flash?: number; o?: n
   </g>
 );
 
+// the whole 24-tile row laid out across the screen (end of the mole scene, start of the notation scene)
+const RIB_S = 0.86;
+const ribbonX = (k: number) => 960 + (k - 11.5) * 86 * RIB_S;
+const easeIn2 = (t: number) => { const x = clamp01(t); return x * x; };
+
 // ------------------------------------------------------------------ 1a. one mole of particles
 export const V1Mole: React.FC<SceneProps> = (props) => {
   const f = useCurrentFrame();
@@ -101,21 +106,19 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
   const shape = (x: number) => (x < 0.2 ? 2.5 * x * x : x > 0.85 ? 1 - (1 - x) * (1 - x) / 0.3 : 0.1 + (x - 0.2) * (0.925 - 0.1) / 0.65);
   const headX = 1290 + GAP * (N - 1) * shape(u);
   const tStop = six + runLen;
-  // on "Nobody wants to write that": every zero folds into the ×10²³ and the number forms
-  const fold = inOut((f - nobody - 4) / 26);
-  const foldX = 1290 + 3 * GAP, camFinal = 730;
-  const camX = Math.max(0, headX - 1450) * (1 - fold) + camFinal * fold;
-  const formed = clamp01((fold - 0.7) / 0.3);
-  const space = clamp01((f - six - 10) / 36);
+  // on "Nobody wants to write that": the camera eases back to the whole row, then the zeros topple like dominoes
+  const camX = Math.max(0, headX - 1450);
+  const fold = inOut((f - nobody - 2) / 22);
+  const space = inOut((f - six - 6) / 50);
   const shownN = f < six ? 0 : Math.min(N, Math.floor((headX - 1290) / GAP) + 1);
   const zerosOut = Math.max(0, shownN - 3);
   const digit = (k: number) => (k === 0 ? '6' : k === 1 ? '0' : k === 2 ? '2' : '0');
   return (
-    <Frame enter="cut" push={0}
+    <Frame enter="cut" exit="cut" push={0}
       html={
         <>
           <SfxList items={[[0, 'sparkle', 0.25, 0.8], [pbStart, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
-            [nobody + 4, 'swish', 0.35, 1.2], [nobody + 28, 'clack', 0.5]]} />
+            [nobody + 2, 'swish', 0.3, 1.2], ...Array.from({length: 21}).map((_, k) => [nobody + 30 + k * 2, 'tap', 0.16, 0.9 + k * 0.03] as [number, 'tap', number, number])]} />
         </>
       }
       svg={
@@ -183,16 +186,21 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
                 <g opacity={0.12}><AxoSide x={900} y={880} scale={0.55} rear={1} arm={-12} dir={-1} /></g>
               </g>
             </g>
-            {/* the ribbon of digits */}
-            {f >= six && Array.from({length: shownN}).map((_, k) => {
-              const x0 = 1290 + k * GAP;
-              const pop = k === shownN - 1 ? clamp01((headX - x0) / GAP + 0.4) : 1;
-              const x = k < 3 ? x0 : x0 + (foldX - x0) * fold;
-              const sc = k < 3 ? 1 : 1 - 0.6 * fold;
-              return <ZeroTile key={k} x={x - GAP * (1 - pop) * 0.6} y={600} s={0.95 * (0.7 + 0.3 * pop) * sc} o={pop * (1 - formed)} ch={digit(k)} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />;
-            })}
           </g>
-          {formed > 0 && <T x={960} y={610} size={170} o={formed}>6.02 × 10<tspan baselineShift="super" fontSize="0.58em" fill={ORANGE}>23</tspan></T>}
+          {/* the ribbon of digits (screen space): tracked by the camera, then laid out whole, then the zeros fall */}
+          {f >= six && Array.from({length: shownN}).map((_, k) => {
+            const x0 = 1290 + k * GAP;
+            const pop = k === shownN - 1 ? clamp01((headX - x0) / GAP + 0.4) : 1;
+            const sx = (x0 - GAP * (1 - pop) * 0.6 - camX) * (1 - fold) + ribbonX(k) * fold;
+            const sc = 0.95 * (0.7 + 0.3 * pop) * (1 - (1 - RIB_S) * fold);
+            const td = nobody + 24 + (k - 3) * 2;
+            const rot = k < 3 ? 0 : 90 * easeIn2((f - td) / 8);
+            return (
+              <g key={k} transform={`rotate(${rot} ${sx + 34 * sc} ${600 + 46 * sc})`}>
+                <ZeroTile x={sx} y={600} s={sc} o={pop} ch={digit(k)} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />
+              </g>
+            );
+          })}
           {/* foreground zeros blurring past */}
           {space > 0 && f < tStop + 10 && (
             <g opacity={0.25 * space}>
@@ -246,11 +254,13 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
   const dozen = cue("chemist's dozen", 0.42), twelve = cue('dozen is twelve', 0.5), moleIs = cue('a mole is', 0.6), atoms = cue('atoms', 0.8), mols = cue('molecules', 0.86);
   const W = 76, X0 = 960 - (24 * W) / 2;
   const squeeze = tsp(f, write + 4, write + 26, 0, 1);
-  const resolve = 1;   // the number already formed at the end of the previous scene
+  // starts on the fallen dominoes from the previous scene; on "write it like this" they slide into ×10²³ and the number forms
+  const gather = inOut((f - write - 2) / 22);
+  const resolve = clamp01((f - write - 16) / 14);
   const spoolX = 1200;
   const toCorner = tio(f, parts, parts + 22);
   const numX = 960, numY = 560 + (380 - 560) * toCorner, numS = 1 - 0.4 * toCorner;
-  const paperBack = clamp01((f - avo) / 24);
+  const paperBack = inOut((f - avo + 6) / 60);   // slow, eased cross-fade from the grid to plain paper
   const eggs = fin(f, twelve, 6);
   const row = fin(f, moleIs, 10);
   const icon = f < atoms ? 'egg' : f < mols ? 'atom' : 'mol';
@@ -259,7 +269,7 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
     <Frame enter="cut" push={0.015}
       html={
         <>
-          <SfxList items={[[sixp, 'pop', 0.4], [parts, 'slide', 0.3], [twelve, 'pop', 0.35], [moleIs, 'rise', 0.3, 1.2], [atoms, 'pop', 0.35, 1.2], [mols, 'pop', 0.35, 1.3]]} />
+          <SfxList items={[[write + 2, 'swish', 0.35, 1.3], [write + 26, 'clack', 0.45], [sixp, 'pop', 0.4], [parts, 'slide', 0.3], [twelve, 'pop', 0.35], [moleIs, 'rise', 0.3, 1.2], [atoms, 'pop', 0.35, 1.2], [mols, 'pop', 0.35, 1.3]]} />
           <Heads items={[
             {at: write, text: 'Write it like [[this:]]'},
             {at: avo, text: "[[Avogadro's]] number"},
@@ -272,12 +282,18 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
         <g>
           <Grid o={1 - paperBack} />
           {/* the ribbon squeezes like an accordion into a spool */}
-          {false && (
+          {resolve < 1 && (
             <g opacity={1 - resolve}>
               {Array.from({length: 24}).map((_, k) => {
-                const x0 = X0 + k * W + W / 2;
-                const x = k < 3 ? x0 : x0 + (spoolX - x0) * squeeze;
-                return <ZeroTile key={k} x={x} y={560} s={0.8 * (k < 3 ? 1 : 1 - 0.55 * squeeze)} ch={k === 0 ? '6' : k === 2 ? '2' : '0'} color={k < 3 ? ORANGE : INK} />;
+                const sc = 0.95 * RIB_S;
+                const x0 = ribbonX(k);
+                const x = k < 3 ? x0 + (760 + (k - 1) * 70 - x0) * gather : x0 + (1180 - x0) * gather;
+                const rot = k < 3 ? 0 : 90 * (1 - gather);
+                return (
+                  <g key={k} transform={`rotate(${rot} ${x + 34 * sc} ${600 + 46 * sc})`} opacity={k < 3 ? 1 : 1 - 0.7 * gather}>
+                    <ZeroTile x={x} y={600} s={sc * (k < 3 ? 1 : 1 - 0.5 * gather)} ch={k === 0 ? '6' : k === 2 ? '2' : '0'} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />
+                  </g>
+                );
               })}
             </g>
           )}

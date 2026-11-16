@@ -52,13 +52,14 @@ scenes:
   - type: animated
     fade: false
     component: V1HookRoom
-    duration: 6.5
+    duration: 5.0
     narration: >
       Ninety-six seconds. That's all you get for each MCAT question.
 
   - type: animated
     fade: false
     component: V1HookPOV
+    pause: 0.6   # slower, more natural gaps between sentences
     narration: >
       And you have no calculator. Here's one. A solution has a hydrogen ion concentration of three times
       ten to the minus five. What's its pH? Most people freeze. In ten minutes you'll answer this in ten
@@ -68,7 +69,7 @@ scenes:
   - type: animated
     fade: false
     component: V1Mole
-    duration: 12.4
+    duration: 13.2
     chapter: "What is scientific notation?"
     narration: >
       Chemistry numbers are absurd. This chamber holds exactly one mole of gas particles. How many is that?

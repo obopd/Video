@@ -133,7 +133,8 @@ export const V1HookRoom: React.FC<SceneProps> = (props) => {
   const dive = inOut((f - p0) / (p1 - p0));
   const z = Math.exp(Math.log(70) * dive);
   // the hole of the 9 opens onto blank paper; only then does the room fade in
-  const fadeIn = inOut((f - (p1 - 8)) / 22);
+  // the room fades in while we are still flying through the 9: zoom and fade run together
+  const fadeIn = inOut((f - (p0 + 0.4 * (p1 - p0))) / (0.65 * (p1 - p0)));
   const settle = ease((f - p1) / Math.max(1, D - 2 - p1));
   // framed close on Axo at his eye level, so he fills the middle of the screen; a gentle settle
   const roomS = 1.12 - 0.12 * settle;
@@ -211,7 +212,7 @@ export const V1HookPOV: React.FC<SceneProps> = (props) => {
   const f = useCurrentFrame();
   const {fps, durationInFrames: D} = props;
   const cue = useCue(props);
-  const noCalc = cue('calculator', 0.08), here = cue("Here's one", 0.16), hyd = cue('three times', 0.3), ph = cue("What's its pH", 0.42);
+  const noCalc = cue('calculator', 0.08), here = cue("Here's one", 0.16), hyd = cue('hydrogen', 0.22), ph = hyd + 10;   // the whole question appears as the narrator reaches it
   const freeze = cue('freeze', 0.52), tenMin = cue('In ten minutes', 0.6), why = cue('why it works', 0.82);
   // 0.5 s push into Axo's eye, then the match cut to his view
   const eyeEnd = 0;   // the push into Axo's eye now ends the room shot

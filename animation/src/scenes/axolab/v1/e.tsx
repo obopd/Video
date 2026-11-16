@@ -118,7 +118,7 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[0, 'sparkle', 0.25, 0.8], [pbStart, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
-            [nobody + 2, 'swish', 0.3, 1.2], ...Array.from({length: 21}).map((_, k) => [nobody + 30 + k * 2, 'tap', 0.16, 0.9 + k * 0.03] as [number, 'tap', number, number])]} />
+            [nobody + 2, 'swish', 0.3, 1.2], [nobody + 22, 'crash', 0.22, 0.5], [nobody + 30, 'thud', 0.4, 0.6], [nobody + 40, 'thud', 0.3, 0.7], [nobody + 50, 'thud', 0.25, 0.8]]} />
         </>
       }
       svg={
@@ -193,10 +193,17 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
             const pop = k === shownN - 1 ? clamp01((headX - x0) / GAP + 0.4) : 1;
             const sx = (x0 - GAP * (1 - pop) * 0.6 - camX) * (1 - fold) + ribbonX(k) * fold;
             const sc = 0.95 * (0.7 + 0.3 * pop) * (1 - (1 - RIB_S) * fold);
-            const td = nobody + 24 + (k - 3) * 2;
-            const rot = k < 3 ? 0 : 90 * easeIn2((f - td) / 8);
+            // earthquake: the row shakes harder and harder, then the zeros drop off with gravity and a tumble
+            const qs = nobody + 22, quakeEnd = qs + 46;
+            const amp = f < qs || f > quakeEnd ? 0 : 12 * clamp01((f - qs) / 12) * (k < 3 ? 0.45 : 1);
+            const jx = amp * Math.sin(f * 3.1 + k * 1.7), jy = amp * 0.6 * Math.cos(f * 2.7 + k * 1.3);
+            const td = qs + 10 + random(`drop${k}`) * 16;
+            const t = k < 3 ? 0 : Math.max(0, (f - td) / 30);
+            const dy = 0.5 * 4200 * t * t, dx = (random(`dx${k}`) - 0.5) * 160 * t;
+            const rot = (random(`spin${k}`) - 0.5) * 300 * t;
+            if (600 + dy > 1300) return null;
             return (
-              <g key={k} transform={`rotate(${rot} ${sx + 34 * sc} ${600 + 46 * sc})`}>
+              <g key={k} transform={`translate(${jx + dx} ${jy + dy}) rotate(${rot} ${sx} ${600})`}>
                 <ZeroTile x={sx} y={600} s={sc} o={pop} ch={digit(k)} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />
               </g>
             );
@@ -287,8 +294,9 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
               {Array.from({length: 24}).map((_, k) => {
                 const sc = 0.95 * RIB_S;
                 const x0 = ribbonX(k);
-                const x = k < 3 ? x0 + (760 + (k - 1) * 70 - x0) * gather : x0 + (1180 - x0) * gather;
-                const rot = k < 3 ? 0 : 90 * (1 - gather);
+                if (k >= 3) return null;   // the zeros fell away in the earthquake
+                const x = x0 + (760 + (k - 1) * 70 - x0) * gather;
+                const rot = 0;
                 return (
                   <g key={k} transform={`rotate(${rot} ${x + 34 * sc} ${600 + 46 * sc})`} opacity={k < 3 ? 1 : 1 - 0.7 * gather}>
                     <ZeroTile x={x} y={600} s={sc * (k < 3 ? 1 : 1 - 0.5 * gather)} ch={k === 0 ? '6' : k === 2 ? '2' : '0'} glow={k < 3 ? 1 : 0} color={k < 3 ? ORANGE : INK} />

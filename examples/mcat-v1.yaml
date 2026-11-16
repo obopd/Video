@@ -52,7 +52,7 @@ scenes:
   - type: animated
     fade: false
     component: V1HookRoom
-    duration: 5.0
+    duration: 5.7
     narration: >
       Ninety-six seconds. That's all you get for each MCAT question.
 

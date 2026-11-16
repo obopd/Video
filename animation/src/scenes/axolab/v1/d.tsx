@@ -212,7 +212,7 @@ export const V1HookPOV: React.FC<SceneProps> = (props) => {
   const f = useCurrentFrame();
   const {fps, durationInFrames: D} = props;
   const cue = useCue(props);
-  const noCalc = cue('calculator', 0.08), here = cue("Here's one", 0.16), hyd = cue('hydrogen', 0.22), ph = hyd + 10;   // the whole question appears as the narrator reaches it
+  const noCalc = cue('calculator', 0.08), here = cue("Here's one", 0.16), hyd = cue('hydrogen', 0.22), ph = cue("What's its pH", 0.55);   // the concentration at 'hydrogen', pH = ? when it's asked
   const freeze = cue('freeze', 0.52), tenMin = cue('In ten minutes', 0.6), why = cue('why it works', 0.82);
   // 0.5 s push into Axo's eye, then the match cut to his view
   const eyeEnd = 0;   // the push into Axo's eye now ends the room shot

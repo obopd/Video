@@ -118,7 +118,7 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
       html={
         <>
           <SfxList items={[[0, 'sparkle', 0.25, 0.8], [pbStart, 'whoosh', 0.35, 0.7], [chamber, 'clack', 0.3, 0.8], [six, 'swish', 0.35, 1.2], ...Array.from({length: 8}).map((_, k) => [six + k * 9, 'tick', 0.18, 1.5 + k * 0.05] as [number, 'tick', number, number]),
-            [nobody + 2, 'swish', 0.3, 1.2], [nobody + 22, 'crash', 0.22, 0.5], [nobody + 30, 'thud', 0.4, 0.6], [nobody + 40, 'thud', 0.3, 0.7], [nobody + 50, 'thud', 0.25, 0.8]]} />
+            [nobody + 2, 'swish', 0.3, 1.2], [nobody + 8, 'crash', 0.22, 0.5], [nobody + 16, 'thud', 0.4, 0.6], [nobody + 24, 'thud', 0.3, 0.7], [nobody + 32, 'thud', 0.25, 0.8]]} />
         </>
       }
       svg={
@@ -194,10 +194,10 @@ export const V1Mole: React.FC<SceneProps> = (props) => {
             const sx = (x0 - GAP * (1 - pop) * 0.6 - camX) * (1 - fold) + ribbonX(k) * fold;
             const sc = 0.95 * (0.7 + 0.3 * pop) * (1 - (1 - RIB_S) * fold);
             // earthquake: the row shakes harder and harder, then the zeros drop off with gravity and a tumble
-            const qs = nobody + 22, quakeEnd = qs + 46;
+            const qs = nobody + 8, quakeEnd = qs + 34;
             const amp = f < qs || f > quakeEnd ? 0 : 12 * clamp01((f - qs) / 12) * (k < 3 ? 0.45 : 1);
             const jx = amp * Math.sin(f * 3.1 + k * 1.7), jy = amp * 0.6 * Math.cos(f * 2.7 + k * 1.3);
-            const td = qs + 10 + random(`drop${k}`) * 16;
+            const td = qs + 6 + random(`drop${k}`) * 10;
             const t = k < 3 ? 0 : Math.max(0, (f - td) / 30);
             const dy = 0.5 * 4200 * t * t, dx = (random(`dx${k}`) - 0.5) * 160 * t;
             const rot = (random(`spin${k}`) - 0.5) * 300 * t;
@@ -262,8 +262,8 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
   const W = 76, X0 = 960 - (24 * W) / 2;
   const squeeze = tsp(f, write + 4, write + 26, 0, 1);
   // starts on the fallen dominoes from the previous scene; on "write it like this" they slide into ×10²³ and the number forms
-  const gather = inOut((f - write - 2) / 22);
-  const resolve = clamp01((f - write - 16) / 14);
+  const gather = inOut((f - 2) / 18);
+  const resolve = clamp01((f - 10) / 12);
   const spoolX = 1200;
   const toCorner = tio(f, parts, parts + 22);
   const numX = 960, numY = 560 + (380 - 560) * toCorner, numS = 1 - 0.4 * toCorner;
@@ -276,7 +276,7 @@ export const V1Notation: React.FC<SceneProps> = (props) => {
     <Frame enter="cut" push={0.015}
       html={
         <>
-          <SfxList items={[[write + 2, 'swish', 0.35, 1.3], [write + 26, 'clack', 0.45], [sixp, 'pop', 0.4], [parts, 'slide', 0.3], [twelve, 'pop', 0.35], [moleIs, 'rise', 0.3, 1.2], [atoms, 'pop', 0.35, 1.2], [mols, 'pop', 0.35, 1.3]]} />
+          <SfxList items={[[2, 'swish', 0.35, 1.3], [20, 'clack', 0.45], [sixp, 'pop', 0.4], [parts, 'slide', 0.3], [twelve, 'pop', 0.35], [moleIs, 'rise', 0.3, 1.2], [atoms, 'pop', 0.35, 1.2], [mols, 'pop', 0.35, 1.3]]} />
           <Heads items={[
             {at: write, text: 'Write it like [[this:]]'},
             {at: avo, text: "[[Avogadro's]] number"},

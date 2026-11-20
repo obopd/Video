@@ -130,37 +130,88 @@ scenes:
       same way: three dollars minus two dimes is two-point-eight dollars. Match the exponents first, then
       subtract.
 
-  # ---------------------------------------------------------------- 2. logarithms
+  # ---------------------------------------------------------------- 2. count the tens: logarithms
   - type: animated
     fade: false
-    component: V1LogRuler
+    component: V1LogViews
     chapter: "Count the tens: logarithms"
+    pause: 0.45
     narration: >
-      Now logarithms. Forget the formula. A log asks one question: how many tens? How many times do you
-      multiply by ten to get from one to this number? One to ten is one step. To a hundred, two. To a
-      thousand, three. So the log of a thousand is three. Go the other way: a hundredth is two steps of
-      dividing by ten, so its log is minus two.
+      Axol just posted his first video. One view. That's his mom.
+      Then ten. A hundred. A thousand. By Sunday, a million.
+      Every jump was the same move: times ten. So count the jumps. A million is six jumps.
+      That count has a name: the logarithm. The log of a million is six.
 
   - type: animated
     fade: false
-    component: V1Hops
+    component: V1LogCount
     narration: >
-      Easy for powers of ten. But what's the log of two? Let's measure it. Start at one, and keep doubling.
-      Two. Four. Eight. Three doublings, and we're almost at ten. So three doublings is almost one full
-      step, which means one doubling is about a third of a step. The log of two is about 0.3.
-      Same trick with three. Triple once: three. Twice: nine. Two triplings nearly make a full step,
-      so one tripling is about half a step. More precisely, the log of three is 0.48.
+      A log asks one question: starting from one, how many times do you multiply by ten to reach this number?
+      Log of a thousand: three. Log of ten: one. Log of one: zero. You haven't moved.
+      It works backwards too. A hundredth is two steps of dividing by ten, so its log is minus two.
 
   - type: animated
     fade: false
-    component: V1SlideRule
+    component: V1LogDouble
     narration: >
-      Now everything else is steps added together. Four is two doublings: 0.6. Six is a doubling and a
-      tripling: 0.3 plus 0.48, so 0.78. Eight is three doublings: 0.9. Five is ten cut in half: a full
-      step forward, one doubling back: 0.7. Memorize two numbers, and every digit follows.
-      Notice what just happened. Multiplying turned into adding steps. Slide one ruler along another, and
-      distances add, so numbers multiply. People built calculators out of this idea; they were called
-      slide rules. Two times three: slide, read six.
+      Easy for powers of ten. But what's the log of two?
+      Axol has a trick. Axolotls regenerate. Watch him split.
+      One Axol. Two. Four. Eight. Three doublings, and the ten-seat bench is almost full.
+      So three doublings is almost one full step of ten, which means one doubling is about a third of a step.
+      The log of two is about 0.3.
+
+  - type: animated
+    fade: false
+    component: V1LogTriple
+    narration: >
+      Now triple. One. Three. Nine. Two triplings, and only one seat is left empty.
+      So one tripling is just under half a step. The exact value: the log of three is 0.48.
+
+  - type: animated
+    fade: false
+    component: V1LogRule
+    narration: >
+      Here's the rule that unlocks every other digit.
+      Remember from a minute ago: when you multiply powers of ten, the exponents add. Ten squared times ten cubed is ten to the fifth.
+      A log is just that exponent. So when you multiply two numbers, you add their logs.
+
+  - type: animated
+    fade: false
+    component: V1LogBlocks
+    narration: >
+      Let's make that solid. Picture each log as a block. Log of two is a short teal block, 0.3 long.
+      Log of three is a longer amber block, 0.48 long. To build a number, snap blocks together.
+      Six is two times three. So snap teal and amber: 0.3 plus 0.48. Log of six is 0.78.
+      Four is two times two: two teal blocks. 0.6.
+      Eight is two times two times two: three teal blocks. 0.9.
+      Nine is three times three: two amber blocks. 0.96, just short of one. That's the empty seat on the bench.
+
+  - type: animated
+    fade: false
+    component: V1LogBlocks2
+    narration: >
+      Dividing works backwards. Instead of adding a block, you pull one off. Five is ten divided by two.
+      Start with one full step, then pull off a teal block. Log of five is 0.7.
+      Seven is the only digit you can't build. Just know it sits between six and eight, about 0.85.
+      Two blocks, and you've built the whole ruler.
+
+  - type: animated
+    fade: false
+    component: V1LogWorld
+    narration: >
+      This isn't just a test trick. You live on log scales.
+      Earthquakes: each step on the magnitude scale means ten times bigger shaking.
+      Sound: every ten decibels is ten times the intensity. A whisper is about thirty decibels.
+      A loud concert, about a hundred and ten. Eighty decibels apart is eight steps of ten: a hundred million times the intensity.
+      Your ears are counting tens for you.
+
+  - type: animated
+    fade: false
+    component: V1LogSlideRule
+    narration: >
+      And before calculators, people multiplied by sliding one log ruler along another. They called it a slide rule.
+      Apollo astronauts carried one to the Moon as a backup.
+      Two times three: slide, read six.
 
   # ---------------------------------------------------------------- 3. the riddle, solved
   - type: animated

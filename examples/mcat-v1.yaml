@@ -170,6 +170,7 @@ scenes:
   - type: animated
     fade: false
     component: V1LogRule
+    duration: 18   # hold the log rule on screen long enough to read
     narration: >
       Here's the rule that unlocks every other digit.
       Remember from a minute ago: when you multiply powers of ten, the exponents add. Ten squared times ten cubed is ten to the fifth.

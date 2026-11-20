@@ -82,7 +82,7 @@ export const V1LogViews: React.FC<SceneProps> = (props) => {
   const jumps = [ten, hund, thou, sunday + 6, sunday + 16, million];
   const nJ = jumps.filter((t) => f >= t).length;
   const views = Math.pow(10, nJ);
-  const click = posted + 16;
+  const click = Math.max(posted + 16, cue('video', 0.05) + 8);   // a nervous hover first, then the click
   const uploaded = fin(f, click + 6, 10);
   const playerO = (1 - fin(f, every - 4, 14));
   const faint = tio(f, million + 6, million + 22);
@@ -136,7 +136,7 @@ export const V1LogViews: React.FC<SceneProps> = (props) => {
               {/* view counter */}
               {f >= one && (
                 <g transform="translate(1290 640)">
-                  <text x={0} y={0} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={86} fill={nJ >= 6 ? ORANGE : INK}
+                  <text x={0} y={0} textAnchor="middle" fontFamily={DISPLAY} fontWeight={800} fontSize={nJ >= 5 ? 64 : 86} fill={nJ >= 6 ? ORANGE : INK}
                         transform={`scale(${jumps.some((t) => f >= t && f < t + 8) ? 1.12 : 1})`}>{fmt(views)}</text>
                   <text x={0} y={52} textAnchor="middle" fontFamily={SANS} fontWeight={800} fontSize={28} letterSpacing={3} fill={P.muted}>{views === 1 ? 'VIEW' : 'VIEWS'}</text>
                 </g>
@@ -158,8 +158,8 @@ export const V1LogViews: React.FC<SceneProps> = (props) => {
               <Confetti t={(f - million) / 40} x={1290} y={600} />
               {/* Axol faints backwards at the million */}
               {f >= million && (
-                <g transform={`rotate(${-80 * faint} 1640 860)`}>
-                  <AxoSide x={1640} y={860} scale={0.7} rear={1} arm={-90} />
+                <g transform={`rotate(${-80 * faint} 1700 980)`}>
+                  <AxoSide x={1700} y={980} scale={0.7} rear={1} arm={-90} />
                 </g>
               )}
             </g>

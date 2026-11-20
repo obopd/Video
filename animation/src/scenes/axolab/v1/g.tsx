@@ -54,8 +54,10 @@ export const V1LogRule: React.FC<SceneProps> = (props) => {
               <T x={1290} y={Y} size={110} color={P.muted} o={tens * fin(f, fifth, 8)}>=</T>
               <T x={1520} y={Y} size={150} o={tens * fin(f, fifth, 8)}>10</T>
               {/* the exponents lift off and click together */}
-              <Chip x={660 + (1625 - 660) * merge} y={Y - 110 - 40 * Math.sin(merge * Math.PI)} text="2" o={1 - (merge >= 1 ? 1 : 0)} />
-              <Chip x={1140 + (1625 - 1140) * merge} y={Y - 110 - 40 * Math.sin(merge * Math.PI)} text="3" color={AMBER} o={1 - (merge >= 1 ? 1 : 0)} />
+              <Chip x={660} y={Y - 110} text="2" />
+              <Chip x={1140} y={Y - 110} text="3" color={AMBER} />
+              {merge > 0 && merge < 1 && <Chip x={660 + (1625 - 660) * merge} y={Y - 110 - 60 * Math.sin(merge * Math.PI)} text="2" s={0.85} />}
+              {merge > 0 && merge < 1 && <Chip x={1140 + (1625 - 1140) * merge} y={Y - 110 - 60 * Math.sin(merge * Math.PI)} text="3" color={AMBER} s={0.85} />}
               {merge >= 1 && <Chip x={1625} y={Y - 110} text="5" color={TEAL} s={tsp(f, fifth + 4, fifth + 16, 0.6, 1.1)} />}
               {merge >= 1 && <Burst x={1625} y={Y - 110} t={clamp01((f - fifth - 4) / 14)} color={TEAL} r={60} />}
               {/* once the 10s fade, only the exponents remain: they are the logs */}
@@ -436,7 +438,7 @@ export const V1LogSlideRule: React.FC<SceneProps> = (props) => {
               <Block x={X0} y={790} w={Math.log10(2) * W - 2} color={TEAL} label="log 2" />
               <Block x={X0 + Math.log10(2) * W + 160 * (1 - snap)} y={790 - 40 * (1 - snap)} w={Math.log10(3) * W - 2} color={AMBER} label="log 3" />
               {snap >= 1 && <line x1={lx(6, X0, W)} x2={lx(6, X0, W)} y1={700} y2={820} stroke={ORANGE} strokeWidth={5} />}
-              <AxoSide x={lx(3, X0, W) + shift - 180} y={1060} scale={0.5} rear={1} arm={lineUp > 0 ? -70 : -30} />
+              <AxoSide x={lx(3, X0, W) + shift - 200} y={1010} scale={0.5} rear={1} arm={lineUp > 0 ? -70 : -30} />
             </g>
           )}
         </g>

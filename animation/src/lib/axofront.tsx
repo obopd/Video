@@ -1,12 +1,13 @@
 // AxoFrontRig: the black Axo seen from the FRONT or the BACK, as a rig
 // (companion to AxoRig, the side view). Same ink-silhouette style as AxoFace:
-// wide head, three feathery gills per side, two round white eyes, no outline.
+// head, three feathery gills per side, two round white eyes, no mouth, no outline.
+// Proportions match the side-view AxoRig so turning between views reads naturally.
 //
 //   * spine (hips -> neck) that leans and sways; rear 0 = on all fours, 1 = standing
 //   * 2-bone IK hind legs (knees bend outward), stepping in place or walking
 //   * front limbs blend from splayed legs (all fours) to arms (standing)
 //   * head roll + head turn (eyes slide toward the side; from the back an eye
-//     peeks around the edge of the head when Axo looks over its shoulder)
+//     peek around the edge of the head when Axo looks over its shoulder)
 //   * tail: behind the body from the front, lying toward the camera from the back
 //   * gills sway / flare and lag on springs (see simulateFront)
 // (x, y) = ground point between the feet.
@@ -43,7 +44,8 @@ export type FrontPose = {
   lean: number; headTilt: number;
   /** Head turn -1..1 (+ = toward screen right). */
   turn: number; lookY: number;
-  blink: number; happy: number; wide: number; sleep: number; wink: number; mouth: number;
+  /** Eyes only (no mouth): blink, happy ^ ^, wide, sleepy, wink, squeezed > <. */
+  blink: number; happy: number; wide: number; sleep: number; wink: number; squeeze: number;
   /** Arms by screen side; angle from straight down (0) outward (+90 sideways, 180 up); elbow bends further outward. */
   armL: number; elbowL: number; armR: number; elbowR: number;
   /** Stepping: phase in cycles, 0..1 amount, foot lift height; extra taps; stance width. */
@@ -56,14 +58,15 @@ export type FrontPose = {
 
 export const FRONT_REST: FrontPose = {
   frame: 0, x: 960, y: 900, scale: 1, back: false, wk: 1, lift: 0, sx: 1, sy: 1, bob: 0, crouch: 0, breath: 0, rear: 1,
-  lean: 0, headTilt: 0, turn: 0, lookY: 0, blink: 0, happy: 0, wide: 0, sleep: 0, wink: 0, mouth: 0,
+  lean: 0, headTilt: 0, turn: 0, lookY: 0, blink: 0, happy: 0, wide: 0, sleep: 0, wink: 0, squeeze: 0,
   armL: 22, elbowL: 10, armR: 22, elbowR: 10, step: 0, stepAmt: 0, stepLift: 14, tapL: 0, tapR: 0, stance: 0,
   tailPhase: 0, tailAmp: 0.5, gillPhase: 0, gillAmp: 5, gillFlare: 0, sweat: 0, headLag: [0, 0],
 };
 
 // gills from AxoFace (left side; mirrored for the right), scaled to this rig
+const HEAD_RX = 76, HEAD_RY = 62;
 const GILLS: [number, number, number, number, number][] = [ // x, y, angle, len, flare sign
-  [-66, -30, -128, 52, -1], [-78, -6, -156, 58, 0], [-75, 19, -182, 50, 1],
+  [-54, -28, -128, 50, -1], [-64, -5, -156, 56, 0], [-61, 18, -182, 48, 1],
 ];
 
 const ik = (hip: V, target: V, l1: number, l2: number, out: number): [V, V] => {
@@ -82,9 +85,9 @@ const ik = (hip: V, target: V, l1: number, l2: number, out: number): [V, V] => {
 export const frontGeometry = (p: FrontPose) => {
   const bk = 1 + 0.018 * p.breath;
   const hip: V = [0, -54 - p.bob + p.crouch];
-  const len = lerp(26, 96, p.rear);
+  const len = lerp(26, 100, p.rear);
   const spine: {c: V; r: number}[] = [];
-  const R = [36, 44, 45, 40];
+  const R = [38, 45, 45, 39];
   const N = 24;
   let top: V = hip;
   for (let i = 0; i <= N; i++) {
@@ -96,7 +99,7 @@ export const frontGeometry = (p: FrontPose) => {
     spine.push({c: [c[0], Math.min(c[1], -(r - 4))], r});
     top = c;
   }
-  const headC: V = add(top, rot([0, -lerp(24, 42, p.rear)], p.lean * 1.1));
+  const headC: V = add(top, rot([0, -lerp(26, 40, p.rear)], p.lean * 1.1));
   const headAngle = p.lean * 0.5 + p.headTilt;
 
   // tail: behind (front view) or toward the camera (back view)
@@ -144,9 +147,13 @@ const Limb: React.FC<{a: V; b: V; c: V; w1: number; w2: number}> = ({a, b, c, w1
   </g>
 );
 
-const Eye: React.FC<{x: number; y: number; r: number; p: FrontPose; wink?: boolean}> = ({x, y, r, p, wink}) => {
+const Eye: React.FC<{x: number; y: number; r: number; p: FrontPose; wink?: boolean; side?: number}> = ({x, y, r, p, wink, side = 1}) => {
   const closed = Math.max(p.blink, p.sleep, wink ? p.wink : 0);
   const rr = r * (1 + 0.3 * p.wide);
+  if (p.squeeze > 0.5) {
+    return <path d={`M ${x - side * rr} ${y - rr * 0.75} L ${x + side * rr * 0.7} ${y} L ${x - side * rr} ${y + rr * 0.75}`}
+                 stroke={PAPER} strokeWidth={r * 0.42} strokeLinecap="round" strokeLinejoin="round" fill="none" />;
+  }
   if (p.happy > 0.5 || (wink && p.wink > 0.6)) {
     return <path d={`M ${x - rr} ${y + rr * 0.35} Q ${x} ${y - rr * 1.1} ${x + rr} ${y + rr * 0.35}`}
                  stroke={PAPER} strokeWidth={r * 0.45} strokeLinecap="round" fill="none" />;
@@ -203,20 +210,21 @@ export const AxoFrontRig: React.FC<{p: FrontPose}> = ({p}) => {
             })}
           </g>
         ))}
-        <ellipse cx={0} cy={0} rx={92} ry={68} fill={INK} />
+        <ellipse cx={0} cy={0} rx={HEAD_RX} ry={HEAD_RY} fill={INK} />
         {!p.back ? (
           <>
-            <Eye x={-38 + t * 28} y={-8 + p.lookY * 6} r={16 * (1 - Math.max(0, t) * 0.25)} p={p} wink />
-            <Eye x={38 + t * 28} y={-8 + p.lookY * 6} r={16 * (1 + Math.min(0, t) * 0.25)} p={p} />
-            {p.mouth > 0.04 && <ellipse cx={t * 30} cy={28} rx={5 + 7 * p.mouth} ry={5 + 10 * p.mouth} fill={PAPER} />}
+            {/* same eyes as the side view (r 13), set a little apart; turning slides them and shrinks the far one */}
+            <Eye x={-30 + t * 26} y={-8 + p.lookY * 6} r={14 * (1 - Math.max(0, t) * 0.28)} p={p} wink side={1} />
+            <Eye x={30 + t * 26} y={-8 + p.lookY * 6} r={14 * (1 + Math.min(0, t) * 0.28)} p={p} side={-1} />
           </>
         ) : (
           Math.abs(t) > 0.05 && (
             <>
-              <defs><clipPath id={clipId}><ellipse cx={0} cy={0} rx={92} ry={68} /></clipPath></defs>
-              {/* looking over the shoulder: one eye peeks round the edge of the head */}
+              <defs><clipPath id={clipId}><ellipse cx={0} cy={0} rx={HEAD_RX} ry={HEAD_RY} /></clipPath></defs>
+              {/* looking over the shoulder: both eyes come round the edge of the head, near eye bigger, like the side view */}
               <g clipPath={`url(#${clipId})`}>
-                <Eye x={Math.sign(t) * (112 - 40 * Math.min(1, Math.abs(t)))} y={-8} r={15} p={p} />
+                <Eye x={Math.sign(t) * (HEAD_RX + 18 - 60 * Math.min(1, Math.abs(t)))} y={-8} r={14} p={p} side={Math.sign(t)} />
+                <Eye x={Math.sign(t) * (HEAD_RX + 30 - 38 * Math.min(1, Math.abs(t)))} y={-10} r={10} p={p} side={-Math.sign(t)} />
               </g>
             </>
           )

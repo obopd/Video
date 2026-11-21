@@ -9,7 +9,7 @@
 //   * front limbs blend continuously from legs (on all fours) to arms (reared up)
 //   * head on the neck that stays mostly upright, with lagging follow-through
 //   * 6 gills with sway, flare (excited / droopy) and spring lag
-//   * eyes: blink, look, wide, happy ^ ^, sleepy, wink; optional little "o" mouth
+//   * no mouth: emotion is in the eyes (blink, look, wide, happy ^ ^, sleepy, wink, squeezed > <)
 //   * optional pencil in hand, sweat drops
 //
 // Usage: build a RigPose per frame (see simulateRig for springs + gait) and render
@@ -54,8 +54,8 @@ export type RigPose = {
   headTilt: number;
   look: number; lookY: number;
   blink: number; happy: number; wide: number; sleep: number; wink: number;
-  /** 0..1 little "o" mouth. */
-  mouth: number;
+  /** 0..1 eyes squeezed shut (> <), for effort, yawning, bracing. */
+  squeeze: number;
   /** Near arm: shoulder angle in world degrees (0 = forward, -90 = up), elbow bend. */
   arm: number; elbow: number;
   arm2: number; elbow2: number;
@@ -72,7 +72,7 @@ export type RigPose = {
 
 export const REST_POSE: RigPose = {
   frame: 0, x: 960, y: 900, scale: 1, dir: 1, lift: 0, rear: 0, arch: 0, bob: 0, crouch: 0, sx: 1, sy: 1, breath: 0,
-  headTilt: 0, look: 0, lookY: 0, blink: 0, happy: 0, wide: 0, sleep: 0, wink: 0, mouth: 0,
+  headTilt: 0, look: 0, lookY: 0, blink: 0, happy: 0, wide: 0, sleep: 0, wink: 0, squeeze: 0,
   arm: 40, elbow: 0, arm2: 40, elbow2: 0,
   gait: 0, stride: 40, stepLift: 12, moving: 0, tapNear: 0, tapFar: 0,
   tailPhase: 0, tailAmp: 6, tailCurl: 0, gillPhase: 0, gillAmp: 5, gillFlare: 0,
@@ -226,6 +226,11 @@ const Foot: React.FC<{at: V; tilt: number; armness?: number}> = ({at, tilt, armn
 const Eye: React.FC<{x: number; y: number; r: number; p: RigPose; near: boolean}> = ({x, y, r, p, near}) => {
   const closed = Math.max(p.blink, p.sleep, near ? p.wink : 0);
   const rr = r * (1 + 0.32 * p.wide);
+  if (p.squeeze > 0.5) {
+    const s = near ? 1 : -1;
+    return <path d={`M ${x - s * rr} ${y - rr * 0.75} L ${x + s * rr * 0.7} ${y} L ${x - s * rr} ${y + rr * 0.75}`}
+                 stroke={PAPER} strokeWidth={r * 0.42} strokeLinecap="round" strokeLinejoin="round" fill="none" />;
+  }
   if (p.happy > 0.5 || (near && p.wink > 0.6)) {
     return <path d={`M ${x - rr} ${y + rr * 0.35} Q ${x} ${y - rr * 1.1} ${x + rr} ${y + rr * 0.35}`}
                  stroke={PAPER} strokeWidth={r * 0.48} strokeLinecap="round" fill="none" />;
@@ -275,7 +280,6 @@ export const AxoRig: React.FC<{p: RigPose}> = ({p}) => {
         <ellipse cx={0} cy={0} rx={66} ry={58} fill={INK} />
         <Eye x={18 + ex} y={-10 + ey} r={13} p={p} near />
         <Eye x={46 + ex * 0.8} y={-12 + ey} r={9.5} p={p} near={false} />
-        {p.mouth > 0.04 && <ellipse cx={40 + ex * 0.5} cy={24} rx={4 + 6 * p.mouth} ry={4 + 9 * p.mouth} fill={PAPER} />}
         {p.sweat > 0.02 && [[-20, -70, 1], [-48, -58, 0.7], [30, -74, 0.8]].map(([sx, sy, ss], i) => {
           const fall = ((f * 1.4 + i * 17) % 40) / 40;
           return (

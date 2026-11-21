@@ -1,0 +1,122 @@
+{
+  "F1": {
+    "blend": {
+      "af_heart": 0.85,
+      "af_bella": 0.15
+    },
+    "base_speed": 0.929,
+    "seconds": 31.04,
+    "wpm": 160.5,
+    "median_pitch_hz": 199.5,
+    "pitch_spread_semitones": 7.4,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.012,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch. When water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding when an argument with gravity."
+  },
+  "F2": {
+    "blend": {
+      "af_heart": 0.65,
+      "af_bella": 0.35
+    },
+    "base_speed": 0.93,
+    "seconds": 31.17,
+    "wpm": 159.8,
+    "median_pitch_hz": 200.7,
+    "pitch_spread_semitones": 7.0,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.012,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch. When water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding when an argument with gravity."
+  },
+  "F3": {
+    "blend": {
+      "af_bella": 0.7,
+      "af_heart": 0.3
+    },
+    "base_speed": 0.936,
+    "seconds": 31.29,
+    "wpm": 159.2,
+    "median_pitch_hz": 200.7,
+    "pitch_spread_semitones": 6.49,
+    "clipped_samples": 0,
+    "clicks": 4,
+    "wer": 0.012,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch. When water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding when an argument with gravity."
+  },
+  "F4": {
+    "blend": {
+      "af_heart": 0.7,
+      "af_sarah": 0.3
+    },
+    "base_speed": 0.926,
+    "seconds": 31.06,
+    "wpm": 160.4,
+    "median_pitch_hz": 198.3,
+    "pitch_spread_semitones": 8.2,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.012,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch. When water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding when an argument with gravity."
+  },
+  "M1": {
+    "blend": {
+      "am_michael": 0.55,
+      "am_fenrir": 0.45
+    },
+    "base_speed": 0.951,
+    "seconds": 31.38,
+    "wpm": 158.7,
+    "median_pitch_hz": 123.5,
+    "pitch_spread_semitones": 10.2,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.012,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch. When water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding when an argument with gravity."
+  },
+  "M2": {
+    "blend": {
+      "am_fenrir": 0.65,
+      "am_michael": 0.35
+    },
+    "base_speed": 0.933,
+    "seconds": 31.3,
+    "wpm": 159.1,
+    "median_pitch_hz": 126.0,
+    "pitch_spread_semitones": 11.1,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.0,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch, when water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding win an argument with gravity."
+  },
+  "M3": {
+    "blend": {
+      "am_michael": 0.65,
+      "am_puck": 0.35
+    },
+    "base_speed": 0.938,
+    "seconds": 31.23,
+    "wpm": 159.5,
+    "median_pitch_hz": 114.6,
+    "pitch_spread_semitones": 8.3,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.012,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch. When water freezes, its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down, and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding when an argument with gravity."
+  },
+  "M4": {
+    "blend": {
+      "am_fenrir": 0.55,
+      "am_puck": 0.45
+    },
+    "base_speed": 0.887,
+    "seconds": 30.67,
+    "wpm": 162.4,
+    "median_pitch_hz": 123.5,
+    "pitch_spread_semitones": 11.7,
+    "clipped_samples": 0,
+    "clicks": 0,
+    "wer": 0.0,
+    "transcript": "Okay, quick question. Why does ice float? Almost every other solid sinks in its own liquid. Water is the weird one. Here's the catch when water freezes its molecules lock into a pattern that takes up more space, not less. More space, same mass, lower density. And that tiny quirk is the reason lakes freeze from the top down and why fish survive the winter. So next time you drop ice in a drink, you're watching hydrogen bonding win an argument with gravity."
+  }
+}

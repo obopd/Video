@@ -8,3 +8,5 @@ node_modules/
 output.wav
 voice/auditions/*.wav
 voice/auditions/*.mp3
+voice/auditions2/*.wav
+voice/auditions2/*.mp3

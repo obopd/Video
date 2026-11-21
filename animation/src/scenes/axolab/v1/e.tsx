@@ -2,7 +2,7 @@
 import React from 'react';
 import {random, useCurrentFrame} from 'remotion';
 import type {SceneProps} from '../../../lib/types';
-import {AxoSide} from '../../../lib/cast';
+import {AxoLive as AxoSide, AxoFrontLive} from '../../../lib/axolive';
 import {Frame, KeySeq, SfxList, useCue} from '../kit';
 import {INK, PAPER, ORANGE, LINE, DISPLAY, SANS, P, TEAL, clamp01, ease, inOut, tio, tsp, fin, Burst, Bill, Dime, ZeroTile} from './common';
 import {T, Sp, UnitTag, AMBER, RED} from '../v2/common';

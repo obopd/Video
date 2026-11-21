@@ -2,7 +2,7 @@
 import React from 'react';
 import {random, useCurrentFrame} from 'remotion';
 import type {SceneProps} from '../../../lib/types';
-import {AxoSide} from '../../../lib/cast';
+import {AxoLive as AxoSide, AxoFrontLive} from '../../../lib/axolive';
 import {Frame, KeySeq, SfxList, useCue, Ring} from '../kit';
 import {AxoFace} from '../brand';
 import {INK, PAPER, ORANGE, LINE, DISPLAY, SANS, P, TEAL, clamp01, ease, inOut, tio, tsp, fin, Burst} from './common';
@@ -50,13 +50,14 @@ const SweatBead: React.FC<{x: number; y: number; t: number; side: 1 | -1; s?: nu
 };
 
 /** Axo from the front, behind the middle desk, holding a small pencil. Same Axo, front view. */
+const RIG_Y = -40, RIG_S = 1.0;
 const AxoAtDesk: React.FC<{x: number; y: number; s?: number; look: number}> = ({x, y, s = 1, look}) => {
   const f = useCurrentFrame();
   const fidget = Math.sin(f / 5) * 3;
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`}>
-      <ellipse cx={0} cy={-175} rx={78} ry={52} fill={INK} />
-      <AxoFace x={0} y={-255} scale={0.56} look={look} />
+      {/* the new front-view rig, standing behind the desk (its legs are hidden by the desk) */}
+      <AxoFrontLive x={0} y={RIG_Y} scale={RIG_S} rear={1} look={look} armL={34 + fidget} armR={34 - fidget} elbowL={-30} elbowR={-30} />
       {[0, 1, 2].map((k) => <SweatBead key={k} x={k === 1 ? -44 : 40} y={-300 + k * 6} side={k === 1 ? -1 : 1} t={((f + k * 23) % 66) / 66} s={1.1} />)}
       {/* small hands on the desk, gripping a small pencil */}
       <g transform={`translate(0 ${-166 + fidget * 0.3})`}>

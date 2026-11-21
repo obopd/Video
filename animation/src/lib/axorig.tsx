@@ -207,19 +207,17 @@ export const rigToWorld = (p: RigPose, v: V): V => [
 ];
 
 // ---------------------------------------------------------------- drawing
-const Limb: React.FC<{a: V; b: V; c: V; w1: number; w2: number; gap?: boolean}> = ({a, b, c, w1, w2, gap}) => (
+const Limb: React.FC<{a: V; b: V; c: V; w1: number; w2: number}> = ({a, b, c, w1, w2}) => (
   <g strokeLinecap="round" strokeLinejoin="round" fill="none">
-    {gap && <path d={`M ${a[0]} ${a[1]} L ${b[0]} ${b[1]} L ${c[0]} ${c[1]}`} stroke={PAPER} strokeWidth={Math.max(w1, w2) + 8} />}
     <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={INK} strokeWidth={w1} />
     <line x1={b[0]} y1={b[1]} x2={c[0]} y2={c[1]} stroke={INK} strokeWidth={w2} />
   </g>
 );
 
-const Foot: React.FC<{at: V; tilt: number; armness?: number; gap?: boolean}> = ({at, tilt, armness = 0, gap}) => {
+const Foot: React.FC<{at: V; tilt: number; armness?: number}> = ({at, tilt, armness = 0}) => {
   const cx = lerp(8, 0, armness), cy = lerp(2, 0, armness), rx = lerp(19, 17, armness), ry = lerp(9, 17, armness);
   return (
     <g transform={`translate(${at[0]} ${at[1]}) rotate(${tilt})`}>
-      {gap && <ellipse cx={cx} cy={cy} rx={rx + 4} ry={ry + 4} fill={PAPER} />}
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={INK} />
     </g>
   );
@@ -258,14 +256,12 @@ export const AxoRig: React.FC<{p: RigPose}> = ({p}) => {
       <Foot at={farF.end} tilt={0} armness={farF.armness} />
       {/* tail + body */}
       {g.spine.map((s, i) => <circle key={i} cx={s.c[0]} cy={s.c[1]} r={s.r} fill={INK} />)}
-      <Limb a={nearH.hip} b={nearH.knee} c={nearH.foot} w1={28} w2={24} gap />
-      <Foot at={nearH.foot} tilt={nearH.tilt} />
       <Limb a={nearH.hip} b={nearH.knee} c={nearH.foot} w1={28} w2={24} />
+      <Foot at={nearH.foot} tilt={nearH.tilt} />
       {nearF.armness < 0.5 && (
         <>
-          <Limb a={nearF.sh} b={nearF.joint} c={nearF.end} w1={26} w2={23} gap />
-          <Foot at={nearF.end} tilt={0} armness={nearF.armness} />
           <Limb a={nearF.sh} b={nearF.joint} c={nearF.end} w1={26} w2={23} />
+          <Foot at={nearF.end} tilt={0} armness={nearF.armness} />
         </>
       )}
       {/* head */}
@@ -291,8 +287,7 @@ export const AxoRig: React.FC<{p: RigPose}> = ({p}) => {
       {/* near arm in front of everything when reared */}
       {nearF.armness >= 0.5 && (
         <>
-          <Foot at={nearF.end} tilt={0} armness={nearF.armness} gap />
-          <Limb a={nearF.sh} b={nearF.joint} c={nearF.end} w1={26} w2={24} gap />
+          <Limb a={nearF.sh} b={nearF.joint} c={nearF.end} w1={26} w2={24} />
           {p.pencil > 0.01 && (() => {
             const fa = Math.atan2(nearF.end[1] - nearF.joint[1], nearF.end[0] - nearF.joint[0]) / D2R;
             return (

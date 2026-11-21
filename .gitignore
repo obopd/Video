@@ -6,3 +6,5 @@ output/
 node_modules/
 .anim-cache/
 output.wav
+voice/auditions/*.wav
+voice/auditions/*.mp3

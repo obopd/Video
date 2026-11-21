@@ -9,6 +9,7 @@ import {v1Scenes} from './scenes/axolab/v1';
 import {brandScenes} from './scenes/axolab/brand';
 import {v2Scenes} from './scenes/axolab/v2';
 import {AxoRigDemo, AxoRigCompare} from './scenes/axolab/rigdemo';
+import {AxoFrontBackDemo} from './scenes/axolab/frontdemo';
 import type {SceneProps} from './lib/types';
 import {C, FONT} from './lib/theme';
 
@@ -24,6 +25,7 @@ const SCENES: Record<string, React.FC<SceneProps>> = {
   ...v2Scenes,
   AxoRigDemo,
   AxoRigCompare,
+  AxoFrontBackDemo,
 };
 
 const Router: React.FC<SceneProps> = (props) => {

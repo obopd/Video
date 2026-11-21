@@ -304,7 +304,7 @@ export const AxoRig: React.FC<{p: RigPose}> = ({p}) => {
 };
 
 // ---------------------------------------------------------------- simulation
-class Spring {
+export class Spring {
   p: V | null = null;
   v: V = [0, 0];
   constructor(public k: number, public c: number) {}

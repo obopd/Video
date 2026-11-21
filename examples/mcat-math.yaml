@@ -1,0 +1,297 @@
+# Axol's Lab: calculator-free MCAT math.
+# Render: python -m ytvideo examples/mcat-math.yaml
+# Scenes are in animation/src/scenes/mcat/. Board steps appear when the narrator says the `cue` phrase.
+# Some numbers are spelled out in the narration so the voice pronounces them clearly.
+
+title: "MCAT Math Without a Calculator: Scientific Notation, Logs, pH & Estimation"
+description: |
+  The MCAT gives you about 96 seconds per question and no calculator. Here are all the moves you need
+  to do the math by hand: scientific notation, exponent rules, logarithms (log 2 and log 3 unlock everything),
+  pH, the natural log, significant digits, and estimation. Plus the three classic traps and a practice problem.
+
+  Next time: units, conversions and ratios.
+tags: [MCAT, MCAT chemistry, MCAT physics, MCAT math, logarithms, pH, scientific notation, premed, Axol's Lab]
+
+output: output/mcat-math.mp4
+resolution: landscape
+fps: 30
+
+voice:
+  engine: auto
+  name: en-US-AndrewMultilingualNeural
+  rate: "-2%"
+
+music:
+  file: assets/ambient.mp3
+  volume: 0.14
+  duck: true
+
+subtitles:
+  burn: false
+
+thumbnail:
+  text: "MCAT math, no calculator"
+  frame_at: 14
+  badge: "pH = ?"
+
+scenes:
+  # ----------------------------------------------------------------- Cold open
+  - type: animated
+    component: ColdOpen
+    fade: false
+    chapter: "The 96-second problem"
+    narration: >
+      Fifty-nine questions. Ninety-five minutes. That's about ninety-six seconds per question...
+      and no calculator. Axo's question says: a solution has a hydrogen ion concentration of
+      three times ten to the minus five. What's the pH? No calculator. No panic either, because
+      the MCAT is designed so you can do this by hand, if you know a handful of moves.
+
+  - type: animated
+    component: Roadmap
+    narration: >
+      This video gives you all of them: scientific notation, exponent rules, logarithms,
+      significant digits, and estimation. Every chemistry and physics video after this one
+      gets easier because of it.
+
+  - type: animated
+    component: LabTitle
+    duration: 3.5
+    props:
+      title: "Calculator-Free MCAT Math"
+      subtitle: "Axol's Lab"
+
+  # ----------------------------------------------------------------- Scientific notation
+  - type: animated
+    component: SciIntro
+    chapter: "Scientific notation"
+    narration: >
+      Scientific notation writes any number as a coefficient between one and ten, times a power of ten.
+      Avogadro's number becomes 6.02 times ten to the twenty-third. To convert, count how far the
+      decimal moves. Move left, the exponent goes up. Move right, it goes down. So zero point zero zero
+      zero four five becomes four point five times ten to the minus four.
+
+  - type: animated
+    component: BoardScene
+    fade: false
+    narration: >
+      Now the operations. Multiplying: multiply the coefficients and add the exponents. Three times
+      ten to the four, times two times ten to the three, is six times ten to the seven. Dividing:
+      divide the coefficients and subtract the exponents. Eight times ten to the six, over four times
+      ten to the two, is two times ten to the four. Adding or subtracting: match the exponents first.
+      Three times ten to the five, plus two times ten to the four. Rewrite the second as zero point two
+      times ten to the five. Now add: three point two times ten to the five.
+    props:
+      steps:
+        - {cue: "Multiplying", clear: true, title: "Multiplying", text: "Multiply the coefficients, **add** the exponents", color: "#a49fd6"}
+        - {cue: "Three times ten to the four", tex: '(3\times10^{4})\,(2\times10^{3})'}
+        - {cue: "is six", tex: '= (3\cdot 2)\times10^{4+3} = \color{#ffd166}{6\times10^{7}}', axo: excited}
+        - {cue: "Dividing", clear: true, title: "Dividing", text: "Divide the coefficients, **subtract** the exponents", color: "#a49fd6", axo: happy}
+        - {cue: "Eight times", tex: '\dfrac{8\times10^{6}}{4\times10^{2}}'}
+        - {cue: "is two times", tex: '= \dfrac{8}{4}\times10^{6-2} = \color{#ffd166}{2\times10^{4}}'}
+        - {cue: "Adding", clear: true, title: "Adding & subtracting", text: "**Match the exponents first**", color: "#a49fd6", axo: thinking}
+        - {cue: "Three times ten to the five", tex: '3\times10^{5} + 2\times10^{4}'}
+        - {cue: "Rewrite", tex: '= 3\times10^{5} + \color{#7cf5d0}{0.2\times10^{5}}'}
+        - {cue: "Now add", tex: '= \color{#ffd166}{3.2\times10^{5}}', axo: excited}
+
+  - type: animated
+    component: BoardScene
+    fade: false
+    narration: >
+      A few exponent rules to lock in. A negative exponent means a reciprocal: ten to the minus three
+      is one over a thousand. Anything to the zero power is one. And a power of a power multiplies the
+      exponents: ten cubed, squared, is ten to the sixth.
+    props:
+      title: "Exponent rules"
+      steps:
+        - {cue: "negative", text: "Negative exponent = reciprocal", color: "#a49fd6"}
+        - {cue: "ten to the minus three", tex: '10^{-3} = \dfrac{1}{10^{3}} = \color{#ffd166}{\dfrac{1}{1000}}'}
+        - {cue: "Anything", tex: 'a^{0} = \color{#ffd166}{1}', note: "anything to the zero power"}
+        - {cue: "power of a power", tex: '(a^{m})^{n} = a^{m\cdot n}'}
+        - {cue: "ten cubed", tex: '(10^{3})^{2} = 10^{3\cdot 2} = \color{#ffd166}{10^{6}}', axo: excited}
+
+  # ----------------------------------------------------------------- Logarithms
+  - type: animated
+    component: PowerMeter
+    chapter: "Logarithms"
+    narration: >
+      A logarithm asks one question: what power of ten gives me this number? Log of one thousand
+      is three, because ten cubed is one thousand. Log of one is zero. Log of ten is one. Log of
+      zero point zero one is minus two.
+
+  - type: animated
+    component: BoardScene
+    fade: false
+    narration: >
+      Three rules do almost all the work. Log of a times b equals log a plus log b. Log of a over b
+      equals log a minus log b. Log of a to the n equals n times log a.
+    props:
+      title: "The three log rules"
+      lineSize: 66
+      steps:
+        - {cue: "a times b", tex: '\log(ab) = \log a + \log b', note: "product → sum"}
+        - {cue: "a over b", tex: '\log\dfrac{a}{b} = \log a - \log b', note: "quotient → difference"}
+        - {cue: "to the n", tex: '\log(a^{n}) = n\,\log a', note: "power → multiple", axo: excited}
+
+  - type: animated
+    component: LogLadder
+    fade: false
+    narration: >
+      Now memorize two numbers: log two is about 0.30, and log three is about 0.48. Everything else
+      comes from them. Five is ten over two, so log five is one minus 0.3, which is 0.7. Four is two
+      squared, so log four is 0.6. Six is two times three, so log six is 0.78. Eight is two cubed,
+      so 0.9. Nine is three squared, so about 0.96.
+
+  - type: animated
+    component: BoardScene
+    fade: false
+    narration: >
+      Try it. Log of two thousand is log two plus log one thousand, which is 0.3 plus three, so 3.3.
+      And a handy check: the log of any number between one and ten lands between zero and one.
+    props:
+      title: "Try it"
+      steps:
+        - {cue: "two thousand", tex: '\log 2000 = \log(2\times10^{3})'}
+        - {cue: "is log two", tex: '= \log 2 + \log 10^{3}'}
+        - {cue: "which is", tex: '= 0.3 + 3 = \color{#ffd166}{3.3}', axo: excited}
+        - {cue: "handy check", text: "Check: $1 < x < 10 \\;\\Rightarrow\\; 0 < \\log x < 1$", color: "#7cf5d0", axo: happy}
+
+  # ----------------------------------------------------------------- pH
+  - type: animated
+    component: BoardScene
+    chapter: "Logs in action: pH"
+    narration: >
+      Back to Axo. pH equals the negative log of the hydrogen ion concentration. Three times ten to
+      the minus five. Split it: log three plus log of ten to the minus five. That's 0.48 minus five.
+      Flip the sign: pH is about 4.5. Shortcut: for a number written as a times ten to the minus n,
+      the pH is about n minus log a.
+    props:
+      question: '[\mathrm{H^+}] = 3\times10^{-5}\ \mathrm{M} \qquad \mathrm{pH} = \,?'
+      maxLines: 6
+      lineSize: 54
+      axo: thinking
+      steps:
+        - {cue: "negative log", tex: '\mathrm{pH} = -\log[\mathrm{H^+}]'}
+        - {cue: "Three times", tex: '= -\log(3\times10^{-5})'}
+        - {cue: "Split", tex: '= -(\log 3 + \log 10^{-5})'}
+        - {cue: "That's", tex: '= -(0.48 - 5)'}
+        - {cue: "Flip", tex: '= 4.52 \approx \color{#ffd166}{4.5}', axo: excited}
+        - {cue: "Shortcut", text: "Shortcut: $a\\times10^{-n} \\;\\Rightarrow\\; \\mathrm{pH}\\approx n-\\log a$", color: "#7cf5d0", axo: happy}
+
+  - type: animated
+    component: BoardScene
+    fade: false
+    narration: >
+      Going backwards works too. pH of 8.3? Write it as nine minus 0.7. So the concentration is ten
+      to the minus nine, times ten to the 0.7. We found ten to the 0.7 is about five. So five times
+      ten to the minus nine.
+    props:
+      title: "Going backwards"
+      lineSize: 56
+      steps:
+        - {cue: "pH of", tex: '\mathrm{pH} = 8.3 \;\Rightarrow\; [\mathrm{H^+}] = 10^{-8.3}'}
+        - {cue: "Write it", tex: '-8.3 = -9 + 0.7'}
+        - {cue: "So the concentration", tex: '[\mathrm{H^+}] = 10^{0.7}\times10^{-9}'}
+        - {cue: "We found", tex: '10^{0.7} \approx 5 \quad (\text{since } \log 5 \approx 0.7)'}
+        - {cue: "So five", tex: '[\mathrm{H^+}] \approx \color{#ffd166}{5\times10^{-9}\ \mathrm{M}}', axo: excited}
+
+  - type: animated
+    component: PhScale
+    fade: false
+    narration: >
+      One more idea: each pH step is a tenfold change in concentration. A pH of three versus five is
+      a hundredfold difference. Logs turn huge ranges into small, readable numbers. You'll see that
+      again with sound decibels.
+
+  # ----------------------------------------------------------------- Natural log
+  - type: animated
+    component: NaturalLog
+    chapter: "The natural log"
+    narration: >
+      The natural log, written L N, uses the number e, about 2.7, instead of ten. It follows the same
+      three rules. L N of one is zero, and L N of e is one. To convert: L N of x is about 2.3 times log
+      of x, because L N of ten is about 2.3. So L N of one hundred is about 4.6. Also remember L N two
+      is about 0.69, which shows up in half-life problems. You'll meet L N in radioactive decay, the
+      Arrhenius equation, and more.
+
+  # ----------------------------------------------------------------- Sig figs
+  - type: animated
+    component: SigFigs
+    chapter: "Significant digits"
+    narration: >
+      Significant digits tell you how precise a number is. Nonzero digits count. Zeros between digits
+      count, so one thousand and two has four. Leading zeros don't, so zero point zero zero four five
+      has two. Trailing zeros count only when there's a decimal point, so one point five zero has three.
+
+  - type: animated
+    component: BoardScene
+    fade: false
+    narration: >
+      For multiplying and dividing, keep the fewest significant digits of any input. Two point five
+      zero times one point two is three point zero. For adding and subtracting, keep the fewest
+      decimal places. 12.11 plus 0.3 is 12.4. Good news: on the MCAT, answer choices are usually far
+      enough apart that precise rounding rarely decides a question. Which brings us to the real skill.
+    props:
+      title: "Sig figs in calculations"
+      maxLines: 6
+      lineSize: 54
+      steps:
+        - {cue: "multiplying", text: "× and ÷ : keep the **fewest sig figs**", color: "#a49fd6"}
+        - {cue: "Two point five", tex: '2.50 \times 1.2 = \color{#ffd166}{3.0}', note: "3 s.f. × 2 s.f. → 2 s.f."}
+        - {cue: "adding", text: "+ and − : keep the **fewest decimal places**", color: "#a49fd6"}
+        - {cue: "12.11", tex: '12.11 + 0.3 = 12.41 \to \color{#ffd166}{12.4}'}
+        - {cue: "Good news", text: "On the MCAT, answer choices are far apart: rounding rarely decides it", color: "#7cf5d0", axo: excited}
+
+  # ----------------------------------------------------------------- Estimation
+  - type: animated
+    component: Estimation
+    chapter: "Estimation"
+    narration: >
+      Estimate. Round to friendly numbers, then correct. 6.9 times 4.1 is about seven times four,
+      which is twenty-eight. Gravity, 9.8, becomes ten. Avogadro's number becomes six times ten to the
+      twenty-third. Try it: how many moles are in 3.6 times ten to the twenty-fourth molecules? Divide
+      by six times ten to the twenty-third. 3.6 over six is 0.6, and ten to the twenty-fourth over ten
+      to the twenty-third is ten. So 0.6 times ten, which is six moles. Under ten seconds.
+
+  # ----------------------------------------------------------------- Traps
+  - type: animated
+    component: Traps
+    chapter: "MCAT traps"
+    narration: >
+      Three classic mistakes. One: log of a plus b is not log a plus log b. The rule only works for
+      multiplication. Two: sign errors. Ten to the minus five concentration gives a pH of positive
+      five. A smaller concentration means a higher pH. Three: adding scientific notation without
+      matching the exponents first.
+
+  # ----------------------------------------------------------------- Practice
+  - type: animated
+    component: BoardScene
+    chapter: "Practice problem"
+    narration: >
+      A strong acid has a hydrogen ion concentration of two times ten to the minus four. Estimate the
+      pH. That's four minus log two, so four minus 0.3, which is 3.7. Now it's diluted a hundredfold.
+      The concentration becomes two times ten to the minus six, so the pH is six minus 0.3, which is
+      5.7. Dilute a strong acid a hundredfold and the pH rises by two.
+    props:
+      question: '\text{Strong acid: } [\mathrm{H^+}] = 2\times10^{-4}\ \mathrm{M} \qquad \mathrm{pH} \approx\, ?'
+      questionLabel: "Practice"
+      pose: write
+      axo: focused
+      maxLines: 6
+      lineSize: 54
+      steps:
+        - {cue: "four minus log", tex: '\mathrm{pH} \approx 4 - \log 2'}
+        - {cue: "so four", tex: '= 4 - 0.3 = \color{#ffd166}{3.7}', axo: happy}
+        - {cue: "diluted", text: "Dilute **100×**", color: "#7cf5d0", axo: thinking}
+        - {cue: "The concentration becomes", tex: '[\mathrm{H^+}] = 2\times10^{-6}\ \mathrm{M}'}
+        - {cue: "six minus", tex: '\mathrm{pH} \approx 6 - 0.3 = \color{#ffd166}{5.7}'}
+        - {cue: "Dilute a strong", text: "100× dilution of a strong acid → **pH rises by 2**", color: "#7cf5d0", axo: excited}
+
+  # ----------------------------------------------------------------- Recap
+  - type: animated
+    component: Recap
+    chapter: "Recap"
+    narration: >
+      Scientific notation: multiply, add exponents; divide, subtract exponents. Logs turn
+      multiplication into addition, and log two and log three unlock everything. L N is about 2.3
+      times log. Estimate first, round later. Next time: units, conversions, and ratios, the other
+      half of calculator-free math.

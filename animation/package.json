@@ -1,0 +1,29 @@
+{
+  "name": "ytvideo-animation",
+  "private": true,
+  "description": "Animated vector scenes for ytvideo, rendered with Remotion",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.539",
+    "@remotion/cli": "4.0.539",
+    "@remotion/renderer": "4.0.539",
+    "@types/d3-geo": "^3.1.1",
+    "@types/katex": "^0.16.8",
+    "@types/topojson-client": "^3.1.5",
+    "d3-geo": "^3.1.1",
+    "katex": "^0.16.47",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.539",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,2 +1,8 @@
-output.wav
 __pycache__/
+*.pyc
+output/
+.build-*/
+.tts-cache/
+node_modules/
+.anim-cache/
+output.wav

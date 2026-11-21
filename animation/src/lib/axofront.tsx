@@ -1,6 +1,6 @@
 // AxoFrontRig: the black Axo seen from the FRONT or the BACK, as a rig
 // (companion to AxoRig, the side view). Same ink-silhouette style as AxoFace:
-// head, three feathery gills per side, four round white eyes (a pair on each side), no mouth, no outline.
+// head, three feathery gills per side, two round white eyes, no mouth, no outline.
 // Proportions match the side-view AxoRig so turning between views reads naturally.
 //
 //   * spine (hips -> neck) that leans and sways; rear 0 = on all fours, 1 = standing
@@ -213,19 +213,9 @@ export const AxoFrontRig: React.FC<{p: FrontPose}> = ({p}) => {
         <ellipse cx={0} cy={0} rx={HEAD_RX} ry={HEAD_RY} fill={INK} />
         {!p.back ? (
           <>
-            {/* four eyes: a pair on each side of the head, the same pair the side view shows
-                (bigger eye outside, smaller eye beside it toward the middle). Turning slides them
-                and shrinks the far pair. A wink closes the whole left pair. */}
-            {([-1, 1] as const).map((s) => {
-              const k = 1 - 0.28 * Math.max(0, s < 0 ? t : -t);
-              const y = -8 + p.lookY * 6;
-              return (
-                <g key={s}>
-                  <Eye x={s * 47 * k + t * 26} y={y} r={13.5 * k} p={p} wink={s < 0} side={-s} />
-                  <Eye x={s * 19 * k + t * 26} y={y - 2} r={9.5 * k} p={p} wink={s < 0} side={-s} />
-                </g>
-              );
-            })}
+            {/* same eyes as the side view (r 13), set a little apart; turning slides them and shrinks the far one */}
+            <Eye x={-30 + t * 26} y={-8 + p.lookY * 6} r={14 * (1 - Math.max(0, t) * 0.28)} p={p} wink side={1} />
+            <Eye x={30 + t * 26} y={-8 + p.lookY * 6} r={14 * (1 + Math.min(0, t) * 0.28)} p={p} side={-1} />
           </>
         ) : (
           Math.abs(t) > 0.05 && (
